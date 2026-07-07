@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}All Appointments{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-xl font-bold text-blue-700">All Appointments</h1>
+        <a href="{% url 'appointments:book_appointment' %}"
+           class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 text-sm">
+            + Book New Appointment
+        </a>
+    </div>
+
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-100 text-left">
+                <tr>
+                    <th class="px-4 py-2">Patient</th>
+                    <th class="px-4 py-2">Doctor</th>
+                    <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">Time</th>
+                    <th class="px-4 py-2">Status</th>
+                    <th class="px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2">{{ appt.patient.user.get_full_name }}</td>
+                        <td class="px-4 py-2">Dr. {{ appt.doctor.user.get_full_name }}</td>
+                        <td class="px-4 py-2">{{ appt.appointment_date }}</td>
+                        <td class="px-4 py-2">{{ appt.appointment_time }}</td>
+                        <td class="px-4 py-2">
+                            <span class="px-2 py-1 rounded text-xs
+                                {% if appt.status == 'approved' %}bg-green-100 text-green-700
+                                {% elif appt.status == 'pending' %}bg-yellow-100 text-yellow-700
+                                {% elif appt.status == 'cancelled' %}bg-red-100 text-red-700
+                                {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                {{ appt.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 space-x-2">
+                            {% if appt.status == 'pending' %}
+                                <a href="{% url 'appointments:approve_appointment' appt.id %}"
+                                   class="text-green-700 hover:underline text-xs">Approve</a>
+                                <a href="{% url 'appointments:cancel_appointment' appt.id %}"
+                                   class="text-red-700 hover:underline text-xs">Cancel</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-4 py-4 text-center text-gray-500">No appointments yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

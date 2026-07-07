@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto bg-white shadow rounded-lg p-6">
+    <h1 class="text-xl font-bold text-blue-700 mb-4">Book Appointment</h1>
+
+    {% if form.errors %}
+        <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
+            {{ form.errors }}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800">
+            Book Appointment
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+
+

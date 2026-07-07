@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Hospital Management System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <nav class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center">
+        <span class="text-lg font-semibold">SMART HOSPITAL</span>
+        <div class="flex items-center gap-4">
+         {% if user.is_authenticated %}
+    {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="Profile" class="w-8 h-8 rounded-full object-cover">
+    {% endif %}
+    <span class="text-sm">{{ user.get_full_name }} ({{ user.role }})</span>
+              <form method="post" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-900 px-3 py-1 rounded text-sm hover:bg-blue-800">
+                        Logout
+                    </button>
+                </form>
+            {% else %}
+               <a href="{% url 'accounts:login' %}" class="text-sm hover:underline">Login</a>
+            {% endif %}
+        </div>
+    </nav>    
+    <main class="p-6">
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold text-blue-700 mb-6">Welcome, {{ user.get_full_name }}</h1>
+
+{% if error %}
+    <p class="text-red-600">{{ error }}</p>
+{% else %}
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+        <div class="bg-white shadow rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Upcoming Appointments</h2>
+            {% if upcoming_appointments %}
+                <ul class="space-y-2">
+                    {% for appt in upcoming_appointments %}
+                        <li class="border-b pb-2">
+                            <span class="font-medium">Dr. {{ appt.doctor.user.get_full_name }}</span>
+                            — {{ appt.appointment_date }} at {{ appt.appointment_time }}
+                            <span class="text-sm text-gray-500">({{ appt.get_status_display }})</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500 text-sm">No upcoming appointments.</p>
+            {% endif %}
+        </div>
+
+        <div class="bg-white shadow rounded-lg p-5">
+            <h2 class="text-lg font-semibold mb-3">Notifications</h2>
+            {% if notifications %}
+                <ul class="space-y-2">
+                    {% for note in notifications %}
+                        <li class="text-sm border-b pb-2">{{ note.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500 text-sm">No new notifications.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+{% endif %}
+{% endblock %}
