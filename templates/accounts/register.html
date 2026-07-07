@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Patient Account - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+
+    <div class="text-center mb-6">
+        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <span class="text-2xl">🧑‍🤝‍🧑</span>
+        </div>
+        <h1 class="text-2xl font-bold text-blue-700">Create Patient Account</h1>
+        <p class="text-gray-500 text-sm mt-1">Register to book appointments and manage your health records</p>
+    </div>
+
+    {% if form.errors %}
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+            Please fix the errors below.
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">First Name</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Last Name</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Email Address</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Phone Number</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.phone.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Password</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.password1.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-medium mb-1">Confirm Password</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.password2.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <button type="submit"
+                class="btn-shine w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition font-medium">
+            Create Account →
+        </button>
+    </form>
+
+    <p class="text-center text-sm text-gray-500 mt-4">
+        Already have an account?
+        <a href="{% url 'accounts:login' %}" class="text-blue-600 hover:underline">Login here</a>
+    </p>
+
+</div>
+{% endblock %}

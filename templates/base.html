@@ -6,30 +6,248 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Smart Hospital Management System{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    body { padding-top: 64px; }
+    .dropdown:hover .dropdown-menu { display: block; }
+
+    /* Fade up animation */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Fade in animation */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* Slide in from left */
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .animate-fade-up {
+        animation: fadeUp 0.7s ease forwards;
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease forwards;
+    }
+    .animate-slide-left {
+        animation: slideInLeft 0.7s ease forwards;
+    }
+
+    /* Staggered delays for children */
+    .delay-100 { animation-delay: 0.1s; opacity: 0; }
+    .delay-200 { animation-delay: 0.2s; opacity: 0; }
+    .delay-300 { animation-delay: 0.3s; opacity: 0; }
+    .delay-400 { animation-delay: 0.4s; opacity: 0; }
+    .delay-500 { animation-delay: 0.5s; opacity: 0; }
+    .delay-600 { animation-delay: 0.6s; opacity: 0; }
+
+    /* Scroll reveal — hidden by default */
+    .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Card hover lift */
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+
+    /* Navbar link underline animation */
+    .nav-link {
+        position: relative;
+    }
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #1d4ed8;
+        transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+    /* Pulse on logo */
+    @keyframes pulse-blue {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(29, 78, 216, 0.4); }
+        50%       { box-shadow: 0 0 0 8px rgba(29, 78, 216, 0); }
+    }
+    .logo-pulse {
+        animation: pulse-blue 2s infinite;
+    }
+
+    /* Button shine effect */
+    .btn-shine {
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-shine::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -75%;
+        width: 50%;
+        height: 200%;
+        background: rgba(255,255,255,0.2);
+        transform: skewX(-20deg);
+        transition: left 0.5s ease;
+    }
+    .btn-shine:hover::after {
+        left: 125%;
+    }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
-    <nav class="bg-blue-700 text-white px-6 py-4 flex justify-between items-center">
-        <span class="text-lg font-semibold">SMART HOSPITAL</span>
-        <div class="flex items-center gap-4">
-         {% if user.is_authenticated %}
-    {% if user.profile_picture %}
-        <img src="{{ user.profile_picture.url }}" alt="Profile" class="w-8 h-8 rounded-full object-cover">
-    {% endif %}
-    <span class="text-sm">{{ user.get_full_name }} ({{ user.role }})</span>
-              <form method="post" action="{% url 'accounts:logout' %}">
+
+    <!-- Fixed Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+
+            <!-- Logo -->
+            <a href="{% url 'home' %}" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center logo-pulse">
+                    <span class="text-white font-bold text-sm">S</span>
+                </div>
+                <span class="font-bold text-blue-700 text-lg">SMART</span>
+            </a>
+            
+
+            <!-- Desktop Nav Links -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+              <a href="{% url 'home' %}" class="nav-link hover:text-blue-700 transition">Home</a>
+               <a href="#features" class="nav-link hover:text-blue-700 transition">Features</a>
+               <a href="#roles" class="nav-link hover:text-blue-700 transition">Roles</a>
+               <a href="#contact" class="nav-link hover:text-blue-700 transition">Contact</a>
+            </div>
+    
+
+            <!-- Right Side -->
+            <div class="hidden md:flex items-center gap-4">
+                {% if user.is_authenticated %}
+                    <!-- Profile Dropdown -->
+                    <div class="relative dropdown">
+                        <button class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg transition">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="Profile"
+                                     class="w-7 h-7 rounded-full object-cover">
+                            {% else %}
+                                <div class="w-7 h-7 bg-blue-700 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">{{ user.first_name|slice:":1" }}</span>
+                                </div>
+                            {% endif %}
+                            <span class="text-sm font-medium text-gray-700">{{ user.get_full_name }}</span>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-50">
+                            <div class="px-4 py-2 border-b border-gray-100">
+                                <p class="text-xs text-gray-500">Signed in as</p>
+                                <p class="text-sm font-semibold text-gray-700 truncate">{{ user.email }}</p>
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full capitalize">{{ user.role }}</span>
+                            </div>
+                            <a href="{% url 'accounts:role_redirect' %}"
+                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                📊 Dashboard
+                            </a>
+                            <div class="border-t border-gray-100 mt-1">
+                                <form method="post" action="{% url 'accounts:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        🚪 Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                {% else %}
+                    <a href="{% url 'accounts:login' %}"
+                       class="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition">
+                        Login →
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <button id="menuBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-3 text-sm">
+            <a href="{% url 'home' %}" class="block text-gray-700 hover:text-blue-700">Home</a>
+            <a href="#features" class="block text-gray-700 hover:text-blue-700">Features</a>
+            <a href="#roles" class="block text-gray-700 hover:text-blue-700">Roles</a>
+            <a href="#contact" class="block text-gray-700 hover:text-blue-700">Contact</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:role_redirect' %}" class="block text-gray-700 hover:text-blue-700">Dashboard</a>
+                <form method="post" action="{% url 'accounts:logout' %}">
                     {% csrf_token %}
-                    <button type="submit" class="bg-blue-900 px-3 py-1 rounded text-sm hover:bg-blue-800">
-                        Logout
-                    </button>
+                    <button type="submit" class="text-red-600 hover:text-red-700">Logout</button>
                 </form>
             {% else %}
-               <a href="{% url 'accounts:login' %}" class="text-sm hover:underline">Login</a>
+                <a href="{% url 'accounts:login' %}"
+                   class="block bg-blue-700 text-white px-4 py-2 rounded-lg text-center">
+                    Login →
+                </a>
             {% endif %}
         </div>
-    </nav>    
-    <main class="p-6">
+    </nav>
+
+    <!-- Page Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
         {% block content %}
         {% endblock %}
     </main>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        document.getElementById('menuBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+
+    <!-- Scroll Reveal -->
+    <script>
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        reveals.forEach(el => observer.observe(el));
+    </script>
+
+</body>
+
 </body>
 </html>
