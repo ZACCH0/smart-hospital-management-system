@@ -11,6 +11,26 @@
         ⚙️ Profile Settings
     </a>
 </div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+    <a href="{% url 'patients:book_appointment' %}"
+       class="bg-blue-700 text-white rounded-xl p-4 text-center hover:bg-blue-800 transition hover-lift">
+        <div class="text-2xl mb-1">📅</div>
+        <p class="text-sm font-medium">Book Appointment</p>
+    </a>
+    <a href="{% url 'patients:my_appointments' %}"
+       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
+        <div class="text-2xl mb-1">🗓️</div>
+        <p class="text-sm font-medium text-gray-700">My Appointments</p>
+    </a>
+    <a href="{% url 'patients:profile_settings' %}"
+       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
+        <div class="text-2xl mb-1">⚙️</div>
+        <p class="text-sm font-medium text-gray-700">Profile Settings</p>
+    </a>
+</div>
+
 {% if error %}
     <p class="text-red-600">{{ error }}</p>
 {% else %}

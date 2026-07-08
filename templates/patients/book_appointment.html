@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Appointment - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'patients:my_appointments' %}"
+           class="text-gray-400 hover:text-blue-700 transition">← Back</a>
+        <h1 class="text-2xl font-bold text-blue-700">Book an Appointment</h1>
+    </div>
+
+    <div class="bg-white shadow rounded-xl p-6">
+
+        {% if form.errors %}
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                Please fix the errors below.
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Select Doctor</label>
+                {{ form.doctor }}
+                {% if form.doctor.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.doctor.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Date</label>
+                    {{ form.appointment_date }}
+                    {% if form.appointment_date.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.appointment_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Time</label>
+                    {{ form.appointment_time }}
+                    {% if form.appointment_time.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.appointment_time.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-1">Reason for Visit</label>
+                {{ form.reason }}
+                {% if form.reason.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.reason.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit"
+                    class="btn-shine w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition font-medium">
+                Book Appointment →
+            </button>
+        </form>
+    </div>
+
+    <!-- Info Box -->
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mt-4 text-sm text-blue-700">
+        ℹ️ Your appointment will be reviewed and approved by our reception team.
+        You'll receive a notification once it's confirmed.
+    </div>
+
+</div>
+{% endblock %}
