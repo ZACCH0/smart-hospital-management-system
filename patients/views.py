@@ -72,3 +72,33 @@ def my_appointments(request):
     return render(request, 'patients/my_appointments.html', {
         'appointments': appointments
     })
+
+@login_required
+def my_medical_records(request):
+    try:
+        patient_profile = request.user.patient_profile
+    except Exception:
+        return redirect('dashboard:patient_home')
+
+    records = patient_profile.medical_records.all().order_by('-created_at')
+
+    return render(request, 'patients/my_medical_records.html', {
+        'records': records
+    })
+
+
+@login_required
+def my_prescriptions(request):
+    try:
+        patient_profile = request.user.patient_profile
+    except Exception:
+        return redirect('dashboard:patient_home')
+
+    from prescriptions.models import Prescription
+    prescriptions = Prescription.objects.filter(
+        medical_record__patient=patient_profile
+    ).order_by('-created_at')
+
+    return render(request, 'patients/my_prescriptions.html', {
+        'prescriptions': prescriptions
+    })
