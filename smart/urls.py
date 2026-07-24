@@ -28,4 +28,6 @@ urlpatterns = [
     path('appointments/', include('appointments.urls')),
     path('api/', include('api.urls')),
     path('patients/',include('patients.urls')),
+    path('doctors/', include('doctors.urls')),
+    path('__reload__/', include('django_browser_reload.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

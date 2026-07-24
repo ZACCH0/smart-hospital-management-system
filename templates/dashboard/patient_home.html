@@ -29,6 +29,17 @@
         <div class="text-2xl mb-1">⚙️</div>
         <p class="text-sm font-medium text-gray-700">Profile Settings</p>
     </a>
+
+    <a href="{% url 'patients:my_medical_records' %}"
+       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
+        <div class="text-2xl mb-1">🏥</div>
+        <p class="text-sm font-medium text-gray-700">Medical Records</p>
+    </a>
+    <a href="{% url 'patients:my_prescriptions' %}"
+       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
+        <div class="text-2xl mb-1">💊</div>
+        <p class="text-sm font-medium text-gray-700">My Prescriptions</p>
+    </a>
 </div>
 
 {% if error %}

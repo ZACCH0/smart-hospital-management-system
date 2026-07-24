@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Write Medical Record - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'doctors:patient_detail' patient.id %}"
+           class="text-gray-400 hover:text-blue-700 transition">← Back</a>
+        <h1 class="text-xl font-bold text-blue-700">
+            Write Record for {{ patient.user.get_full_name }}
+        </h1>
+    </div>
+
+    <div class="bg-white shadow rounded-xl p-6">
+        {% if form.errors %}
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                Please fix the errors below.
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">
+                    Linked Appointment <span class="text-gray-400">(optional)</span>
+                </label>
+                {{ form.appointment }}
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">
+                    Diagnosis <span class="text-red-500">*</span>
+                </label>
+                {{ form.diagnosis }}
+                {% if form.diagnosis.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.diagnosis.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Symptoms</label>
+                {{ form.symptoms }}
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-1">Treatment Plan</label>
+                {{ form.treatment }}
+            </div>
+
+            <button type="submit"
+                    class="btn-shine w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition font-medium">
+                Save Medical Record
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
