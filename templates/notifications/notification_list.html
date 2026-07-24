@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-blue-700">Notifications</h1>
+            {% if unread_count %}
+                <p class="text-sm text-gray-500 mt-1">
+                    {{ unread_count }} unread notification{{ unread_count|pluralize }}
+                </p>
+            {% endif %}
+        </div>
+        {% if unread_count %}
+            <a href="{% url 'notifications:mark_all_read' %}"
+               class="text-sm bg-blue-50 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-100 transition">
+                ✓ Mark all as read
+            </a>
+        {% endif %}
+    </div>
+
+    {% if notifications %}
+        <div class="space-y-3">
+            {% for note in notifications %}
+                <div class="bg-white shadow rounded-xl p-4 reveal
+                    {% if not note.is_read %}border-l-4 border-blue-500{% endif %}">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center mt-0.5
+                                {% if not note.is_read %}bg-blue-100{% else %}bg-gray-100{% endif %}">
+                                <span class="text-sm">🔔</span>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-800 {% if not note.is_read %}font-medium{% endif %}">
+                                    {{ note.message }}
+                                </p>
+                                <p class="text-xs text-gray-400 mt-1">
+                                    {{ note.created_at|date:"M j, Y" }} at {{ note.created_at|time:"g:i A" }}
+                                </p>
+                            </div>
+                        </div>
+                        {% if not note.is_read %}
+                            <a href="{% url 'notifications:mark_as_read' note.id %}"
+                               class="text-xs text-blue-600 hover:underline ml-4 whitespace-nowrap">
+                                Mark read
+                            </a>
+                        {% else %}
+                            <span class="text-xs text-gray-400 ml-4">Read</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white shadow rounded-xl p-10 text-center">
+            <div class="text-5xl mb-4">🔔</div>
+            <h2 class="text-lg font-semibold text-gray-700 mb-2">No notifications yet</h2>
+            <p class="text-gray-500 text-sm">You'll be notified about appointments and updates here</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
