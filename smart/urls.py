@@ -31,4 +31,5 @@ urlpatterns = [
     path('doctors/', include('doctors.urls')),
     path('__reload__/', include('django_browser_reload.urls')),
     path('notifications/', include('notifications.urls')),
+    path('pharmacy/', include('pharmacy.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

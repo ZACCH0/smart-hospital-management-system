@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Pharmacy - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-blue-700">Pharmacy Inventory</h1>
+        <a href="{% url 'pharmacy:add_medicine' %}"
+           class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+            + Add Medicine
+        </a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-blue-500">
+            <p class="text-2xl font-bold text-blue-700">{{ medicines.count }}</p>
+            <p class="text-sm text-gray-500">Total Medicines</p>
+        </div>
+        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-yellow-500">
+            <p class="text-2xl font-bold text-yellow-600">{{ low_stock_count }}</p>
+            <p class="text-sm text-gray-500">Low Stock</p>
+        </div>
+        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-red-500">
+            <p class="text-2xl font-bold text-red-600">{{ expired_count }}</p>
+            <p class="text-sm text-gray-500">Expired</p>
+        </div>
+    </div>
+
+    <!-- Medicine Table -->
+    <div class="bg-white shadow rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-left">
+                <tr>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Medicine</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Category</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Stock</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Price</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Expiry</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medicine in medicines %}
+                    <tr class="border-t hover:bg-gray-50 transition">
+                        <td class="px-4 py-3 font-medium">{{ medicine.name }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ medicine.get_category_display }}</td>
+                        <td class="px-4 py-3">{{ medicine.stock_quantity }}</td>
+                        <td class="px-4 py-3">₦{{ medicine.price }}</td>
+                        <td class="px-4 py-3">{{ medicine.expiry_date }}</td>
+                        <td class="px-4 py-3">
+                            {% if medicine.is_expired %}
+                                <span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full">Expired</span>
+                            {% elif medicine.is_low_stock %}
+                                <span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">Low Stock</span>
+                            {% else %}
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">In Stock</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 space-x-2">
+                            <a href="{% url 'pharmacy:edit_medicine' medicine.id %}"
+                               class="text-blue-600 hover:underline text-xs">Edit</a>
+                            <a href="{% url 'pharmacy:delete_medicine' medicine.id %}"
+                               class="text-red-600 hover:underline text-xs"
+                               onclick="return confirm('Delete {{ medicine.name }}?')">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                            No medicines in inventory yet.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

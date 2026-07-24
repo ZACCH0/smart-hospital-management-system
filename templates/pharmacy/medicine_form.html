@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'pharmacy:medicine_list' %}"
+           class="text-gray-400 hover:text-blue-700 transition">← Back</a>
+        <h1 class="text-xl font-bold text-blue-700">{{ title }}</h1>
+    </div>
+
+    <div class="bg-white shadow rounded-xl p-6">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Medicine Name</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Category</label>
+                {{ form.category }}
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Stock Quantity</label>
+                    {{ form.stock_quantity }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Price (₦)</label>
+                    {{ form.price }}
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-1">Expiry Date</label>
+                {{ form.expiry_date }}
+            </div>
+
+            <button type="submit"
+                    class="btn-shine w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition font-medium">
+                {{ title }}
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
