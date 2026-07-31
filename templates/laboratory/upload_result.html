@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Result - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'laboratory:lab_test_list' %}"
+           class="text-gray-400 hover:text-blue-700 transition">← Back</a>
+        <h1 class="text-xl font-bold text-blue-700">Upload Lab Result</h1>
+    </div>
+
+    <!-- Test Info -->
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 text-sm">
+        <p class="font-medium text-blue-700">Test: {{ lab_test.test_name }}</p>
+        <p class="text-gray-600 mt-1">Patient: {{ lab_test.patient.user.get_full_name }}</p>
+        <p class="text-gray-600">Requested: {{ lab_test.requested_date }}</p>
+    </div>
+
+    <div class="bg-white shadow rounded-xl p-6">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Result Details</label>
+                {{ form.result }}
+                {% if form.result.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.result.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-1">
+                    Report File <span class="text-gray-400">(optional)</span>
+                </label>
+                {{ form.report_file }}
+            </div>
+
+            <button type="submit"
+                    class="btn-shine w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-medium">
+                Upload Result
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

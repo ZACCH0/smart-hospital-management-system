@@ -16,7 +16,15 @@
         <div class="text-2xl mb-1">📅</div>
         <p class="text-sm font-medium text-gray-700">All Appointments</p>
     </a>
+
+    <a href="{% url 'laboratory:request_lab_test' %}"
+   class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
+    <div class="text-2xl mb-1">🧪</div>
+    <p class="text-sm font-medium text-gray-700">Request Lab Test</p>
+</a>
+
 </div>
+
 
 {% if error %}
     <p class="text-red-600">{{ error }}</p>
