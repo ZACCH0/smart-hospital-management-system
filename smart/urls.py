@@ -33,4 +33,5 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('pharmacy/', include('pharmacy.urls')),
     path('laboratory/', include('laboratory.urls')),
+    path('billing/', include('billing.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

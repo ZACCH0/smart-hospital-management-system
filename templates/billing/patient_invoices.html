@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}My Invoices - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+    <h1 class="text-2xl font-bold text-blue-700 mb-6">My Invoices</h1>
+
+    {% if invoices %}
+        <div class="space-y-4">
+            {% for invoice in invoices %}
+                <div class="bg-white shadow rounded-xl p-5 reveal">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-semibold text-gray-800">Invoice #{{ invoice.id }}</p>
+                            <p class="text-2xl font-bold text-blue-700 mt-1">₦{{ invoice.amount }}</p>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Issued: {{ invoice.issued_date|date:"M j, Y" }}
+                            </p>
+                            {% if invoice.payment %}
+                                <p class="text-sm text-green-600 mt-1">
+                                    Paid via {{ invoice.payment.get_payment_method_display }}
+                                    on {{ invoice.payment.payment_date|date:"M j, Y" }}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-medium
+                            {% if invoice.status == 'paid' %}bg-green-100 text-green-700
+                            {% elif invoice.status == 'pending' %}bg-yellow-100 text-yellow-700
+                            {% else %}bg-red-100 text-red-700{% endif %}">
+                            {{ invoice.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white shadow rounded-xl p-10 text-center">
+            <div class="text-5xl mb-4">💰</div>
+            <h2 class="text-lg font-semibold text-gray-700 mb-2">No invoices yet</h2>
+            <p class="text-gray-500 text-sm">Your billing history will appear here</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

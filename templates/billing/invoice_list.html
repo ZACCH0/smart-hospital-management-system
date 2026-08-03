@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Billing - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-blue-700">Invoices</h1>
+        <a href="{% url 'billing:create_invoice' %}"
+           class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+            + Create Invoice
+        </a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-green-500">
+            <p class="text-2xl font-bold text-green-600">₦{{ total_paid }}</p>
+            <p class="text-sm text-gray-500">Total Paid</p>
+        </div>
+        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-yellow-500">
+            <p class="text-2xl font-bold text-yellow-600">₦{{ total_pending }}</p>
+            <p class="text-sm text-gray-500">Total Pending</p>
+        </div>
+    </div>
+
+    <!-- Invoice Table -->
+    <div class="bg-white shadow rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-left">
+                <tr>
+                    <th class="px-4 py-3 font-semibold text-gray-600">#</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Patient</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Amount</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Date</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                    <tr class="border-t hover:bg-gray-50 transition">
+                        <td class="px-4 py-3 text-gray-500">#{{ invoice.id }}</td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ invoice.patient.user.get_full_name }}
+                        </td>
+                        <td class="px-4 py-3">₦{{ invoice.amount }}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium
+                                {% if invoice.status == 'paid' %}bg-green-100 text-green-700
+                                {% elif invoice.status == 'pending' %}bg-yellow-100 text-yellow-700
+                                {% else %}bg-red-100 text-red-700{% endif %}">
+                                {{ invoice.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-gray-500">
+                            {{ invoice.issued_date|date:"M j, Y" }}
+                        </td>
+                        <td class="px-4 py-3">
+                            {% if invoice.status == 'pending' %}
+                                {% if not invoice.payment %}
+                                    <a href="{% url 'billing:record_payment' invoice.id %}"
+                                       class="text-green-600 hover:underline text-xs">
+                                        Record Payment
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-gray-400 text-xs">
+                                    {% if invoice.status == 'paid' %}Paid ✓{% else %}Overdue{% endif %}
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                            No invoices yet.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
