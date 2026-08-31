@@ -29,7 +29,6 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('patients/',include('patients.urls')),
     path('doctors/', include('doctors.urls')),
-    path('__reload__/', include('django_browser_reload.urls')),
     path('notifications/', include('notifications.urls')),
     path('pharmacy/', include('pharmacy.urls')),
     path('laboratory/', include('laboratory.urls')),
