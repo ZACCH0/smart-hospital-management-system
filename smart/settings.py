@@ -1,5 +1,7 @@
 from pathlib import Path
 from decouple import config
+import os
+import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
