@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # Local apps
+    'core',  
     'accounts',
     'smart',
     'doctors',

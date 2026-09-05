@@ -81,12 +81,6 @@ def my_medical_records(request):
         return redirect('dashboard:patient_home')
 
     records = patient_profile.medical_records.all().order_by('-created_at')
-
-    # TEMPORARY DEBUG — remove after fixing
-    print(f"Patient profile ID: {patient_profile.id}")
-    print(f"Records count: {records.count()}")
-    print(f"Records: {records}")
-
     return render(request, 'patients/my_medical_records.html', {
         'records': records
     })

@@ -5,19 +5,16 @@ from doctors.models import DoctorProfile
 from patients.models import PatientProfile
 from medical_records.models import MedicalRecord
 from prescriptions.models import Prescription
+from appointments.models import Appointment
 from .forms import MedicalRecordForm, PrescriptionForm
-
-# Create your views here.
+from core.decorators import doctor_required
 
 
 @login_required
+@doctor_required
 def patient_list(request):
-    try:
-        doctor_profile = request.user.doctor_profile
-    except Exception:
-        return redirect('dashboard:doctor_home')
+    doctor_profile = request.user.doctor_profile
 
-    from appointments.models import Appointment
     patient_ids = Appointment.objects.filter(
         doctor=doctor_profile
     ).values_list('patient', flat=True).distinct()
@@ -30,19 +27,28 @@ def patient_list(request):
 
 
 @login_required
+@doctor_required
 def patient_detail(request, patient_id):
-    try:
-        doctor_profile = request.user.doctor_profile
-    except Exception:
-        return redirect('dashboard:doctor_home')
+    doctor_profile = request.user.doctor_profile
 
+    # Verify this doctor has actually seen this patient
+    # (has at least one appointment with them)
     patient = get_object_or_404(PatientProfile, id=patient_id)
+
+    has_relationship = Appointment.objects.filter(
+        doctor=doctor_profile,
+        patient=patient
+    ).exists()
+
+    if not has_relationship:
+        messages.error(request, 'You do not have access to this patient.')
+        return redirect('doctors:patient_list')
+
     records = MedicalRecord.objects.filter(
         patient=patient,
         doctor=doctor_profile
     ).order_by('-created_at')
 
-    from appointments.models import Appointment
     appointments = Appointment.objects.filter(
         patient=patient,
         doctor=doctor_profile
@@ -56,13 +62,20 @@ def patient_detail(request, patient_id):
 
 
 @login_required
+@doctor_required
 def write_medical_record(request, patient_id):
-    try:
-        doctor_profile = request.user.doctor_profile
-    except Exception:
-        return redirect('dashboard:doctor_home')
-
+    doctor_profile = request.user.doctor_profile
     patient = get_object_or_404(PatientProfile, id=patient_id)
+
+    # Verify doctor-patient relationship
+    has_relationship = Appointment.objects.filter(
+        doctor=doctor_profile,
+        patient=patient
+    ).exists()
+
+    if not has_relationship:
+        messages.error(request, 'You do not have access to this patient.')
+        return redirect('doctors:patient_list')
 
     if request.method == 'POST':
         form = MedicalRecordForm(
@@ -87,13 +100,16 @@ def write_medical_record(request, patient_id):
 
 
 @login_required
+@doctor_required
 def add_prescription(request, record_id):
-    try:
-        doctor_profile = request.user.doctor_profile
-    except Exception:
-        return redirect('dashboard:doctor_home')
+    doctor_profile = request.user.doctor_profile
 
-    record = get_object_or_404(MedicalRecord, id=record_id, doctor=doctor_profile)
+    # doctor_profile is scoped in the query — only this doctor's records
+    record = get_object_or_404(
+        MedicalRecord,
+        id=record_id,
+        doctor=doctor_profile
+    )
 
     if request.method == 'POST':
         form = PrescriptionForm(request.POST)
