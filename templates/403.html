@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Access Denied - SHMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center">
+    <div class="text-center max-w-md mx-auto">
+
+        <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-5V9m0 0V7m0 2h2M10 9H8m12 3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </div>
+
+        <h1 class="text-6xl font-extrabold text-red-600 mb-2">403</h1>
+        <h2 class="text-2xl font-bold text-gray-800 mb-3">Access Denied</h2>
+        <p class="text-gray-500 mb-8">
+            You do not have permission to access this page.
+            If you believe this is a mistake, please contact the system administrator.
+        </p>
+
+        <div class="flex gap-3 justify-center">
+            <a href="javascript:history.back()"
+               class="bg-gray-100 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-200 transition text-sm font-medium">
+                ← Go Back
+            </a>
+            <a href="{% url 'accounts:role_redirect' %}"
+               class="bg-blue-700 text-white px-5 py-2 rounded-lg hover:bg-blue-800 transition text-sm font-medium">
+                Go to Dashboard
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
