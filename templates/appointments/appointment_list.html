@@ -6,11 +6,14 @@
 <div class="max-w-4xl mx-auto">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-xl font-bold text-blue-700">All Appointments</h1>
+        {% if not is_doctor %}
         <a href="{% url 'appointments:book_appointment' %}"
-           class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 text-sm">
+        class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
             + Book New Appointment
         </a>
+    {% endif %}
     </div>
+
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
         <table class="w-full text-sm">

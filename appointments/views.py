@@ -24,16 +24,39 @@ def book_appointment(request):
 @login_required
 @staff_required
 def appointment_list(request):
-    appointments = Appointment.objects.all().order_by('-appointment_date')
+    user = request.user
+
+    # Doctors only see their own appointments
+    if hasattr(user, 'doctor_profile'):
+        appointments = Appointment.objects.filter(
+            doctor=user.doctor_profile
+        ).order_by('-appointment_date')
+    else:
+        # Receptionists and Admins see all appointments
+        appointments = Appointment.objects.all().order_by('-appointment_date')
+
     return render(request, 'appointments/appointment_list.html', {
-        'appointments': appointments
+        'appointments': appointments,
+        'is_doctor': hasattr(user, 'doctor_profile'),
     })
 
 
 @login_required
 @staff_required
 def approve_appointment(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
+    user = request.user
+
+    if hasattr(user, 'doctor_profile'):
+        # Doctor can only approve their own appointments
+        appointment = get_object_or_404(
+            Appointment,
+            id=appointment_id,
+            doctor=user.doctor_profile
+        )
+    else:
+        # Receptionist and Admin can approve any appointment
+        appointment = get_object_or_404(Appointment, id=appointment_id)
+
     appointment.status = 'approved'
     appointment.save()
     messages.success(request, 'Appointment approved.')
@@ -43,7 +66,19 @@ def approve_appointment(request, appointment_id):
 @login_required
 @staff_required
 def cancel_appointment(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
+    user = request.user
+
+    if hasattr(user, 'doctor_profile'):
+        # Doctor can only cancel their own appointments
+        appointment = get_object_or_404(
+            Appointment,
+            id=appointment_id,
+            doctor=user.doctor_profile
+        )
+    else:
+        # Receptionist and Admin can cancel any appointment
+        appointment = get_object_or_404(Appointment, id=appointment_id)
+
     appointment.status = 'cancelled'
     appointment.save()
     messages.success(request, 'Appointment cancelled.')
