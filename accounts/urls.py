@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='accounts:login'), name='logout'),
     path('redirect/', views.role_redirect_view, name='role_redirect'),
     path('register/', views.register_patient, name='register'),
+    path('choose-role/', views.choose_role_view, name='choose_role'),
 
        # Password Reset URLs
     path('password-reset/',

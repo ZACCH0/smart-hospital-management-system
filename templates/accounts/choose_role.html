@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Choose Your Role - SHMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full mx-auto">
+
+        <!-- Profile Picture + Welcome -->
+        <div class="text-center mb-8">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}"
+                     alt="{{ user.get_full_name }}"
+                     class="w-24 h-24 rounded-full object-cover border-4 border-blue-100 shadow-md mx-auto mb-4">
+            {% else %}
+                <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                    <span class="text-4xl font-bold text-blue-700">
+                        {{ user.first_name|slice:":1" }}
+                    </span>
+                </div>
+            {% endif %}
+
+            <h1 class="text-2xl font-bold text-gray-800">
+                Welcome, {{ user.get_full_name }}
+            </h1>
+            <p class="text-gray-500 text-sm mt-2">
+                You have multiple profiles. How would you like to continue?
+            </p>
+        </div>
+
+        <!-- Role Selection -->
+        <form method="post">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-4">
+
+                {% if has_doctor %}
+                <button type="submit" name="role" value="doctor"
+                        class="bg-white border-2 border-blue-200 hover:border-blue-600 hover:shadow-md rounded-xl p-6 text-left transition group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-blue-100 group-hover:bg-blue-600 rounded-xl flex items-center justify-center transition">
+                            <span class="text-2xl">👨‍⚕️</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800 text-lg">Continue as Doctor</p>
+                            <p class="text-gray-500 text-sm">
+                                Access your patients, medical records and schedule
+                            </p>
+                        </div>
+                        <div class="ml-auto text-gray-300 group-hover:text-blue-600 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+                {% endif %}
+
+                {% if has_patient %}
+                <button type="submit" name="role" value="patient"
+                        class="bg-white border-2 border-green-200 hover:border-green-600 hover:shadow-md rounded-xl p-6 text-left transition group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-green-100 group-hover:bg-green-600 rounded-xl flex items-center justify-center transition">
+                            <span class="text-2xl">🏥</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800 text-lg">Continue as Patient</p>
+                            <p class="text-gray-500 text-sm">
+                                View your appointments, records and prescriptions
+                            </p>
+                        </div>
+                        <div class="ml-auto text-gray-300 group-hover:text-green-600 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+                {% endif %}
+
+            </div>
+        </form>
+
+        <!-- Switch role option for already-chosen users -->
+        {% if request.session.active_role %}
+        <div class="text-center mt-4">
+            <p class="text-xs text-gray-400">
+                Currently active as
+                <span class="font-medium text-gray-600">{{ request.session.active_role|title }}</span>
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Sign out -->
+        <div class="text-center mt-6">
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="text-sm text-gray-400 hover:text-red-500 transition">
+                    Sign out instead
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
