@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.db.models import Sum
 from .models import Invoice, Payment
 from .forms import InvoiceForm, PaymentForm
+from core.audit import log_action
+from notifications.models import Notification
 
 # Create your views here.
 @login_required
@@ -40,12 +42,19 @@ def create_invoice(request):
             return redirect('billing:invoice_list')
     else:
         form = InvoiceForm()
+    log_action(
+    request,
+    action='create',
+    model_name='Invoice',
+    object_id=invoice.id,
+    object_repr=str(invoice),
+    details=f'Amount: ₦{invoice.amount}, Status: {invoice.status}'
+)
 
     return render(request, 'billing/invoice_form.html', {
         'form': form,
         'title': 'Create Invoice'
     })
-
 
 @login_required
 def record_payment(request, invoice_id):
@@ -58,6 +67,7 @@ def record_payment(request, invoice_id):
 
     if request.method == 'POST':
         form = PaymentForm(request.POST)
+
         if form.is_valid():
             payment = form.save(commit=False)
             payment.invoice = invoice
@@ -67,23 +77,32 @@ def record_payment(request, invoice_id):
             invoice.status = 'paid'
             invoice.save()
 
+            log_action(
+                request,
+                action='payment',
+                model_name='Payment',
+                object_id=payment.id,
+                object_repr=f'Payment for Invoice #{invoice.id}',
+                details=f'Amount: ₦{payment.amount}, Method: {payment.get_payment_method_display()}'
+            )
+
             # Notify patient
-            from notifications.models import Notification
             Notification.objects.create(
                 user=invoice.patient.user,
                 message=f'Payment of ₦{payment.amount} received via {payment.get_payment_method_display()}. Thank you!'
             )
+
             messages.success(request, 'Payment recorded successfully.')
             return redirect('billing:invoice_list')
+
     else:
         form = PaymentForm(initial={'amount': invoice.amount})
 
-    return render(request, 'billing/record_payment.html', {
-        'form': form,
-        'invoice': invoice,
-    })
-
-
+        return render(request, 'billing/record_payment.html', {
+            'form': form,
+            'invoice': invoice,
+        })
+        
 @login_required
 def patient_invoices(request):
     try:

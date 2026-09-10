@@ -4,6 +4,7 @@ from django.contrib import messages
 from .models import Appointment
 from .forms import AppointmentForm
 from core.decorators import receptionist_required, staff_required
+from core.audit import log_action
 
 
 @login_required
@@ -12,7 +13,16 @@ def book_appointment(request):
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         if form.is_valid():
-            form.save()
+            appointment = form.save()
+            log_action(
+                request,
+                action='create',
+                model_name='Appointment',
+                object_id=appointment.id,
+                object_repr=str(appointment),
+                details=f'Booked by receptionist {request.user.get_full_name()}'
+            )
+
             messages.success(request, 'Appointment booked successfully.')
             return redirect('dashboard:receptionist_home')
     else:
@@ -25,14 +35,11 @@ def book_appointment(request):
 @staff_required
 def appointment_list(request):
     user = request.user
-
-    # Doctors only see their own appointments
     if hasattr(user, 'doctor_profile'):
         appointments = Appointment.objects.filter(
             doctor=user.doctor_profile
         ).order_by('-appointment_date')
     else:
-        # Receptionists and Admins see all appointments
         appointments = Appointment.objects.all().order_by('-appointment_date')
 
     return render(request, 'appointments/appointment_list.html', {
@@ -45,20 +52,25 @@ def appointment_list(request):
 @staff_required
 def approve_appointment(request, appointment_id):
     user = request.user
-
     if hasattr(user, 'doctor_profile'):
-        # Doctor can only approve their own appointments
         appointment = get_object_or_404(
-            Appointment,
-            id=appointment_id,
-            doctor=user.doctor_profile
+            Appointment, id=appointment_id, doctor=user.doctor_profile
         )
     else:
-        # Receptionist and Admin can approve any appointment
         appointment = get_object_or_404(Appointment, id=appointment_id)
 
     appointment.status = 'approved'
     appointment.save()
+
+    log_action(
+        request,
+        action='approve',
+        model_name='Appointment',
+        object_id=appointment.id,
+        object_repr=str(appointment),
+        details=f'Approved by {request.user.get_full_name()}'
+    )
+
     messages.success(request, 'Appointment approved.')
     return redirect('appointments:appointment_list')
 
@@ -67,19 +79,24 @@ def approve_appointment(request, appointment_id):
 @staff_required
 def cancel_appointment(request, appointment_id):
     user = request.user
-
     if hasattr(user, 'doctor_profile'):
-        # Doctor can only cancel their own appointments
         appointment = get_object_or_404(
-            Appointment,
-            id=appointment_id,
-            doctor=user.doctor_profile
+            Appointment, id=appointment_id, doctor=user.doctor_profile
         )
     else:
-        # Receptionist and Admin can cancel any appointment
         appointment = get_object_or_404(Appointment, id=appointment_id)
 
     appointment.status = 'cancelled'
     appointment.save()
+
+    log_action(
+        request,
+        action='cancel',
+        model_name='Appointment',
+        object_id=appointment.id,
+        object_repr=str(appointment),
+        details=f'Cancelled by {request.user.get_full_name()}'
+    )
+
     messages.success(request, 'Appointment cancelled.')
     return redirect('appointments:appointment_list')
