@@ -9,7 +9,10 @@ urlpatterns = [
     path('redirect/', views.role_redirect_view, name='role_redirect'),
     path('register/', views.register_patient, name='register'),
     path('choose-role/', views.choose_role_view, name='choose_role'),
-
+     # 2FA URLs
+    path('2fa/setup/', views.setup_2fa, name='setup_2fa'),
+    path('2fa/verify/', views.verify_2fa, name='verify_2fa'),
+    path('2fa/disable/', views.disable_2fa, name='disable_2fa'),
        # Password Reset URLs
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
@@ -39,3 +42,4 @@ urlpatterns = [
          ),
          name='password_reset_complete'),
 ]
+
