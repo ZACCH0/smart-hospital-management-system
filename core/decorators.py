@@ -59,3 +59,11 @@ def admin_required(view_func):
 
 def staff_required(view_func):
     return role_required('doctor', 'receptionist', 'admin')(view_func)
+
+def lab_staff_required(view_func):
+    """
+    Restricts view to admin and receptionist only.
+    Doctors cannot perform lab processing actions
+    (upload results, mark in progress).
+    """
+    return role_required('admin', 'receptionist')(view_func)

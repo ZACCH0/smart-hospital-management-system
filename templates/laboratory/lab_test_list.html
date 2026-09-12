@@ -2,12 +2,11 @@
 {% block title %}Laboratory - SHMS{% endblock %}
 {% block content %}
 <div class="max-w-5xl mx-auto">
-
-    <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-blue-700">Laboratory Tests</h1>
-        {% if user.role == 'doctor' %}
+        {% if is_doctor %}
             <a href="{% url 'laboratory:request_lab_test' %}"
-               class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+            class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
                 + Request Test
             </a>
         {% endif %}
@@ -57,29 +56,37 @@
                                 {{ test.get_status_display }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 space-x-2">
+                       <td class="px-4 py-3 space-x-2">
+                        {% if not is_doctor and not is_patient %}
                             {% if test.status == 'pending' %}
                                 <a href="{% url 'laboratory:update_test_status' test.id %}"
-                                   class="text-blue-600 hover:underline text-xs">
+                                class="text-blue-600 hover:underline text-xs">
                                     Mark In Progress
                                 </a>
                             {% endif %}
-                           {% if test.status == 'in_progress' %}
-                              {% if not test.result %}
-                                <a href="{% url 'laboratory:upload_result' test.id %}"
-                                 class="text-green-600 hover:underline text-xs">
-                                      Upload Result
-                                     </a>
-                             {% else %}
-                                <span class="text-gray-400 text-xs">Result uploaded</span>
-                            {% endif %}
-                        {% endif %}
-                            {% if test.status == 'completed' %}
-                                {% if test.result %}
+                            {% if test.status == 'in_progress' %}
+                                {% if not test.result %}
+                                    <a href="{% url 'laboratory:upload_result' test.id %}"
+                                    class="text-green-600 hover:underline text-xs">
+                                        Upload Result
+                                    </a>
+                                {% else %}
                                     <span class="text-gray-400 text-xs">Result uploaded</span>
                                 {% endif %}
                             {% endif %}
-                        </td>
+                            {% if test.status == 'completed' %}
+                                <span class="text-gray-400 text-xs">Completed ✓</span>
+                            {% endif %}
+                        {% else %}
+                            {% if test.status == 'completed' and test.result %}
+                                <span class="text-green-600 text-xs">Result Available ✓</span>
+                            {% elif test.status == 'pending' %}
+                                <span class="text-yellow-600 text-xs">Awaiting processing</span>
+                            {% elif test.status == 'in_progress' %}
+                                <span class="text-blue-600 text-xs">Processing...</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
                     </tr>
                 {% empty %}
                     <tr>

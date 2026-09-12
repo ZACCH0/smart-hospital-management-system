@@ -3,11 +3,38 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import LabTest, LabResult
 from .forms import LabTestForm, LabResultForm
+from core.decorators import doctor_required, lab_staff_required
 
-# Create your views here.
 @login_required
 def lab_test_list(request):
-    tests = LabTest.objects.all().order_by('-requested_date')
+    user = request.user
+    # Scope queryset based on role
+    if user.role in ('admin', 'receptionist'):
+        # Admin and receptionist see all tests
+        tests = LabTest.objects.select_related(
+            'patient__user', 'doctor__user'
+        ).order_by('-requested_date')
+
+    elif hasattr(user, 'doctor_profile'):
+        # Doctor sees ONLY tests they ordered
+        tests = LabTest.objects.filter(
+            doctor=user.doctor_profile
+        ).select_related(
+            'patient__user', 'doctor__user'
+        ).order_by('-requested_date')
+
+    elif hasattr(user, 'patient_profile'):
+        # Patient sees ONLY their own tests
+        tests = LabTest.objects.filter(
+            patient=user.patient_profile
+        ).select_related(
+            'patient__user', 'doctor__user'
+        ).order_by('-requested_date')
+
+    else:
+        # No recognized profile — show nothing
+        tests = LabTest.objects.none()
+
     pending = tests.filter(status='pending').count()
     in_progress = tests.filter(status='in_progress').count()
     completed = tests.filter(status='completed').count()
@@ -17,15 +44,15 @@ def lab_test_list(request):
         'pending': pending,
         'in_progress': in_progress,
         'completed': completed,
+        'is_doctor': hasattr(user, 'doctor_profile'),
+        'is_patient': hasattr(user, 'patient_profile') and user.role == 'patient',
     })
 
+
 @login_required
+@doctor_required
 def request_lab_test(request):
-    try:
-        doctor_profile = request.user.doctor_profile
-    except Exception:
-        messages.error(request, 'Only doctors can request lab tests.')
-        return redirect('laboratory:lab_test_list')
+    doctor_profile = request.user.doctor_profile
 
     if request.method == 'POST':
         form = LabTestForm(request.POST)
@@ -34,7 +61,6 @@ def request_lab_test(request):
             lab_test.doctor = doctor_profile
             lab_test.save()
 
-            # Notify patient
             from notifications.models import Notification
             Notification.objects.create(
                 user=lab_test.patient.user,
@@ -47,11 +73,12 @@ def request_lab_test(request):
 
     return render(request, 'laboratory/request_lab_test.html', {'form': form})
 
+
 @login_required
+@lab_staff_required
 def upload_result(request, test_id):
     lab_test = get_object_or_404(LabTest, id=test_id)
 
-    # Check if result already exists
     if hasattr(lab_test, 'result'):
         messages.error(request, 'A result has already been uploaded for this test.')
         return redirect('laboratory:lab_test_list')
@@ -66,7 +93,6 @@ def upload_result(request, test_id):
             lab_test.status = 'completed'
             lab_test.save()
 
-            # Notify patient
             from notifications.models import Notification
             Notification.objects.create(
                 user=lab_test.patient.user,
@@ -82,7 +108,9 @@ def upload_result(request, test_id):
         'lab_test': lab_test,
     })
 
+
 @login_required
+@lab_staff_required
 def update_test_status(request, test_id):
     lab_test = get_object_or_404(LabTest, id=test_id)
     lab_test.status = 'in_progress'
