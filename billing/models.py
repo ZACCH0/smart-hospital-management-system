@@ -23,7 +23,7 @@ class Invoice(models.Model):
         related_name='invoices'
     )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending',db_index=True)
     issued_date = models.DateField(auto_now_add=True)
 
     class Meta:

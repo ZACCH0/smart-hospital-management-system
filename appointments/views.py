@@ -5,6 +5,7 @@ from .models import Appointment
 from .forms import AppointmentForm
 from core.decorators import receptionist_required, staff_required
 from core.audit import log_action
+from django.core.paginator import Paginator
 
 
 @login_required
@@ -22,31 +23,37 @@ def book_appointment(request):
                 object_repr=str(appointment),
                 details=f'Booked by receptionist {request.user.get_full_name()}'
             )
-
             messages.success(request, 'Appointment booked successfully.')
             return redirect('dashboard:receptionist_home')
     else:
         form = AppointmentForm()
-
     return render(request, 'appointments/book_appointment.html', {'form': form})
-
 
 @login_required
 @staff_required
 def appointment_list(request):
     user = request.user
+
+    base_qs = Appointment.objects.select_related(
+        'patient__user',
+        'doctor__user',
+    ).order_by('-appointment_date')
+
     if hasattr(user, 'doctor_profile'):
-        appointments = Appointment.objects.filter(
-            doctor=user.doctor_profile
-        ).order_by('-appointment_date')
+        appointments = base_qs.filter(doctor=user.doctor_profile)
     else:
-        appointments = Appointment.objects.all().order_by('-appointment_date')
+        appointments = base_qs
+
+    # Pagination — 20 appointments per page
+    paginator = Paginator(appointments, 20)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'appointments/appointment_list.html', {
-        'appointments': appointments,
+        'appointments': page_obj,
+        'page_obj': page_obj,
         'is_doctor': hasattr(user, 'doctor_profile'),
     })
-
 
 @login_required
 @staff_required
@@ -70,7 +77,6 @@ def approve_appointment(request, appointment_id):
         object_repr=str(appointment),
         details=f'Approved by {request.user.get_full_name()}'
     )
-
     messages.success(request, 'Appointment approved.')
     return redirect('appointments:appointment_list')
 
@@ -97,6 +103,5 @@ def cancel_appointment(request, appointment_id):
         object_repr=str(appointment),
         details=f'Cancelled by {request.user.get_full_name()}'
     )
-
     messages.success(request, 'Appointment cancelled.')
     return redirect('appointments:appointment_list')

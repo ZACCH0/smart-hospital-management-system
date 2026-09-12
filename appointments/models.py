@@ -23,9 +23,9 @@ class Appointment(models.Model):
         on_delete=models.CASCADE,
         related_name='appointments'
     )
-    appointment_date = models.DateField()
+    appointment_date = models.DateField(db_index=True)
     appointment_time = models.TimeField()
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending',db_index=True)
     reason = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

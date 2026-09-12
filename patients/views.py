@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserProfileForm, PatientProfileForm, PatientAppointmentForm
 from appointments.models import Appointment
-
+from django.core.paginator import Paginator
 
 @login_required
 def profile_settings(request):
@@ -59,7 +59,6 @@ def book_appointment(request):
 
     return render(request, 'patients/book_appointment.html', {'form': form})
 
-
 @login_required
 def my_appointments(request):
     try:
@@ -67,10 +66,17 @@ def my_appointments(request):
     except Exception:
         return redirect('dashboard:patient_home')
 
-    appointments = patient_profile.appointments.all().order_by('-appointment_date')
+    appointments_qs = patient_profile.appointments.select_related(
+        'doctor__user'
+    ).order_by('-appointment_date')
+
+    paginator = Paginator(appointments_qs, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'patients/my_appointments.html', {
-        'appointments': appointments
+        'appointments': page_obj,
+        'page_obj': page_obj,
     })
 
 @login_required
@@ -80,10 +86,16 @@ def my_medical_records(request):
     except Exception:
         return redirect('dashboard:patient_home')
 
-    records = patient_profile.medical_records.all().order_by('-created_at')
+    records = patient_profile.medical_records.select_related(
+        'doctor__user'
+    ).prefetch_related(
+        'prescriptions'
+    ).order_by('-created_at')
+
     return render(request, 'patients/my_medical_records.html', {
         'records': records
     })
+
 
 @login_required
 def my_prescriptions(request):
@@ -95,6 +107,9 @@ def my_prescriptions(request):
     from prescriptions.models import Prescription
     prescriptions = Prescription.objects.filter(
         medical_record__patient=patient_profile
+    ).select_related(
+        'medical_record__doctor__user',
+        'medical_record__patient__user'
     ).order_by('-created_at')
 
     return render(request, 'patients/my_prescriptions.html', {

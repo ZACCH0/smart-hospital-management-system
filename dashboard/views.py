@@ -1,15 +1,14 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-#  Create your views here
+from django.db.models import Sum
 
-#ADMIN PAGE 
+
 @login_required
 def admin_home(request):
     from accounts.models import CustomUser
     from appointments.models import Appointment
     from billing.models import Invoice
-    from django.db.models import Sum
 
     total_doctors = CustomUser.objects.filter(role='doctor').count()
     total_patients = CustomUser.objects.filter(role='patient').count()
@@ -32,19 +31,15 @@ def admin_home(request):
         'total_patients': total_patients,
         'total_appointments': total_appointments,
         'pending_appointments': pending_appointments,
-        'total_revenue': total_revenue,
-
-# Chart data
-        'pending_appointments': pending_appointments,
         'approved_appointments': approved_appointments,
         'completed_appointments': completed_appointments,
         'cancelled_appointments': cancelled_appointments,
+        'total_revenue': total_revenue,
         'pending_revenue': pending_revenue,
     }
-
     return render(request, 'dashboard/admin_home.html', context)
 
-#DOCTOR 
+
 @login_required
 def doctor_home(request):
     try:
@@ -56,32 +51,39 @@ def doctor_home(request):
 
     today = timezone.now().date()
 
-    todays_appointments = doctor_profile.appointments.filter(
+    todays_appointments = doctor_profile.appointments.select_related(
+        'patient__user'
+    ).filter(
         appointment_date=today
     ).order_by('appointment_time')
 
-    patients = doctor_profile.appointments.values_list(
+    from patients.models import PatientProfile
+    patient_ids = doctor_profile.appointments.values_list(
         'patient', flat=True
     ).distinct()
+    patient_list = PatientProfile.objects.filter(
+        id__in=patient_ids
+    ).select_related('user')
 
-    from patients.models import PatientProfile
-    patient_list = PatientProfile.objects.filter(id__in=patients)
-
-    notifications = request.user.notifications.filter(is_read=False).order_by('-created_at')[:5]
+    notifications = request.user.notifications.order_by('-created_at').filter(
+        is_read=False
+    )[:5]
 
     context = {
         'todays_appointments': todays_appointments,
         'patient_list': patient_list,
         'notifications': notifications,
     }
-
     return render(request, 'dashboard/doctor_home.html', context)
+
 
 @login_required
 def receptionist_home(request):
     from appointments.models import Appointment
     pending_count = Appointment.objects.filter(status='pending').count()
-    return render(request, 'dashboard/receptionist_home.html', {'pending_count': pending_count})
+    return render(request, 'dashboard/receptionist_home.html', {
+        'pending_count': pending_count
+    })
 
 
 @login_required
@@ -95,18 +97,18 @@ def patient_home(request):
 
     today = timezone.now().date()
 
-    upcoming_appointments = patient_profile.appointments.filter(
+    upcoming_appointments = patient_profile.appointments.select_related(
+        'doctor__user'
+    ).filter(
         appointment_date__gte=today
     ).order_by('appointment_date', 'appointment_time')
 
-    recent_prescriptions = patient_profile.medical_records.all().first()
-    # we'll improve this once medical_records linking is more complete
-
-    notifications = request.user.notifications.filter(is_read=False).order_by('-created_at')[:5]
+    notifications = request.user.notifications.filter(
+        is_read=False
+    ).order_by('-created_at')[:5]
 
     context = {
         'upcoming_appointments': upcoming_appointments,
         'notifications': notifications,
     }
-
     return render(request, 'dashboard/patient_home.html', context)

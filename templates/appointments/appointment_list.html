@@ -61,4 +61,27 @@
         </table>
     </div>
 </div>
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="flex justify-center items-center gap-2 mt-6">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition">
+            ← Previous
+        </a>
+    {% endif %}
+
+    <span class="text-sm text-gray-500">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition">
+            Next →
+        </a>
+    {% endif %}
+</div>
+{% endif %}
+
 {% endblock %}

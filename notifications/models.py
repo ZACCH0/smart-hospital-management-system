@@ -10,7 +10,7 @@ class Notification(models.Model):
         related_name='notifications'
     )
     message = models.CharField(max_length=255)
-    is_read = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False,db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -16,7 +16,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name  = models.CharField(max_length=100)
     phone      = models.CharField(max_length=15, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    role       = models.CharField(max_length=20, choices=ROLE_CHOICES, default='patient')
+    role       = models.CharField(max_length=20, choices=ROLE_CHOICES, default='patient',db_index=True)
     is_active  = models.BooleanField(default=True)
     is_staff   = models.BooleanField(default=False)  # needed for admin panel access
     date_joined = models.DateTimeField(auto_now_add=True)
