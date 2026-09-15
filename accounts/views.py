@@ -19,6 +19,9 @@ from .two_factor import (
     user_is_2fa_verified,
 )
 from core.audit import log_action
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth import login, logout
 
 
 
@@ -295,16 +298,123 @@ def register_patient(request):
     if request.method == 'POST':
         form = PatientRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.is_active = False  
+            user.email_verified = False
+            user.save()
+
+            # Create PatientProfile
             from patients.models import PatientProfile
             PatientProfile.objects.create(
                 user=user,
                 date_of_birth='2000-01-01',
                 gender='other'
             )
-            login(request, user)
-            return redirect('dashboard:patient_home')
+
+            # Send verification email
+            verification_url = request.build_absolute_uri(
+                f'/accounts/verify-email/{user.verification_token}/'
+            )
+
+            send_mail(
+                subject='Verify Your SHMS Email Address',
+                message=f'''
+Hello {user.get_full_name()},
+
+Thank you for registering with the Smart Hospital Management System.
+
+Please click the link below to verify your email address and activate your account:
+
+{verification_url}
+
+This link is unique to your account. Do not share it with anyone.
+
+If you did not register for an SHMS account, please ignore this email.
+
+— Smart Hospital Management System Team
+                ''',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            return redirect('accounts:verification_sent')
     else:
         form = PatientRegistrationForm()
 
     return render(request, 'accounts/register.html', {'form': form})
+
+
+def verify_email(request, token):
+    """Verify email address using token from email link."""
+    from accounts.models import CustomUser
+
+    try:
+        user = CustomUser.objects.get(verification_token=token)
+    except CustomUser.DoesNotExist:
+        return render(request, 'accounts/verification_failed.html')
+
+    if user.email_verified:
+        # Already verified — just redirect to login
+        messages.info(request, 'Your email is already verified. Please log in.')
+        return redirect('accounts:login')
+
+    # Activate the account
+    user.is_active = True
+    user.email_verified = True
+    user.save()
+
+    # Log the verification
+    from core.audit import log_action
+    log_action(
+        request,
+        action='update',
+        model_name='CustomUser',
+        object_id=user.id,
+        object_repr=user.email,
+        details='Email verified successfully.'
+    )
+
+    # Log them in automatically
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    messages.success(request, 'Email verified successfully. Welcome to SHMS!')
+    return redirect('dashboard:patient_home')
+
+
+def verification_sent(request):
+    """Show 'check your email' page after registration."""
+    return render(request, 'accounts/verification_sent.html')
+
+
+def resend_verification(request):
+    """Allow user to request a new verification email."""
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        from accounts.models import CustomUser
+        try:
+            user = CustomUser.objects.get(email=email, email_verified=False)
+
+            verification_url = request.build_absolute_uri(
+                f'/accounts/verify-email/{user.verification_token}/'
+            )
+
+            send_mail(
+                subject='Verify Your SHMS Email Address',
+                message=f'''
+Hello {user.get_full_name()},
+
+Here is your new verification link:
+
+{verification_url}
+
+— Smart Hospital Management System Team
+                ''',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+            messages.success(request, 'Verification email resent. Please check your inbox.')
+        except CustomUser.DoesNotExist:
+            messages.error(request, 'No unverified account found with that email.')
+
+    return redirect('accounts:verification_sent')

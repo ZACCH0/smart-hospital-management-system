@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Check Your Email - SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-16 bg-white shadow-md rounded-xl p-8 text-center">
+
+    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+    </div>
+
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">Check Your Email</h1>
+    <p class="text-gray-500 mb-6">
+        We've sent a verification link to your email address.
+        Please click the link to activate your account before logging in.
+    </p>
+
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 text-sm text-blue-700">
+        ℹ️ Check your spam/junk folder if you don't see the email within a few minutes.
+    </div>
+
+    <!-- Resend option -->
+    <p class="text-sm text-gray-500 mb-3">Didn't receive the email?</p>
+    <form method="post" action="{% url 'accounts:resend_verification' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <input type="email" name="email" required
+                   placeholder="Enter your email address"
+                   class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button type="submit"
+                class="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 transition text-sm font-medium">
+            Resend Verification Email
+        </button>
+    </form>
+
+    <div class="mt-4">
+        <a href="{% url 'accounts:login' %}" class="text-sm text-gray-400 hover:text-blue-600 transition">
+            Back to Login
+        </a>
+    </div>
+
+</div>
+{% endblock %}

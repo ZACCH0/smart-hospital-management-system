@@ -43,14 +43,27 @@
                                 {{ appt.get_status_display }}
                             </span>
                         </td>
-                        <td class="px-4 py-2 space-x-2">
-                            {% if appt.status == 'pending' %}
-                                <a href="{% url 'appointments:approve_appointment' appt.id %}"
-                                   class="text-green-700 hover:underline text-xs">Approve</a>
-                                <a href="{% url 'appointments:cancel_appointment' appt.id %}"
-                                   class="text-red-700 hover:underline text-xs">Cancel</a>
+                    <td class="px-4 py-3 space-x-2">
+                        {% if appt.status == 'pending' %}
+                            <a href="{% url 'appointments:approve_appointment' appt.id %}"
+                            class="text-green-600 hover:underline text-xs">Approve</a>
+                            <a href="{% url 'appointments:cancel_appointment' appt.id %}"
+                            class="text-red-600 hover:underline text-xs">Cancel</a>
+                        {% elif appt.status == 'approved' %}
+                            <a href="{% url 'appointments:cancel_appointment' appt.id %}"
+                            class="text-red-600 hover:underline text-xs">Cancel</a>
+                            {% if not is_doctor %}
+                                <a href="{% url 'appointments:mark_no_show' appt.id %}"
+                                class="text-yellow-600 hover:underline text-xs">No Show</a>
                             {% endif %}
-                        </td>
+                        {% elif appt.status == 'cancelled' %}
+                            <span class="text-gray-400 text-xs">Cancelled</span>
+                        {% elif appt.status == 'no_show' %}
+                            <span class="text-yellow-600 text-xs">No Show</span>
+                        {% elif appt.status == 'completed' %}
+                            <span class="text-gray-400 text-xs">Completed ✓</span>
+                        {% endif %}
+                    </td>
                     </tr>
                 {% empty %}
                     <tr>

@@ -52,7 +52,7 @@ class PatientAppointmentForm(forms.ModelForm):
 
     class Meta:
         model = Appointment
-        fields = ['doctor', 'appointment_date', 'appointment_time', 'reason']
+        fields = ['doctor', 'appointment_date', 'appointment_time', 'duration', 'reason']
         widgets = {
             'doctor': forms.Select(attrs={
                 'class': 'w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
@@ -63,6 +63,9 @@ class PatientAppointmentForm(forms.ModelForm):
             }),
             'appointment_time': forms.TimeInput(attrs={
                 'type': 'time',
+                'class': 'w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+            'duration': forms.Select(attrs={
                 'class': 'w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
             }),
             'reason': forms.Textarea(attrs={
@@ -76,3 +79,4 @@ class PatientAppointmentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['doctor'].queryset = DoctorProfile.objects.filter(available=True)
         self.fields['doctor'].label = 'Select Doctor'
+        self.fields['duration'].label = 'Estimated Duration'
