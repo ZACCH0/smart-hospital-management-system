@@ -9,6 +9,7 @@ urlpatterns = [
     path('redirect/', views.role_redirect_view, name='role_redirect'),
     path('register/', views.register_patient, name='register'),
     path('choose-role/', views.choose_role_view, name='choose_role'),
+    path('demo/<str:role>/', views.demo_login, name='demo_login'),
      # Email Verification
     path('verify-email/<uuid:token>/', views.verify_email, name='verify_email'),
     path('verification-sent/', views.verification_sent, name='verification_sent'),

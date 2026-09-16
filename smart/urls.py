@@ -38,5 +38,6 @@ urlpatterns = [
     path('pharmacy/', include('pharmacy.urls')),
     path('laboratory/', include('laboratory.urls')),
     path('billing/', include('billing.urls')),
+    path('demo/', TemplateView.as_view(template_name='demo/demo_page.html'), name='demo'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

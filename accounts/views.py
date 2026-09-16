@@ -22,7 +22,7 @@ from core.audit import log_action
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import login, logout
-
+from django.contrib.auth import login as auth_login
 
 
 @login_required
@@ -418,3 +418,54 @@ Here is your new verification link:
             messages.error(request, 'No unverified account found with that email.')
 
     return redirect('accounts:verification_sent')
+
+#Demo
+def demo_login(request, role):
+    """
+    One-click demo login for demonstration purposes.
+    Only works for demo accounts (@shms-demo.com).
+    """
+    from accounts.models import CustomUser
+    DEMO_EMAILS = {
+        'admin': 'admin@shms-demo.com',
+        'doctor': 'doctor@shms-demo.com',
+        'receptionist': 'receptionist@shms-demo.com',
+        'patient': 'patient@shms-demo.com',
+    }
+
+    if role not in DEMO_EMAILS:
+        messages.error(request, 'Invalid demo role.')
+        return redirect('home')
+
+    try:
+        user = CustomUser.objects.get(email=DEMO_EMAILS[role])
+    except CustomUser.DoesNotExist:
+        messages.error(
+            request,
+            'Demo accounts not set up yet. Please contact the administrator.'
+        )
+        return redirect('home')
+
+    # Log out any existing session first
+    if request.user.is_authenticated:
+        from django.contrib.auth import logout
+        logout(request)
+
+    # Log in as demo user
+    auth_login(
+        request,
+        user,
+        backend='django.contrib.auth.backends.ModelBackend'
+    )
+
+    # Mark this session as a demo session
+    request.session['is_demo'] = True
+    request.session['demo_role'] = role
+
+    messages.info(
+        request,
+        f'You are now browsing as Demo {role.title()}. '
+        f'This is a demonstration with fake data only.'
+    )
+
+    return redirect('accounts:role_redirect')

@@ -115,6 +115,7 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
+    
 
     <!-- Fixed Navbar -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
@@ -211,6 +212,7 @@
                     </a>
                 {% endif %}
                 
+                
             </div>
 
             <!-- Mobile Hamburger -->
@@ -241,11 +243,23 @@
                     Login →
                 </a>
             {% endif %}
+            
         </div>
     </nav>
 
     <!-- Page Content -->
     <main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Demo Banner -->
+    {% if request.session.is_demo %}
+    <div class="bg-amber-400 text-amber-900 px-4 py-2 text-center text-sm font-medium">
+        🎭 <strong>Demo Mode</strong> — You are viewing demonstration data only.
+        No real patient information is shown.
+        <a href="{% url 'accounts:logout' %}"
+        class="underline font-bold ml-2 hover:text-amber-700">
+            Exit Demo
+        </a>
+    </div>
+    {% endif %}
     {% if messages %}
         <div class="mb-6">
             {% for message in messages %}
