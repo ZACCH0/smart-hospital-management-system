@@ -1,15 +1,12 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
-from django.core.exceptions import PermissionDenied
-from .forms import PatientRegistrationForm
-from django_otp.plugins.otp_totp.models import TOTPDevice
+import logging
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from .forms import PatientRegistrationForm
+from django_otp.plugins.otp_totp.models import TOTPDevice
 from .two_factor import (
     get_user_totp_device,
     create_totp_device,
@@ -21,100 +18,45 @@ from .two_factor import (
 from core.audit import log_action
 from django.core.mail import send_mail
 from django.conf import settings
-from django.contrib.auth import login, logout
 from django.contrib.auth import login as auth_login
+from django.db import transaction
+from django.db import IntegrityError
+
+logger = logging.getLogger(__name__)
 
 
-@login_required
-def role_redirect_view(request):
-    user = request.user
+def _send_verification_email(request, user):
+    """Build link + send. Returns True on success, False on SMTP failure (no 500)."""
+    verification_url = request.build_absolute_uri(
+        f'/accounts/verify-email/{user.verification_token}/'
+    )
+    try:
+        send_mail(
+            subject='Verify Your SHMS Email Address',
+            message=f'''
+Hello {user.get_full_name()},
 
-    has_doctor = hasattr(user, 'doctor_profile')
-    has_patient = hasattr(user, 'patient_profile')
-    is_admin = user.role == 'admin'
-    is_receptionist = user.role == 'receptionist'
+Thank you for registering with the Smart Hospital Management System.
 
-    # Admin and Receptionist go directly
-    if is_admin:
-        return redirect('dashboard:admin_home')
-    if is_receptionist:
-        return redirect('dashboard:receptionist_home')
+Please click the link below to verify your email address and activate your account:
 
-    # If user has BOTH profiles
-    if has_doctor and has_patient:
-        # Check if they already chose a role this session
-        active_role = request.session.get('active_role')
-        if active_role == 'doctor' and has_doctor:
-            return redirect('dashboard:doctor_home')
-        elif active_role == 'patient' and has_patient:
-            return redirect('dashboard:patient_home')
-        else:
-            # No session choice yet — show choose role page
-            return redirect('accounts:choose_role')
+{verification_url}
 
-    # Single profile — go directly
-    if has_doctor:
-        return redirect('dashboard:doctor_home')
-    if has_patient:
-        return redirect('dashboard:patient_home')
+This link is unique to your account. Do not share it with anyone.
 
-    return redirect('accounts:login')
+If you did not register for an SHMS account, please ignore this email.
 
+— Smart Hospital Management System Team
+            ''',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        return True
+    except Exception as exc:
+        logger.exception('Verification email failed for %s: %s', user.email, exc)
+        return False
 
-@login_required
-def choose_role_view(request):
-    user = request.user
-
-    has_doctor = hasattr(user, 'doctor_profile')
-    has_patient = hasattr(user, 'patient_profile')
-
-    # Only users with multiple profiles should reach this page
-    if not (has_doctor and has_patient):
-        return redirect('accounts:role_redirect')
-
-    if request.method == 'POST':
-        selected_role = request.POST.get('role')
-
-        # Backend security check — verify role actually exists
-        if selected_role == 'doctor' and has_doctor:
-            request.session['active_role'] = 'doctor'
-            return redirect('dashboard:doctor_home')
-        elif selected_role == 'patient' and has_patient:
-            request.session['active_role'] = 'patient'
-            return redirect('dashboard:patient_home')
-        else:
-            raise PermissionDenied
-
-    return render(request, 'accounts/choose_role.html', {
-        'has_doctor': has_doctor,
-        'has_patient': has_patient,
-    })
-
-
-def register_patient(request):
-    if request.user.is_authenticated:
-        return redirect('accounts:role_redirect')
-
-    if request.method == 'POST':
-        form = PatientRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-
-            from patients.models import PatientProfile
-            PatientProfile.objects.create(
-                user=user,
-                date_of_birth='2000-01-01',
-                gender='other'
-            )
-
-            login(request, user)
-            return redirect('dashboard:patient_home')
-    else:
-        form = PatientRegistrationForm()
-
-    return render(request, 'accounts/register.html', {'form': form})
-
-#TWO FACTOR AUTHENTICATION
 
 @login_required
 def role_redirect_view(request):
@@ -298,45 +240,34 @@ def register_patient(request):
     if request.method == 'POST':
         form = PatientRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False  
-            user.email_verified = False
-            user.save()
+            try:
+                with transaction.atomic():
+                    user = form.save(commit=False)
+                    user.is_active = False
+                    user.email_verified = False
+                    user.save()
 
-            # Create PatientProfile
-            from patients.models import PatientProfile
-            PatientProfile.objects.create(
-                user=user,
-                date_of_birth='2000-01-01',
-                gender='other'
-            )
+                    # Create PatientProfile
+                    from patients.models import PatientProfile
+                    PatientProfile.objects.get_or_create(
+                        user=user,
+                        defaults={'date_of_birth': '2000-01-01', 'gender': 'other'},
+                    )
+            except IntegrityError:
+                # Race (double-submit) or case-variant duplicate slipped past
+                # clean_email — show friendly error instead of 500.
+                form.add_error('email', 'An account with this email already exists.')
+                return render(request, 'accounts/register.html', {'form': form})
 
-            # Send verification email
-            verification_url = request.build_absolute_uri(
-                f'/accounts/verify-email/{user.verification_token}/'
-            )
-
-            send_mail(
-                subject='Verify Your SHMS Email Address',
-                message=f'''
-Hello {user.get_full_name()},
-
-Thank you for registering with the Smart Hospital Management System.
-
-Please click the link below to verify your email address and activate your account:
-
-{verification_url}
-
-This link is unique to your account. Do not share it with anyone.
-
-If you did not register for an SHMS account, please ignore this email.
-
-— Smart Hospital Management System Team
-                ''',
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
+            # Send verification email — never 500 on SMTP failure.
+            if _send_verification_email(request, user):
+                messages.success(request, 'Account created. Please check your email to verify.')
+            else:
+                messages.warning(
+                    request,
+                    'Account created, but the verification email could not be sent. '
+                    'Use Resend below or contact support.',
+                )
 
             return redirect('accounts:verification_sent')
     else:
@@ -394,26 +325,14 @@ def resend_verification(request):
         try:
             user = CustomUser.objects.get(email=email, email_verified=False)
 
-            verification_url = request.build_absolute_uri(
-                f'/accounts/verify-email/{user.verification_token}/'
-            )
-
-            send_mail(
-                subject='Verify Your SHMS Email Address',
-                message=f'''
-Hello {user.get_full_name()},
-
-Here is your new verification link:
-
-{verification_url}
-
-— Smart Hospital Management System Team
-                ''',
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
-            messages.success(request, 'Verification email resent. Please check your inbox.')
+            if _send_verification_email(request, user):
+                messages.success(request, 'Verification email resent. Please check your inbox.')
+            else:
+                messages.warning(
+                    request,
+                    'Could not send email right now (mail server unreachable). '
+                    'Please try again later.',
+                )
         except CustomUser.DoesNotExist:
             messages.error(request, 'No unverified account found with that email.')
 

@@ -2,54 +2,126 @@
 
 {% block title %}Login - SHMS{% endblock %}
 
+{# Minimal auth layout: hide the public site header on this page. #}
+{% block pub_header %}{% endblock %}
+
 {% block public_content %}
-<div class="max-w-md mx-auto mt-16 bg-white shadow-md rounded-lg p-8">
-    <h1 class="text-2xl font-bold text-blue-700 mb-6 text-center">Login</h1>
+{# Login — Figma 15 (desktop split) + 43 (mobile stacked), twin of register. Backend untouched: built-in LoginView, username + password. #}
+<section class="bg-white flex flex-col lg:flex-row lg:min-h-screen">
 
-    {% if form.errors %}
-        <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
-            Invalid email or password. Please try again.
-        </div>
-    {% endif %}
-    {% if form.errors %}
-    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
-        Invalid email or password. If you just registered, please verify your email first.
-        <a href="{% url 'accounts:verification_sent' %}" class="underline font-medium">
-            Resend verification email
+    {# ============ LEFT: mint panel (hero on mobile) ============ #}
+    <div class="bg-[#d9e7e4] rounded-b-[2.5rem] lg:rounded-b-none lg:rounded-r-[3rem] px-6 sm:px-10 pt-8 lg:pt-0 pb-12 lg:pb-10 lg:w-1/2 flex flex-col items-center text-center lg:justify-center relative overflow-hidden">
+        <a href="{% url 'home' %}" class="inline-flex items-center gap-2 pl-2 pr-5 py-2 rounded-full bg-white shadow-sm hover:shadow transition" aria-label="Back to SHMS home">
+            <span class="w-8 h-8 rounded-full bg-[#225A5D] text-white flex items-center justify-center font-extrabold" aria-hidden="true">S</span>
+            <strong class="text-[#13271E] tracking-tight">SHMS</strong>
         </a>
+
+        <h1 class="mt-6 text-[26px] sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-[#489D9A]">Your Care Continues Here</h1>
+        <p class="mt-3 max-w-md text-sm sm:text-[15px] leading-relaxed text-[#5f6f6d]">
+            Sign in to pick up where you left off — appointments, records, and more.
+        </p>
+
+        {# Care visual: real clinical photography (verified live, not used elsewhere on site). #}
+        <div class="mt-8 w-full max-w-sm lg:max-w-md relative">
+            <img src="https://images.pexels.com/photos/6011604/pexels-photo-6011604.jpeg?auto=compress&cs=tinysrgb&w=800"
+                 alt="Doctor reviewing care on a digital tablet" loading="lazy"
+                 class="w-full h-52 sm:h-60 lg:h-64 object-cover rounded-3xl shadow-[0_20px_50px_-20px_rgba(19,39,30,0.35)]">
+            <div class="absolute left-4 bottom-4 flex items-center gap-2 pl-2 pr-4 py-2 bg-white/95 rounded-full shadow-lg">
+                <span class="w-7 h-7 rounded-full bg-[#eef3f2] flex items-center justify-center" aria-hidden="true">
+                    <svg class="w-4 h-4 text-[#225A5D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </span>
+                <p class="text-xs font-semibold text-[#1c2b29]">Secure sign-in for every role</p>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex w-full max-w-md mt-10 items-center justify-between text-[12.5px] text-[#5f6f6d]">
+            <span>&copy; {% now "Y" %} SHMS</span>
+            <span class="flex gap-5">
+                <a href="{% url 'home' %}#footer-section" class="hover:text-[#225A5D]">Privacy Policy</a>
+                <a href="{% url 'home' %}#footer-section" class="hover:text-[#225A5D]">Terms and conditions</a>
+            </span>
+        </div>
     </div>
-{% endif %}
 
-    <form method="post">
-        {% csrf_token %}
+    {# ============ RIGHT: white form (sheet on mobile) ============ #}
+    <div class="bg-white -mt-10 lg:mt-0 rounded-t-[2.5rem] lg:rounded-none relative z-10 px-6 sm:px-10 py-10 lg:py-12 lg:w-1/2 lg:flex lg:items-center lg:justify-center">
+        <div class="w-full max-w-md mx-auto">
+            <h2 class="text-2xl lg:text-[30px] font-extrabold tracking-tight text-[#1c2b29] text-center">Welcome Back to SHMS</h2>
+            <p class="mt-2 text-sm text-[#5f6f6d] text-center">Sign in to access your SHMS dashboard.</p>
 
-        <div class="mb-4">
-            <label class="block text-sm font-medium mb-1" for="id_username">Email</label>
-            <input type="email" name="username" id="id_username"
-                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            {% if form.errors %}
+                <div class="bg-[#fdf0ef] border border-[#f0c7c2] text-[#8f2b23] px-4 py-3 rounded-2xl mt-6 text-sm leading-relaxed" role="alert">
+                    Invalid email or password. If you just registered, please verify your email first.
+                    <a href="{% url 'accounts:verification_sent' %}" class="underline font-semibold">
+                        Resend verification email
+                    </a>
+                </div>
+            {% endif %}
+
+            <form method="post" class="mt-7 space-y-5">
+                {% csrf_token %}
+
+                <div>
+                    <label for="id_username" class="block text-[13.5px] text-[#5f6f6d] mb-2">Email Address</label>
+                    <input type="email" name="username" id="id_username"
+                           required autocomplete="username" placeholder="Input your email"
+                           class="w-full px-5 py-3.5 bg-[#f2f4f5] border border-transparent rounded-2xl text-[#1c2b29] text-sm placeholder:text-[#64756f] focus:outline-none focus:ring-2 focus:ring-[#489D9A] focus:bg-white focus:border-[#489D9A] transition">
+                </div>
+
+                <div>
+                    <label for="id_password" class="block text-[13.5px] text-[#5f6f6d] mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" name="password" id="id_password"
+                               required autocomplete="current-password" placeholder="Input your password"
+                               class="w-full px-5 py-3.5 pr-12 bg-[#f2f4f5] border border-transparent rounded-2xl text-[#1c2b29] text-sm placeholder:text-[#64756f] focus:outline-none focus:ring-2 focus:ring-[#489D9A] focus:bg-white focus:border-[#489D9A] transition">
+                        <button type="button" data-toggle="id_password" aria-label="Show password"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-[#5f6f6d] hover:text-[#225A5D] focus:outline-none focus:ring-2 focus:ring-[#489D9A] rounded">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.05 12.55a11.7 11.7 0 0119.9 0 11.7 11.7 0 01-19.9 0z"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <a href="{% url 'accounts:password_reset' %}" class="text-sm text-[#31798A] font-semibold hover:underline">
+                        Forgot Password?
+                    </a>
+                </div>
+
+                <button type="submit" id="loginSubmit"
+                        class="w-full py-4 px-6 bg-[#225A5D] hover:bg-[#1b484b] text-white rounded-full font-bold text-[15px] transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#489D9A] disabled:opacity-60">
+                    Login
+                </button>
+
+                <p class="text-center text-sm text-[#5f6f6d]">
+                    New to SHMS?
+                    <a href="{% url 'accounts:register' %}" class="text-[#31798A] font-semibold hover:underline ml-1">Create an account</a>
+                </p>
+            </form>
+            <p class="lg:hidden text-center text-xs text-[#64756f] mt-8">&copy; {% now "Y" %} SHMS</p>
         </div>
+    </div>
+</section>
 
-        <div class="mb-6">
-            <label class="block text-sm font-medium mb-1" for="id_password">Password</label>
-            <input type="password" name="password" id="id_password"
-                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-
-        <button type="submit"
-                class="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800 transition">
-            Log In
-        </button>
-        <p class="text-center text-sm text-gray-500 mt-4">
-    New patient?
-    <a href="{% url 'accounts:register' %}" class="text-blue-600 hover:underline">
-        Create an account
-    </a>
-    <div class="text-center mt-3">
-    <a href="{% url 'accounts:password_reset' %}" class="text-sm text-blue-600 hover:underline">
-        Forgot your password?
-    </a>
-</div>
-</p>
-    </form>
-</div>
+<script>
+(function () {
+    var toggle = document.querySelector('[data-toggle]');
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            var input = document.getElementById(toggle.getAttribute('data-toggle'));
+            if (!input) return;
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        });
+    }
+    var form = document.querySelector('form[method="post"]');
+    var submit = document.getElementById('loginSubmit');
+    if (form && submit) {
+        form.addEventListener('submit', function () {
+            submit.disabled = true;
+            submit.textContent = 'Signing in…';
+        });
+    }
+})();
+</script>
 {% endblock %}
