@@ -2,35 +2,35 @@
 {% block title %}Laboratory - SHMS{% endblock %}
 {% block content %}
 <div class="max-w-5xl mx-auto">
-        <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-blue-700">Laboratory Tests</h1>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold text-primary">Laboratory Tests</h1>
         {% if is_doctor %}
             <a href="{% url 'laboratory:request_lab_test' %}"
-            class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+            class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
                 + Request Test
             </a>
         {% endif %}
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-yellow-500">
-            <p class="text-2xl font-bold text-yellow-600">{{ pending }}</p>
+            <p class="text-xl sm:text-2xl font-bold text-yellow-600">{{ pending }}</p>
             <p class="text-sm text-gray-500">Pending</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-blue-500">
-            <p class="text-2xl font-bold text-blue-600">{{ in_progress }}</p>
+        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-primary">
+            <p class="text-xl sm:text-2xl font-bold text-secondary">{{ in_progress }}</p>
             <p class="text-sm text-gray-500">In Progress</p>
         </div>
         <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-green-500">
-            <p class="text-2xl font-bold text-green-600">{{ completed }}</p>
+            <p class="text-xl sm:text-2xl font-bold text-green-600">{{ completed }}</p>
             <p class="text-sm text-gray-500">Completed</p>
         </div>
     </div>
 
     <!-- Tests Table -->
-    <div class="bg-white shadow rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="bg-white shadow rounded-xl overflow-x-auto">
+        <table class="w-full text-sm min-w-[620px]">
             <thead class="bg-gray-50 text-left">
                 <tr>
                     <th class="px-4 py-3 font-semibold text-gray-600">Test Name</th>
@@ -51,7 +51,7 @@
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 rounded-full text-xs font-medium
                                 {% if test.status == 'completed' %}bg-green-100 text-green-700
-                                {% elif test.status == 'in_progress' %}bg-blue-100 text-blue-700
+                                {% elif test.status == 'in_progress' %}bg-primary/10 text-primary
                                 {% else %}bg-yellow-100 text-yellow-700{% endif %}">
                                 {{ test.get_status_display }}
                             </span>
@@ -60,7 +60,7 @@
                         {% if not is_doctor and not is_patient %}
                             {% if test.status == 'pending' %}
                                 <a href="{% url 'laboratory:update_test_status' test.id %}"
-                                class="text-blue-600 hover:underline text-xs">
+                                class="text-secondary hover:underline text-xs">
                                     Mark In Progress
                                 </a>
                             {% endif %}
@@ -83,7 +83,7 @@
                             {% elif test.status == 'pending' %}
                                 <span class="text-yellow-600 text-xs">Awaiting processing</span>
                             {% elif test.status == 'in_progress' %}
-                                <span class="text-blue-600 text-xs">Processing...</span>
+                                <span class="text-secondary text-xs">Processing...</span>
                             {% endif %}
                         {% endif %}
                     </td>

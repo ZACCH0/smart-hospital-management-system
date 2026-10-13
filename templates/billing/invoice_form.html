@@ -7,8 +7,8 @@
 
     <div class="flex items-center gap-3 mb-6">
         <a href="{% url 'billing:invoice_list' %}"
-           class="text-gray-400 hover:text-blue-700 transition">← Back</a>
-        <h1 class="text-xl font-bold text-blue-700">{{ title }}</h1>
+           class="text-gray-400 hover:text-primary transition">← Back</a>
+        <h1 class="text-xl font-bold text-primary">{{ title }}</h1>
     </div>
 
     <div class="bg-white shadow rounded-xl p-6">
@@ -44,7 +44,7 @@
             </div>
 
             <button type="submit"
-                    class="btn-shine w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition font-medium">
+                    class="btn-shine w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary transition font-medium">
                 {{ title }}
             </button>
         </form>

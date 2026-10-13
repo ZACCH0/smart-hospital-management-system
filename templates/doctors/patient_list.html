@@ -5,10 +5,10 @@
 {% block content %}
 <div class="max-w-3xl mx-auto">
 
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-blue-700">My Patients</h1>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <h1 class="text-2xl font-bold text-primary">My Patients</h1>
         <a href="{% url 'dashboard:doctor_home' %}"
-           class="text-gray-400 hover:text-blue-700 text-sm transition">← Dashboard</a>
+           class="text-gray-400 hover:text-primary text-sm transition">← Dashboard</a>
     </div>
 
     {% if patients %}
@@ -21,8 +21,8 @@
                             <img src="{{ patient.user.profile_picture.url }}"
                                  class="w-12 h-12 rounded-full object-cover">
                         {% else %}
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-700 font-bold">
+                            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                <span class="text-primary font-bold">
                                     {{ patient.user.first_name|slice:":1" }}
                                 </span>
                             </div>

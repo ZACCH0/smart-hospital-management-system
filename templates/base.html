@@ -89,14 +89,6 @@
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
 
-        <a href="{% url 'home' %}" class="app-topbar__brand">
-            <span class="app-brandmark logo-pulse" aria-hidden="true">S</span>
-            <span class="app-brandtext">
-                <strong>SHMS</strong>
-                <span>Hospital Suite</span>
-            </span>
-        </a>
-
         <span class="app-topbar__spacer"></span>
 
         <div class="app-topbar__actions">
@@ -158,19 +150,15 @@
 
     <div class="app-scrim" id="sidebarScrim" aria-hidden="true"></div>
 
-    {# ---------------- Sidebar ---------------- #}
+    {# ---------------- Sidebar (Figma: brand top, teal-pill nav, sign out foot) ---------------- #}
     <aside class="app-sidebar app-scroll-dark" id="sidebar" aria-label="Main navigation">
-        <div class="app-sidebar__profile">
-            {% if user.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" alt="" class="app-avatar">
-            {% else %}
-                <span class="app-avatar">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "S" %}</span>
-            {% endif %}
-            <div class="app-sidebar__profile-info">
-                <strong>{{ user.get_full_name|default:user.email }}</strong>
-                <span>{{ user.role|capfirst }}</span>
-            </div>
-        </div>
+        <a href="{% url 'accounts:role_redirect' %}" class="app-sidebar__brand" aria-label="SHMS home">
+            <span class="app-brandmark" aria-hidden="true">S</span>
+            <span class="app-brandtext">
+                <strong>SHMS</strong>
+                <span>Hospital Suite</span>
+            </span>
+        </a>
 
         <nav class="app-sidebar__nav">
             <a href="{% url 'accounts:role_redirect' %}"

@@ -29,7 +29,7 @@ def patient_required(view_func):
             return redirect_to_login(request.get_full_path())
         if not hasattr(request.user, 'patient_profile'):
             raise PermissionDenied
-        return wrapper_func(request, *args, **kwargs)
+        return view_func(request, *args, **kwargs)
     return wrapper
 
 

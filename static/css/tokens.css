@@ -63,6 +63,14 @@
   --color-danger:        #c0392b;
   --color-warm:          var(--shms-warm); /* demo/upsell only */
 
+  /* ---- App shell: Figma light sidebar (overrides app.css dark) ---- */
+  --side-bg:    #ffffff;
+  --side-bg-2:  #f2f8f7;
+  --side-text:  #3f4f4c;
+  --side-text-active: #ffffff;
+  --side-hover: #e8f7f6;
+  --side-border: var(--color-border);
+
   /* ---- Surfaces / chrome ---- */
   --bg-body:    var(--shms-background);
   --bg-surface: #ffffff;

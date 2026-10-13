@@ -5,9 +5,9 @@
 {% block content %}
 <div class="max-w-2xl mx-auto">
 
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-blue-700">Notifications</h1>
+            <h1 class="text-2xl font-bold text-primary">Notifications</h1>
             {% if unread_count %}
                 <p class="text-sm text-gray-500 mt-1">
                     {{ unread_count }} unread notification{{ unread_count|pluralize }}
@@ -16,7 +16,7 @@
         </div>
         {% if unread_count %}
             <a href="{% url 'notifications:mark_all_read' %}"
-               class="text-sm bg-blue-50 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-100 transition">
+               class="text-sm bg-primary/10 text-primary px-4 py-2 rounded-lg hover:bg-primary/10 transition">
                 ✓ Mark all as read
             </a>
         {% endif %}
@@ -26,11 +26,11 @@
         <div class="space-y-3">
             {% for note in notifications %}
                 <div class="bg-white shadow rounded-xl p-4 reveal
-                    {% if not note.is_read %}border-l-4 border-blue-500{% endif %}">
+                    {% if not note.is_read %}border-l-4 border-primary{% endif %}">
                     <div class="flex justify-between items-start">
                         <div class="flex items-start gap-3">
                             <div class="w-8 h-8 rounded-full flex items-center justify-center mt-0.5
-                                {% if not note.is_read %}bg-blue-100{% else %}bg-gray-100{% endif %}">
+                                {% if not note.is_read %}bg-primary/10{% else %}bg-gray-100{% endif %}">
                                 <span class="text-sm">🔔</span>
                             </div>
                             <div>
@@ -44,7 +44,7 @@
                         </div>
                         {% if not note.is_read %}
                             <a href="{% url 'notifications:mark_as_read' note.id %}"
-                               class="text-xs text-blue-600 hover:underline ml-4 whitespace-nowrap">
+                               class="text-xs text-secondary hover:underline ml-4 whitespace-nowrap">
                                 Mark read
                             </a>
                         {% else %}

@@ -1,89 +1,118 @@
 {% extends 'base.html' %}
 
-{% block title %}Patient Dashboard{% endblock %}
+{% block title %}My Health — SHMS{% endblock %}
 
 {% block content %}
-
-<div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-blue-700">Welcome, {{ user.get_full_name }}</h1>
-    <a href="{% url 'patients:profile_settings' %}"
-       class="text-sm bg-blue-50 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-100 transition">
-        ⚙️ Profile Settings
-    </a>
-</div>
-
-<!-- Quick Actions -->
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-    <a href="{% url 'patients:book_appointment' %}"
-       class="bg-blue-700 text-white rounded-xl p-4 text-center hover:bg-blue-800 transition hover-lift">
-        <div class="text-2xl mb-1">📅</div>
-        <p class="text-sm font-medium">Book Appointment</p>
-    </a>
-    <a href="{% url 'patients:my_appointments' %}"
-       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
-        <div class="text-2xl mb-1">🗓️</div>
-        <p class="text-sm font-medium text-gray-700">My Appointments</p>
-    </a>
-    <a href="{% url 'patients:profile_settings' %}"
-       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
-        <div class="text-2xl mb-1">⚙️</div>
-        <p class="text-sm font-medium text-gray-700">Profile Settings</p>
-    </a>
-
-    <a href="{% url 'patients:my_medical_records' %}"
-       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
-        <div class="text-2xl mb-1">🏥</div>
-        <p class="text-sm font-medium text-gray-700">Medical Records</p>
-    </a>
-    <a href="{% url 'patients:my_prescriptions' %}"
-       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
-        <div class="text-2xl mb-1">💊</div>
-        <p class="text-sm font-medium text-gray-700">My Prescriptions</p>
-    </a>
-    <a href="{% url 'billing:patient_invoices' %}"
-   class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
-    <div class="text-2xl mb-1">💰</div>
-    <p class="text-sm font-medium text-gray-700">My Invoices</p>
-</a>
+<div class="app-pagehead">
+    <div>
+        <p class="app-pagehead__eyebrow">Patient workspace</p>
+        <h1>Welcome, {{ user.first_name|default:user.get_full_name }}</h1>
+        <p>Book visits, track appointments, records and bills — all in one place.</p>
+    </div>
+    <div class="app-pagehead__actions">
+        <a href="{% url 'patients:book_appointment' %}" class="btn btn-primary btn-sm">+ Book Appointment</a>
+        <a href="{% url 'patients:profile_settings' %}" class="btn btn-outline btn-sm">Profile Settings</a>
+    </div>
 </div>
 
 {% if error %}
-    <p class="text-red-600">{{ error }}</p>
+<div class="app-card app-empty">
+    <h3>Profile not ready</h3>
+    <p>{{ error }} Complete your profile to unlock bookings and records.</p>
+    <div class="app-empty__actions">
+        <a href="{% url 'patients:profile_settings' %}" class="btn btn-primary btn-sm">Complete Profile</a>
+    </div>
+</div>
 {% else %}
 
-    <div class="grid md:grid-cols-2 gap-6">
+{# Quick actions #}
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+    <a href="{% url 'patients:book_appointment' %}" class="app-card app-card--pad app-card--hover !bg-primary !text-white !border-transparent">
+        <svg class="!w-6 !h-6 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <p class="text-[14px] font-bold">Book Appointment</p>
+        <p class="text-[12.5px] opacity-80 mt-0.5">See a doctor</p>
+    </a>
+    <a href="{% url 'patients:my_appointments' %}" class="app-card app-card--pad app-card--hover">
+        <svg class="!w-6 !h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        <p class="text-[14px] font-bold text-slate-900">My Appointments</p>
+        <p class="text-[12.5px] text-slate-500 mt-0.5">Visits & status</p>
+    </a>
+    <a href="{% url 'patients:my_medical_records' %}" class="app-card app-card--pad app-card--hover">
+        <svg class="!w-6 !h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <p class="text-[14px] font-bold text-slate-900">Medical Records</p>
+        <p class="text-[12.5px] text-slate-500 mt-0.5">History & files</p>
+    </a>
+    <a href="{% url 'patients:my_prescriptions' %}" class="app-card app-card--pad app-card--hover">
+        <svg class="!w-6 !h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+        <p class="text-[14px] font-bold text-slate-900">Prescriptions</p>
+        <p class="text-[12.5px] text-slate-500 mt-0.5">Medications</p>
+    </a>
+    <a href="{% url 'billing:patient_invoices' %}" class="app-card app-card--pad app-card--hover">
+        <svg class="!w-6 !h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <p class="text-[14px] font-bold text-slate-900">My Invoices</p>
+        <p class="text-[12.5px] text-slate-500 mt-0.5">Bills & payments</p>
+    </a>
+    <a href="{% url 'patients:profile_settings' %}" class="app-card app-card--pad app-card--hover">
+        <svg class="!w-6 !h-6 mb-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <p class="text-[14px] font-bold text-slate-900">Profile Settings</p>
+        <p class="text-[12.5px] text-slate-500 mt-0.5">Personal details</p>
+    </a>
+</div>
 
-        <div class="bg-white shadow rounded-lg p-5">
-            <h2 class="text-lg font-semibold mb-3">Upcoming Appointments</h2>
-            {% if upcoming_appointments %}
-                <ul class="space-y-2">
-                    {% for appt in upcoming_appointments %}
-                        <li class="border-b pb-2">
-                            <span class="font-medium">Dr. {{ appt.doctor.user.get_full_name }}</span>
-                            — {{ appt.appointment_date }} at {{ appt.appointment_time }}
-                            <span class="text-sm text-gray-500">({{ appt.get_status_display }})</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-gray-500 text-sm">No upcoming appointments.</p>
-            {% endif %}
+<div class="grid md:grid-cols-2 gap-4">
+    <section class="app-card app-card--flush">
+        <div class="app-card__head">
+            <div>
+                <h2>Upcoming Appointments</h2>
+                <p>Your booked visits, soonest first.</p>
+            </div>
+            <div class="app-card__head-actions">
+                <a href="{% url 'patients:my_appointments' %}" class="btn btn-ghost btn-sm">View all</a>
+            </div>
         </div>
-
-        <div class="bg-white shadow rounded-lg p-5">
-            <h2 class="text-lg font-semibold mb-3">Notifications</h2>
-            {% if notifications %}
-                <ul class="space-y-2">
-                    {% for note in notifications %}
-                        <li class="text-sm border-b pb-2">{{ note.message }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-gray-500 text-sm">No new notifications.</p>
-            {% endif %}
+        {% if upcoming_appointments %}
+        <ul class="divide-y divide-slate-100">
+            {% for appt in upcoming_appointments|slice:":5" %}
+            <li class="flex items-center gap-3 px-5 py-3.5">
+                <div class="min-w-0 flex-1">
+                    <p class="text-[14px] font-bold text-slate-900 truncate">Dr. {{ appt.doctor.user.get_full_name }}</p>
+                    <p class="text-[12.5px] text-slate-500">{{ appt.appointment_date|date:"D, j M" }} · {{ appt.appointment_time|time:"H:i" }}</p>
+                </div>
+                {% include "partials/status_badge.html" with status=appt.status %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="app-empty">
+            <h3>No visits booked</h3>
+            <p>Book your first appointment to get started.</p>
         </div>
+        {% endif %}
+    </section>
 
-    </div>
-
+    <section class="app-card app-card--flush">
+        <div class="app-card__head">
+            <div>
+                <h2>Notifications</h2>
+                <p>Latest updates on your care.</p>
+            </div>
+            <div class="app-card__head-actions">
+                <a href="{% url 'notifications:notification_list' %}" class="btn btn-ghost btn-sm">View all</a>
+            </div>
+        </div>
+        {% if notifications %}
+        <ul class="divide-y divide-slate-100">
+            {% for note in notifications %}
+            <li class="px-5 py-3.5 text-[13.5px] text-slate-700">{{ note.message }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="app-empty">
+            <h3>All quiet</h3>
+            <p>No new notifications right now.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
 {% endif %}
 {% endblock %}

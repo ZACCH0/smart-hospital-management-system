@@ -47,8 +47,8 @@
 | 3 Design system | tokens.css + app.css + partials, locked user choices | DONE | 2026-10-13 |
 | 4 Homepage build | 13 sections in place + read-only `core/views.home` + nav CTA | DONE, awaiting visual approval | 2026-10-13 |
 | 4b Doctors filter tabs | Specialty tabs (All + 8, JS-only) on homepage grid | DONE, awaiting visual approval | 2026-10-13 |
-| 5 Homepage test/fix | `check` + `/` + roles + 390px mobile from user review | PENDING | — |
-| 6 Dashboards | Admin/Doctor/Patient/Receptionist, only after homepage approval | LOCKED | — |
+| 5 Homepage test/fix | `check` + `/` + roles + 390px mobile from user review | DONE — user approved homepage as-is, no fix notes | 2026-10-13 |
+| 6 Dashboards | Admin/Doctor/Patient/Receptionist, homepage approval granted | DONE, awaiting visual approval | 2026-10-13 |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | LOCKED | — |
 
 **Phase progress (28-phase plan):** Phases 1–11 complete; 12–28 remaining (see §10 tail list).
@@ -149,6 +149,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-13 (Stage 6 mobile rail):** per user, icon rail now persistent on ALL sizes — phones get a slimmer 64px rail (tablets 84px), no hidden drawer, hamburger retired; content/topbar offset accordingly. Tested: `check` clean, 19/19 matrix ALL PASS. NOT tested: real Android device at 360–430px.
+
 - **2026-10-13 (fixed header):** public nav now `position:fixed` (stays pinned on scroll; was `sticky`) + `main` offset `pt-64/70px`; anchor sections (`features/roles/stats/footer`) got `scroll-mt` so jumps clear the bar; AI modal lifted to `z-90` above header. **Fault found 2026-10-13:** stray Tailwind `relative` class on the header was overriding the pin (same specificity, later CDN stylesheet) — removed + selector bumped to `header.pub-header` with a do-not-touch note. Tested: `check` clean, GET `/` + login + register + demo 200. NOT tested: real scroll/pinned behavior on device. **USER-CONFIRMED 2026-10-13: pin works.**
 
 - **2026-10-13 (commit):** `a35834d` pushed to `origin/redesign-homepage` — 163 files (homepage build + dashboard updates + static/partials first commit + 144 junk untracks). Secrets scanned clean, `main` untouched. Tree fully clean after push.
@@ -173,7 +175,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **PARKED 2026-10-13 — DONE same session:** `templates/base.html` user-flagged faults fixed (role-check `in` bug, AI-button crash guard, dead `brand-50` hover, avatar fallback) + hero reworked (positioning, teal-aligned bg, responsive 390→1440). Awaiting visual approval.
+> **STAGE 6 DONE 2026-10-13 — awaiting visual approval:** reception board + guards + patient refresh built and matrix-tested. Open `/dashboard/receptionist/` as receptionist and judge the beauty.
+> **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 
 1. **User visual review** of `/` (desktop + 390px): hero, 8 services, doctors + tabs, FAQ, footer — reply with fixes or "approved".
 2. **Commit** the pile on `redesign-homepage` (`git add templates/ static/ core/ smart/ PROGRESS_STATUS.md` → commit → push branch, never `main`).

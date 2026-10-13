@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import UserProfileForm, PatientProfileForm, PatientAppointmentForm
 from appointments.models import Appointment
 from django.core.paginator import Paginator
+from core.decorators import patient_required
 
 @login_required
 def profile_settings(request):
@@ -37,7 +38,7 @@ def profile_settings(request):
     })
 
 
-@login_required
+@patient_required
 def book_appointment(request):
     try:
         patient_profile = request.user.patient_profile

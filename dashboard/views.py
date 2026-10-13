@@ -1,10 +1,16 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum, Count, Q
+
+from core.decorators import (
+    admin_required,
+    doctor_required,
+    receptionist_required,
+    patient_required,
+)
 
 
-@login_required
+@admin_required
 def admin_home(request):
     from accounts.models import CustomUser
     from appointments.models import Appointment
@@ -40,7 +46,7 @@ def admin_home(request):
     return render(request, 'dashboard/admin_home.html', context)
 
 
-@login_required
+@doctor_required
 def doctor_home(request):
     try:
         doctor_profile = request.user.doctor_profile
@@ -77,16 +83,50 @@ def doctor_home(request):
     return render(request, 'dashboard/doctor_home.html', context)
 
 
-@login_required
+@receptionist_required
 def receptionist_home(request):
     from appointments.models import Appointment
-    pending_count = Appointment.objects.filter(status='pending').count()
+    from doctors.models import DoctorProfile
+
+    today = timezone.now().date()
+
+    todays_appointments = Appointment.objects.select_related(
+        'patient__user', 'doctor__user'
+    ).filter(
+        appointment_date=today
+    ).exclude(
+        status__in=['cancelled', 'no_show']
+    ).order_by('appointment_time')
+
+    pending_approvals = Appointment.objects.select_related(
+        'patient__user', 'doctor__user'
+    ).filter(
+        status='pending'
+    ).order_by('appointment_date', 'appointment_time')[:10]
+
+    doctors = DoctorProfile.objects.select_related('user').annotate(
+        today_load=Count(
+            'appointments',
+            filter=Q(appointments__appointment_date=today) & ~Q(
+                appointments__status__in=['cancelled', 'no_show']
+            ),
+        )
+    ).order_by('-available', 'user__first_name')
+
     return render(request, 'dashboard/receptionist_home.html', {
-        'pending_count': pending_count
+        'today': today,
+        'today_count': todays_appointments.count(),
+        'pending_count': Appointment.objects.filter(status='pending').count(),
+        'available_count': DoctorProfile.objects.filter(available=True).count(),
+        'unavailable_count': DoctorProfile.objects.filter(available=False).count(),
+        'doctor_count': DoctorProfile.objects.count(),
+        'todays_appointments': todays_appointments[:12],
+        'pending_approvals': pending_approvals,
+        'doctors': doctors,
     })
 
 
-@login_required
+@patient_required
 def patient_home(request):
     try:
         patient_profile = request.user.patient_profile

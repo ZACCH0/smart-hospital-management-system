@@ -5,33 +5,33 @@
 {% block content %}
 <div class="max-w-5xl mx-auto">
 
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-blue-700">Pharmacy Inventory</h1>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold text-primary">Pharmacy Inventory</h1>
         <a href="{% url 'pharmacy:add_medicine' %}"
-           class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+           class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
             + Add Medicine
         </a>
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-blue-500">
-            <p class="text-2xl font-bold text-blue-700">{{ medicines.count }}</p>
+    <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
+        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-primary">
+            <p class="text-xl sm:text-2xl font-bold text-primary">{{ medicines.count }}</p>
             <p class="text-sm text-gray-500">Total Medicines</p>
         </div>
         <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-yellow-500">
-            <p class="text-2xl font-bold text-yellow-600">{{ low_stock_count }}</p>
+            <p class="text-xl sm:text-2xl font-bold text-yellow-600">{{ low_stock_count }}</p>
             <p class="text-sm text-gray-500">Low Stock</p>
         </div>
         <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-red-500">
-            <p class="text-2xl font-bold text-red-600">{{ expired_count }}</p>
+            <p class="text-xl sm:text-2xl font-bold text-red-600">{{ expired_count }}</p>
             <p class="text-sm text-gray-500">Expired</p>
         </div>
     </div>
 
     <!-- Medicine Table -->
-    <div class="bg-white shadow rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="bg-white shadow rounded-xl overflow-x-auto">
+        <table class="w-full text-sm min-w-[620px]">
             <thead class="bg-gray-50 text-left">
                 <tr>
                     <th class="px-4 py-3 font-semibold text-gray-600">Medicine</th>
@@ -62,7 +62,7 @@
                         </td>
                         <td class="px-4 py-3 space-x-2">
                             <a href="{% url 'pharmacy:edit_medicine' medicine.id %}"
-                               class="text-blue-600 hover:underline text-xs">Edit</a>
+                               class="text-secondary hover:underline text-xs">Edit</a>
                             <a href="{% url 'pharmacy:delete_medicine' medicine.id %}"
                                class="text-red-600 hover:underline text-xs"
                                onclick="return confirm('Delete {{ medicine.name }}?')">
