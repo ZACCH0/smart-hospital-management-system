@@ -9,8 +9,8 @@
 {# Register — Figma 15 (desktop split) + 42 (mobile stacked). Backend untouched: same fields, same POST, same validation. #}
 <section class="bg-white flex flex-col lg:flex-row lg:min-h-screen">
 
-    {# ============ LEFT: mint panel (hero on mobile) ============ #}
-    <div class="bg-[#d9e7e4] rounded-b-[2.5rem] lg:rounded-b-none lg:rounded-r-[3rem] px-6 sm:px-10 pt-8 lg:pt-0 pb-12 lg:pb-10 lg:w-1/2 flex flex-col items-center text-center lg:justify-center relative overflow-hidden">
+    {# ============ LEFT: mint panel (desktop only — hidden on mobile for form-first view) ============ #}
+    <div class="hidden lg:flex bg-[#d9e7e4] lg:rounded-r-[3rem] px-10 pb-10 lg:w-1/2 flex-col items-center text-center justify-center relative overflow-hidden">
         <a href="{% url 'home' %}" class="inline-flex items-center gap-2 pl-2 pr-5 py-2 rounded-full bg-white shadow-sm hover:shadow transition" aria-label="Back to SHMS home">
             <span class="w-8 h-8 rounded-full bg-[#225A5D] text-white flex items-center justify-center font-extrabold" aria-hidden="true">S</span>
             <strong class="text-[#13271E] tracking-tight">SHMS</strong>
@@ -43,9 +43,15 @@
         </div>
     </div>
 
-    {# ============ RIGHT: white form (sheet on mobile) ============ #}
-    <div class="bg-white -mt-10 lg:mt-0 rounded-t-[2.5rem] lg:rounded-none relative z-10 px-6 sm:px-10 py-10 lg:py-12 lg:w-1/2 lg:flex lg:items-center lg:justify-center">
+    {# ============ RIGHT: white form (full view on mobile, split on desktop) ============ #}
+    <div class="bg-white relative z-10 px-6 sm:px-10 py-10 lg:py-12 lg:w-1/2 lg:flex lg:items-center lg:justify-center">
         <div class="w-full max-w-md mx-auto">
+            <a href="{% url 'home' %}" class="lg:hidden flex justify-center mb-6" aria-label="Back to SHMS home">
+                <span class="inline-flex items-center gap-2 pl-2 pr-5 py-2 rounded-full bg-white shadow-sm border border-[#E2E8F0]">
+                    <span class="w-8 h-8 rounded-full bg-[#225A5D] text-white flex items-center justify-center font-extrabold" aria-hidden="true">S</span>
+                    <strong class="text-[#13271E] tracking-tight">SHMS</strong>
+                </span>
+            </a>
             <h2 class="text-2xl lg:text-[30px] font-extrabold tracking-tight text-[#1c2b29] text-center">Create Your SHMS Account</h2>
             <p class="mt-2 text-sm text-[#5f6f6d] text-center">Register to book appointments and manage your care securely.</p>
 

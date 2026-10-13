@@ -1,160 +1,185 @@
-# SHMS Project Progress — Living Document
+# [PROJECT] - PROJECT STATUS — SHMS (Living Document)
 
 > **AI WORKFLOW RULE (must follow every session):**
 > 1. **START:** Read this file first before any work to know current state.
-> 2. **DURING:** Update `## Current Focus` when starting a new task.
-> 3. **FINISH:** When a task is done — move it to `## Completed`, append to `## Recent Changes`, update `%`, `Last updated`, and commit this file with the code.
+> 2. **DURING:** Update §3 Stage tracker when starting a new task.
+> 3. **FINISH:** When a task is done — update §3 + §10, update `%`, `Last updated`, and commit this file with the code.
 > 4. Never finish a task without updating this file.
 
-## Project Overview
+---
+
+## 1. Overview (what, who for, hosting, repo)
+
 - **Project:** Smart Hospital Management System (SHMS)
-- **One-liner:** SHMS is a Django hospital platform for patients, doctors, receptionists and admins to manage appointments, records, lab, pharmacy and billing in one place — goal: portfolio-grade, hospital-presentable product.
+- **What:** Django hospital platform — appointments, records, lab, pharmacy, billing in one place. Goal: portfolio-grade, hospital-presentable product.
+- **Who for:** Patients, Doctors, Receptionists, Admins (4 roles, role-based workspaces).
 - **Stack:** Django 5.2.15 + Tailwind CDN + vanilla JS + DRF + django-otp + WhiteNoise + Pillow
 - **Hosting:** Render (build: `pip install + collectstatic + migrate`)
 - **Live URL:** https://smart-hospital-management-system-8zgy.onrender.com
 - **GitHub:** https://github.com/ZACCH0/smart-hospital-management-system
-- **Branch:** `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
+- **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
+- **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
+- **Last updated:** 2026-10-13 | **Last pushed commit:** `77ec29d` (2026-09-23) | **Health:** `manage.py check` → no issues (verified 2026-10-13)
 
-## Operating Role & Workflow (saved 2026-10-09, second user prompt = binding)
+## 2. Workflow rules (the hard rules above)
+
 - **My role:** Lead developer + designer + project manager for SHMS.
 - **How I communicate:** Plain, warm, professional, honest. No jargon dumps. Brief WHY for decisions. Short sections + tables. Show only relevant code unless full file asked.
 - **Hard rules:**
   1. One stage at a time. Report, then STOP for approval.
-  2. No invented facts (prices, emails, names, links, reviews, policies). Use `[PLACEHOLDER]` + list in this file.
+  2. No invented facts (prices, emails, names, links, reviews, policies). Use `[PLACEHOLDER]` + list in §5.
   3. Never silently delete content/assets. Move old to `/legacy/` instead.
   4. No secrets in frontend.
   5. No false tested claims. State TESTED vs NOT TESTED explicitly.
   6. On conflict between instructions/sources → STOP, ask, record here. Do not guess.
   7. Mind changes = modify current stage, no restart.
   8. Clean human-style code, comments only where useful.
-- **Stages:** 1 Audit only (no build) → 2 Figma/reference inspect → 3 Design system → 4 Homepage build → 5 Homepage test/fix → 6 Dashboards (only after approval) → 7 QA + docs.
 - **Stage report format (mandatory):** COMPLETED / TESTED (+NOT TESTED) / FILES CHANGED / DECISIONS I NEED / KNOWN PLACEHOLDERS / NEXT STAGE → then stop.
-- **Conflict RESOLVED 2026-10-09:** User chose `PROGRESS_STATUS.md` as canonical. Renamed `PROGRESS.md` → `PROGRESS_STATUS.md`. Treat `PROJECT_PROGRESS.md` / `PROJECT_STATUS.md` as aliases — do not create duplicates.
-- **Contacts:** User approved `[CONTACT_TO_BE_PROVIDED]` placeholders — use `[HOSPITAL_EMAIL_TO_BE_PROVIDED]`, `[HOSPITAL_PHONE_TO_BE_PROVIDED]`, `[HOSPITAL_ADDRESS_TO_BE_PROVIDED]`. Never invent real ones.
-- **Deploy rule (user 2026-10-09):** Do NOT push to `main` (live Render auto-deploys main). Work on `redesign-homepage` branch + deliver ZIP with README. Merge to main only on explicit approval.
+- **Deploy rule (user 2026-10-09):** Do NOT push to `main` (live Render auto-deploys main). Work on `redesign-homepage` + deliver ZIP with README. Merge to `main` only on explicit approval.
 
-## Completion Status
-- **39% complete (11 / 28 phases)**
-- Progress: `████████░░░░░░░░░░░░ 39%`
-- **Last updated:** 2026-10-10
-- **Last commit (pushed):** `77ec29d` — Redesign public homepage, header nav (with mobile menu), fix demo page block bug (2026-09-23)
-- **Health:** `../.venv/Scripts/python.exe manage.py check` → no issues (verified 2026-10-10)
+## 3. Stage tracker (stage | scope | status | date)
 
-## Current Focus
-- **Active task:** Login Figma rebuild — DONE 2026-10-10 on `redesign-homepage`, awaiting user visual approval. Register approved, commit pending for both. `main` untouched = live safe.
-- **Scope lock:** PUBLIC HOMEPAGE ONLY after audit. No dashboards until approval.
-- **Figma FOUND 2026-10-09:** `../SHMS FIGMA/` = 40 JPG previews (01–43, some missing). 01 inspected: Medlink dashboard, teal sidebar, stat cards, bar/donut charts — matches brief palette. Will inspect homepage-relevant previews next (hero/services/doctors).
-- **Registration diagnosis DONE (see Known Issues):** root cause = `send_mail(fail_silently=False)` + SMTP on Render. Fix planned, not applied (audit stage).
-- **Deploy:** stay on `redesign-homepage` branch, no push to `main`. ZIP on request.
-- **Decision needed:** none on naming (resolved). Awaiting: approval to start full Stage-1 audit of all apps/templates.
-- **Uncommitted changes (must commit soon):**
-  - `M templates/accounts/login.html, register.html, base.html`
-  - `M templates/dashboard/admin_home.html, doctor_home.html, home.html`
-  - `?? PROGRESS.md, static/, templates/partials/`
-  - Action: `git add PROGRESS.md templates/ static/` → commit → push
+| Stage | Scope | Status | Date |
+|-------|-------|--------|------|
+| 1 Audit only (no build) | All apps/templates, duplicate views, homepage gap | DONE | 2026-10-10 |
+| 2 Figma/reference inspect | 10 previews + home.html + base nav + static + doctor data | DONE | 2026-10-13 |
+| 3 Design system | tokens.css + app.css + partials, locked user choices | DONE | 2026-10-13 |
+| 4 Homepage build | 13 sections in place + read-only `core/views.home` + nav CTA | DONE, awaiting visual approval | 2026-10-13 |
+| 4b Doctors filter tabs | Specialty tabs (All + 8, JS-only) on homepage grid | DONE, awaiting visual approval | 2026-10-13 |
+| 5 Homepage test/fix | `check` + `/` + roles + 390px mobile from user review | PENDING | — |
+| 6 Dashboards | Admin/Doctor/Patient/Receptionist, only after homepage approval | LOCKED | — |
+| 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | LOCKED | — |
 
-## Completed Phases
-- [x] **Phase 1: Security Foundation** — Oct 2026. RBAC, object-level permissions, custom 403/404/500, password reset, security headers. Tested: unauthorized blocked, error pages render.
-- [x] **Phase 2: Multi-profile Architecture** — Oct 2026. One user, multiple roles, session-based switching (`active_role`). Tested: switch persists, permissions update.
-- [x] **Phase 3: Audit Logging** — 2026-09-10. AuditLog model, login/logout/action tracking via `core/audit.py`. Tested: logs on auth + key actions.
-- [x] **Phase 4: 2FA (TOTP)** — 2026-09-11. `django-otp` for Admin/Doctor, QR setup (`accounts/two_factor.py`). Tested: QR + code verify + login enforcement.
-- [x] **Phase 5: Database Performance** — 2026-09-12. `select_related/prefetch_related`, indexes, pagination. Tested: query count down, pagination OK.
-- [x] **Phase 6: Appointment System Upgrade** — Oct 2026. Conflict prevention, NO_SHOW status, cancellation reason. Tested: double-booking blocked.
-- [x] **Phase 7: Email Verification** — 2026-09-15. UUID token, inactive-until-verified, resend. Tested: token activates, resend works.
-- [x] **Phase 8: Laboratory Access Control** — 2026-09-12. Doctors see only own ordered tests. Tested: cross-doctor hidden.
-- [x] **Phase 9: Doctor Appointment Restrictions** — 2026-09-09. Doctors see only own appointments, creation blocked. Tested: queryset scoped.
-- [x] **Phase 10: Demo Environment** — 2026-09-16. One-click demo login, seed data, demo banner. Tested: demo login + banner OK.
-- [x] **Phase 11: UI/UX — Dark Sidebar + Homepage** — Oct 2026 + polish 2026-10-08. Dark sidebar, homepage redesign, teal→slate-50, unified badges/hovers, real hospital footer, hero trust row. Tested: `manage.py check` passes, desktop visual OK.
+**Phase progress (28-phase plan):** Phases 1–11 complete; 12–28 remaining (see §10 tail list).
+- [x] 1 Security Foundation · [x] 2 Multi-profile Architecture · [x] 3 Audit Logging · [x] 4 2FA (TOTP) · [x] 5 DB Performance · [x] 6 Appointment Upgrade · [x] 7 Email Verification · [x] 8 Lab Access Control · [x] 9 Doctor Appointment Restrictions · [x] 10 Demo Environment · [x] 11 UI/UX Dark Sidebar + Homepage
+- [ ] 12 EMR Improvement · [ ] 13 Prescriptions · [ ] 14 Pharmacy · [ ] 15 Laboratory · [ ] 16 Billing · [ ] 17 IPD/Ward · [ ] 18 Notifications · [ ] 19 REST API Pro · [ ] 20 Dashboards & Analytics · [ ] 21 Automated Testing · [ ] 22 Audit & Security UI · [ ] 23 Backup & Recovery · [ ] 24 Multi-tenancy · [ ] 25 Hospital Registration · [ ] 26 Subscriptions · [ ] 27 Documentation (README lines 39-282 tutorial cleanup) · [ ] 28 Final Quality Review
 
-## In Progress
-- [x] **Fix: Registration 500 on Render production** — FIXED 2026-10-10. Was: `send_mail(fail_silently=False)` unguarded + duplicate view defs. Now: single defs, `_send_verification_email()` try/except (no 500), atomic create + `get_or_create` profile, resend hardened. Needs: live Render retest with real SMTP.
+## 4. Confirmed info (facts I approved)
 
-## Next Up (do in this order)
-1. Get Figma/reference path from user, inspect it + base.html + static assets + doctor data.
-2. Implement PUBLIC HOMEPAGE per 13-section brief (in place, no new view).
-3. Test homepage (`check` + `/` + roles + mobile), then update this file.
-4. Only then: dashboards. Registration 500 fix in parallel/after (user decides).
+| Fact | Approved |
+|------|----------|
+| Tracker canonical file = `PROGRESS_STATUS.md`; `PROJECT_PROGRESS.md` / `PROJECT_STATUS.md` are aliases, never create duplicates | 2026-10-09 |
+| No push to `main`; work on `redesign-homepage` + ZIP delivery | 2026-10-09 |
+| Contact placeholders AISLE (never invent real ones) | 2026-10-09 |
+| Footer uses `[HOSPITAL_*_TO_BE_PROVIDED]` placeholders | 2026-10-13 |
+| Keep AI modal + AOS + gradients on homepage as-is (no removal) | 2026-10-13 |
+| Home may become a function view supplying real doctors (read-only) | 2026-10-13 |
+| Services section = 8 cards (6 + Emergency & Triage + Wards & Admissions) | 2026-10-13 |
+| Testimonials stay omitted | 2026-10-09 (brief) |
+| Full Medlink-style doctors directory page = DEFERRED to later phase | 2026-10-13 |
+| Homepage shows only real DB doctors (5); empty specialties hidden | 2026-10-13 |
+| Auth mobile = form-first (mint hero hidden < lg) on register + login | 2026-10-13 |
+| Public stats are demo-safe only (roles/modules/doctors/role-based) | 2026-10-09 (brief) |
 
-## Remaining Phases
-- [ ] Phase 12: EMR/Medical Record Improvement
-- [ ] Phase 13: Prescription System Upgrade
-- [ ] Phase 14: Pharmacy Upgrade
-- [ ] Phase 15: Laboratory Upgrade
-- [ ] Phase 16: Billing Upgrade
-- [ ] Phase 17: IPD/Ward Management
-- [ ] Phase 18: Notification System Upgrade
-- [ ] Phase 19: REST API Professionalization
-- [ ] Phase 20: Dashboard & Analytics Upgrade
-- [ ] Phase 21: Automated Testing
-- [ ] Phase 22: Audit & Security Monitoring UI
-- [ ] Phase 23: Backup & Recovery Strategy
-- [ ] Phase 24: Multi-tenancy / SaaS
-- [ ] Phase 25: Hospital Registration
-- [ ] Phase 26: Subscription Management
-- [ ] Phase 27: Documentation Upgrade (also: README.md lines 39-282 contain pasted tutorial — needs cleanup)
-- [ ] Phase 28: Final Quality Review
+## 5. Placeholders open (who must supply each)
 
-## Active Design Brief — Homepage Redesign (saved 2026-10-09, user prompt = source of truth)
-- **Note:** This file `PROGRESS_STATUS.md` IS the tracker (aliases: PROJECT_PROGRESS.md / PROJECT_STATUS.md — do not create duplicates).
-- **Objective:** Make SHMS look like real professional hospital SaaS (Medlink-grade). Portfolio-grade, not student/Bootstrap/AI-random.
-- **Constraint:** Frontend only. Preserve backend: models, views, URLs, auth, permissions, business logic, DB. No duplicate models/URLs/views. Inspect before changing.
-- **Reference:** Figma/reference package (Medlink-inspired: white bg, soft teal accents, light gray surfaces, subtle borders, rounded cards, restrained shadows). MUST inspect before coding. DO NOT blindly copy — original SHMS implementation in same language. **Status: not found in repo — awaiting path from user.**
-- **Brand tokens:** Primary #0F9D9A, Deep #087F7B, Light #E8F7F6, BG #F8FAFC, Surface #FFFFFF, Text #172033, Muted #64748B, Border #E2E8F0. Status colors only for success/warning/danger/info. No rainbow nav/buttons.
-- **Homepage 13-section order:** 1 Navbar (sticky, Home/Services/Doctors/About/Contact + Login + Book Appointment + mobile menu) → 2 Hero (2-col, badge + headline + 2 CTAs + layered image w/ floating cards, whitespace) → 3 Trust strip (demo-safe stats only, no fake hospital claims) → 4 About (Healthcare Management Simplified + image) → 5 Services (8 cards, icon+name+desc+hover, consistent color) → 6 Why SHMS (Everything Your Healthcare Team Needs + dashboard preview) → 7 Doctors (USE real DB data, View Profile + Book Appointment; doctors must NOT see patient Book action on own dashboard) → 8 How It Works (4 steps) → 9 Appointment CTA → 10 Testimonials (omit or label DEMO only) → 11 FAQ accordion → 12 Final CTA → 13 Footer (brand, Quick Links, Patient, Services, Contact, social, copyright).
-- **Images:** Real healthcare photography, rounded, consistent ratio, responsive, optimized. Reuse existing assets first.
+| Placeholder | Used in | Supplier |
+|-------------|---------|----------|
+| `[HOSPITAL_EMAIL_TO_BE_PROVIDED]` | Homepage footer contact + emergency strip | Hospital owner |
+| `[HOSPITAL_PHONE_TO_BE_PROVIDED]` | Homepage footer contact + emergency strip Call button | Hospital owner |
+| `[HOSPITAL_ADDRESS_TO_BE_PROVIDED]` | Homepage footer contact block | Hospital owner |
+| Seed data cleanup ("Dr" inside some first names → renders "Dr. Dr …") | DB seed / demo data | Developer (on request) |
+
+## 6. Design / brand (colours, fonts, tone)
+
+- **Source tokens (`static/css/tokens.css`, single source of truth):** Primary #225A5D · Primary-dark #13271E · Secondary #31798A · Accent #489D9A · Accent-light #B1CBCD · Background #F8F9FA · Deep green #37554D · Warm #A37557 (demo/upsell only, never status). Text #1c2b29 · Muted #5f6f6d · Border #dfe7e5. Success #1e7e4d · Warning #b45309 · Danger #c0392b.
+- **Brief palette:** Primary #0F9D9A, Deep #087F7B, Light #E8F7F6, BG #F8FAFC, Surface #FFFFFF, Text #172033, Muted #64748B, Border #E2E8F0 (Figma reference; implementation follows tokens.css teal family).
+- **Fonts:** Inter if installed, else system stack (offline-safe). Sizes: page 22 · section 17 · card 15 · body 14.5 · muted 13 · table 13.5 · label 12.5 · nav 13.5.
+- **Tone:** Plain, warm, professional, honest. SHMS voice (e.g. register "Your Health, One Secure Account", login "Your Care Continues Here"). Zero Medlink wording in auth templates.
+- **Quality gate:** Whitespace, subtle shadows, restrained teal, hierarchy, clean CTAs. No excessive gradients/animations/giant text/random colors/rainbow nav (exception: user chose to KEEP existing hero AI modal + AOS on homepage).
+- **Components (reusable):** Button, Card, Badge, Doctor/Appointment/Stat cards, Section Header, Modal, Input, Table, Empty State, Alert, Pagination (`templates/partials/` + `static/css/app.css`).
 - **Responsive:** 1440/1280/1024/768/390/375 — intentional mobile, not shrunk desktop.
-- **Dashboards (AFTER homepage approval only):** same system for Admin/Doctor/Patient/Receptionist — sidebar, topnav, stat cards, charts, tables, widgets.
-- **Components:** Button, Card, Badge, Doctor/Appointment/Stat cards, Section Header, Modal, Input, Table, Empty State, Alert, Pagination — reusable, no big HTML duplication.
-- **A11y + Perf:** semantic HTML, alt, keyboard/focus, contrast, labels/aria. No heavy libs, optimize images/CSS/JS.
-- **Django integration:** use existing `home` route (`smart/urls.py:29` TemplateView `home.html`), existing context/URL names/auth. No fake data when DB data exists. Public homepage open, post-login by role (Admin/Doctor/Patient/Receptionist), no unauthorized actions.
-- **Quality gate:** no excessive gradients/animations/giant text/random colors/pills/glassmorphism/clutter. Prefer whitespace, subtle shadows, restrained teal, hierarchy, clean CTAs.
-- **Stages:** 1 Inspect project ✓ (partial 2026-10-09: urls/home confirmed) → 2 Inspect Figma (BLOCKED — need files) → 3 Inspect homepage → 4 Design system → 5 Build homepage → 6 Test (`check` + `/` + 5 roles + console/images/links/mobile) → 7 Fix → 8 Dashboards later.
-- **Existing homepage found:** `templates/home.html` (495 lines, Tailwind + AOS, hero + AI modal) + `templates/base.html` + `smart/urls.py:29`. Will improve in place, not new view.
 
-## Known Issues / Bugs
-- [Closed] Tracker naming — resolved 2026-10-09: canonical is `PROGRESS_STATUS.md`.
-- [Closed] Figma path — found 2026-10-09: `../SHMS FIGMA/` 40 JPGs. 01_preview inspected (Medlink dash).
-- [Closed] Registration 500 on Render — FIXED 2026-10-10:
-  Removed duplicate `role_redirect/choose_role/register_patient` defs, cleaned duplicate imports, added `_send_verification_email()` with try/except (SMTP fail → warning + redirect, never 500), `transaction.atomic()` + `get_or_create` profile, hardened `resend_verification`. `manage.py check` clean via `../.venv`. Real SMTP delivery on Render NOT TESTED — verify env `EMAIL_HOST_USER/PASSWORD` (no spaces in app-password) + `DEFAULT_FROM_EMAIL`.
-- [Closed] Registration IntegrityError on duplicate email — FIXED 2026-10-10:
-  `clean_email` now strip+lower + `email__iexact` check, `register_patient` catches `IntegrityError` (double-submit/race) → friendly "already exists" error, no 500. `manage.py check` clean; live duplicate retest NOT done by user yet.
-- [Closed] `accounts/views.py` duplicate defs — cleaned 2026-10-10, each view now single def (verified via grep).
-- [Open] README.md polluted with tutorial text (lines 39+) — move to docs during Phase 27, do not delete silently (use /legacy/ per rule 3).
-- [Open] Uncommitted work at risk (templates + static/) — keep on `redesign-homepage` branch, no push to `main` per user rule.
+## 7. Audit findings (original problems found)
 
-## Recent Changes (append-only, newest first)
-- 2026-10-10: Color sales-audit — measured palette vs WCAG AA (all text/buttons pass incl. white-on-primary 7.81, muted 5.27, links 4.96); fixed the one fail, placeholders #9aa8a5→#64756f (4.87) on both auth pages. Tested: `check` clean.
-- 2026-10-10: Auth copy made original — mint-panel headlines rewritten in SHMS voice (register "Your Health, One Secure Account", login "Your Care Continues Here"); zero Medlink wording left in auth templates. Structure still Figma-inspired per brief. Tested: `check` clean, GET asserts pass.
-- 2026-10-10: Login rebuilt as register's Figma twin — same mint split + white sheet, fresh verified clinic photo (Pexels 6011604), eye toggle, solid pill button, kept error/resend/forgot/register links, dropped AOS dependency. Remember-Me omitted (no backend support — honest, not a dead checkbox). Backend untouched. Tested: `check` clean, GET asserts pass all; browser look + POST NOT tested by user.
-- 2026-10-10: Register photo v2 — fresh Pexels doctor-with-tablet shot (ID 5452291, verified live, not used anywhere else on site) replaces the home-duplicate photo. Tested: `check` clean, GET 200 asserts pass; browser look NOT tested by user.
-- 2026-10-10: Register mint panel now uses real hospital photography (doctors with tablet, verified asset reused from home) in a rounded frame + small "Verified & secure" chip — replaced the code-drawn browser mockup. Tested: `check` clean, GET 200 asserts pass; browser look NOT tested by user.
-- 2026-10-10: Register rebuilt as true Figma split — mint panel (pill logo-home, teal headline, browser-frame dashboard photo reused from home, footer row) + white form (gray pill inputs, Terms, eye toggles, solid pill button). Desktop 50/50 like `15_preview`, mobile stacked sheet like `42_preview`. Backend untouched. Tested: `check` clean, GET register/login/home render asserts pass; browser look + POST NOT tested by user.
-- 2026-10-10: Hid site header on register + login — `base.html` header wrapped in `pub_header` block, both auth templates override it empty, register got centered SHMS logo-home pill. Other pages keep header. Tested: `manage.py check` clean, GET register/login 200 with no header + home 200 with header; browser look NOT tested.
-- 2026-10-10: Redesigned register page — `templates/accounts/register.html` rebuilt in Figma 42 style + tokens.css (mint hero, white card, solid #225A5D pill button, no emojis/gradients, Terms checkbox, eye toggles, double-submit guard). Backend untouched. Tested: `manage.py check` clean, GET /accounts/register/ 200 with all fields, no emoji/gradient hex; POST/SMTP NOT tested.
-- 2026-10-10: Fixed registration IntegrityError on duplicate email — `accounts/forms.py` iexact+normalize, `accounts/views.py` IntegrityError guard. Tested: `py_compile` pass, `manage.py check` clean; duplicate POST + live SMTP NOT retested by user.
-- 2026-10-10: Fixed registration 500 — `accounts/views.py` deduped + `_send_verification_email` guard + atomic/get_or_create + resend hardened. Tested: `py_compile` pass, `manage.py check` clean via `../.venv`; live SMTP NOT tested.
-- 2026-10-10: STAGE 1 audit complete (no build). Verified branch redesign-homepage, 60 templates, duplicate views confirmed, homepage gap vs 13-section brief mapped, Figma 02/03 inspected (dashboard/appointments, no homepage yet), system python has no Django so check NOT re-verified. Updated tracker only, no code changed.
-- 2026-10-09: Renamed tracker to PROGRESS_STATUS.md (user decision). Found SHMS FIGMA (40 JPGs), inspected 01 Medlink dash. Diagnosed registration 500 (SMTP + duplicate views) — no fix applied. Set no-push-to-main + placeholders approved. Tested: `manage.py check` clean (earlier); email delivery NOT tested; Figma image view only.
-- 2026-10-09: Saved operating role/workflow brief (lead dev + 8 hard rules + stage-gate reporting). Filled project one-liner/stack/hosting. Logged filename conflict PROGRESS vs PROJECT_STATUS as OPEN. No code changed (audit stage).
-- 2026-10-09: Saved homepage redesign brief to memory (20-section user prompt). Inspected urls/home (TemplateView home.html 495 lines), confirmed no figma files in repo. Scope locked to homepage-only. Tested: n/a (brief save only).
-- 2026-10-09: Rebuilt PROGRESS.md as living document with AI workflow rule, Current Focus, Next Up, health check. Verified `manage.py check` clean, branch `main`, last commit `77ec29d`.
-- 2026-10-08: Homepage final polish — teal removed, badges/hover/login aligned, real hospital footer, hero upgraded.
-- 2026-10-08: Created PROGRESS.md baseline (Phases 1–11).
-- 2026-10-08: Phase 11 — dark sidebar + homepage.
-- 2026-10-08: Phase 10 — demo environment.
-- 2026-10-08: Phase 9 — doctor appointment scoping.
+- **Registration 500 on Render (CLOSED 2026-10-10):** `send_mail(fail_silently=False)` unguarded + duplicate view defs + no atomicity. Fixed: single defs, `_send_verification_email()` try/except, `transaction.atomic()` + `get_or_create` profile, hardened resend.
+- **Duplicate `accounts/views.py` defs (CLOSED 2026-10-10):** `role_redirect/choose_role/register_patient` defined twice; imports duplicated. Cleaned, verified via grep.
+- **Registration IntegrityError on duplicate email (CLOSED 2026-10-10):** added `clean_email` strip+lower + `email__iexact` check + `IntegrityError` guard → friendly error.
+- **Invented footer contacts (CLOSED 2026-10-13):** Lagos address/phone + support@shms.com replaced with §5 placeholders.
+- **Homepage gaps vs 13-section brief (CLOSED 2026-10-13):** trust strip, About, 2 service cards, Why SHMS, Doctors, How It Works, appointment/final CTAs, FAQ all missing; `#stats` mislabeled as How It Works; no Book Appointment CTA. All built 2026-10-13.
+- **`home` was context-less TemplateView (CLOSED 2026-10-13):** could not supply real doctors. Superseded: read-only `core/views.home` (see §8).
+- **Dead AI modal API key (OPEN, kept per user):** `home.html` Gemini call has empty `apiKey`. User chose to keep as-is 2026-10-13.
+- **README polluted (OPEN):** lines 39-282 contain pasted tutorial — move to docs in Phase 27, never silently delete.
+- **Dead `.gitignore` (FOUND + FIXED 2026-10-13):** file was UTF-16 encoded — git cannot parse it, so zero patterns worked. Consequence: ~125 `__pycache__/*.pyc` files AND 18 `media/` user uploads (profile photos, lab-report PDFs) got committed. Fixed: converted `.gitignore` to UTF-8 (verified via `check-ignore`), `git rm --cached` all pyc/media (working tree untouched, 0 remain tracked). Secrets check: no `.env`/sqlite ever tracked. Remaining risk: old commits still contain those files — needs history cleanup (`filter-repo`) before any public push of those commits, or leave history and go forward clean (decision needed).
+- **`partials/status_badge.html` broken filter (CLOSED 2026-10-13):** used non-existent `replace` filter — latent crash on any page rendering it with data (e.g. doctor dashboard with appointments). Fixed with explicit labels (`No Show`, `In Progress`, `capfirst` for rest); all 12 statuses render-tested. Homepage never used it (inline badges).
 
-## Quick Commands
+## 8. Decisions (answered / working defaults / superseded)
+
+**Answered:**
+- 2026-10-09: canonical tracker = `PROGRESS_STATUS.md` (resolved naming conflict).
+- 2026-10-09: no-push-to-`main` deploy rule + placeholders approved.
+- 2026-10-13: footer → placeholders YES; AI modal/AOS → KEEP; home function view → ALLOW; services → 8 cards.
+- 2026-10-13: specialty filter tabs NOW (JS-only); full doctors directory page LATER.
+- 2026-10-13: this 12-section status format adopted for this file.
+
+**Working defaults (assumed, reversible):**
+- Patient booking links point to `patients:book_appointment` (login-required; anonymous users redirect to login — safe).
+- Homepage doctor cards show qualification + experience (no working-hours field exists on the model).
+- "View Profile" link omitted on homepage cards (no public doctor-profile route exists) — Book Appointment only.
+
+**Superseded:**
+- "No new view" brief constraint → superseded 2026-10-13 by approved read-only `core/views.home` (needed for real DB doctors; no writes, no URL-name changes).
+- Old `#stats` numbers band → content moved to trust strip; section now holds How It Works steps (anchor id kept so nav still works).
+
+## 9. Project structure (folders, where config lives, commands)
+
+```
+smart/                  # Django project root (manage.py lives here)
+├── accounts/  api/  appointments/  billing/  core/  dashboard/
+├── doctors/  laboratory/  medical_records/  notifications/
+├── patients/  pharmacy/  prescriptions/
+├── smart/              # config package (settings.py, urls.py — no views.py)
+├── templates/          # home.html, base.html, accounts/, dashboard/, partials/
+├── static/             # css/app.css, css/tokens.css, js/tailwindcdn.js, js/chart.umd.min.js
+├── staticfiles/  media/  manage.py  requirements.txt  Procfile  build.sh  runtime.txt
+../SHMS FIGMA/          # 40 JPG previews (01–43, some missing) + notwant/copyhomepage.jpeg
+../.venv/               # virtualenv (use ..\.venv\Scripts\python.exe)
+```
+
+- **Opencode/agent config:** none in project (no `opencode.json`, no `.opencode/`, no `AGENTS.md`). Global `~/.config/opencode/opencode.jsonc` = defaults only.
+- **Home route:** `/` → `core/views.home` (was `TemplateView`), name=`home`.
+- **Commands:**
 ```bash
-python manage.py check
-python manage.py runserver
+..\.venv\Scripts\python.exe manage.py check
+..\.venv\Scripts\python.exe manage.py runserver
 git status --short
 git log --oneline -10
 ```
 
+## 10. Last changes (dated, per stage, fixes + tests)
+
+- **2026-10-13 (review):** full fault sweep — dead UTF-16 `.gitignore` revived (UTF-8) + 144 tracked junk files untracked (`__pycache__`, `media/` uploads); no invalid filters left; all btn/badge CSS verified; 6 public pages render 200 (`/api/` 403 anonymous is pre-existing DRF auth, untouched). Tested: `check` clean; NOT tested: browser, logged-in pages.
+- **2026-10-13 (fix):** `status_badge.html` crash fix — explicit labels, all 12 statuses render-tested; `/`, register, login, demo all 200. Tested: `check` clean + render asserts; browser NOT tested.
+- **2026-10-13 (Stage 4b):** Homepage doctors specialty filter tabs (All + 8, JS-only, empty tabs auto-hide) per 06_preview. Full directory page DEFERRED. Tested: `check` clean, GET / 200 (9 tabs, 5 cards); browser NOT tested.
+- **2026-10-13 (Stage 4):** Homepage 13-section build — trust strip, About, 8 services, Why SHMS, real-DB doctors, How It Works, 2 CTA bands, FAQ, final CTA, footer placeholders, nav Book CTA, `core/views.home`. Tested: `check` clean, GET / + register + login all 200; browser NOT tested.
+- **2026-10-13:** Auth mobile form-first (register + login mint hero `hidden lg:flex`, centered logo pill). Tested: `check` clean; 390px look NOT tested.
+- **2026-10-10:** Palette WCAG AA audit — all pass (white-on-primary 7.81, muted 5.27, links 4.96); fixed placeholder contrast #9aa8a5→#64756f (4.87). Tested: `check` clean.
+- **2026-10-10:** Auth copy original SHMS voice; login rebuilt as register twin (Pexels 6011604 photo, eye toggle, no dead Remember-Me). Tested: `check` clean, GET asserts pass; browser + POST NOT tested.
+- **2026-10-10:** Register Figma split rebuild (mint + white sheet, Pexels 5452291 photo, Terms, eye toggles, double-submit guard) + header hidden on auth pages. Tested: `check` clean, GET 200s; POST/SMTP NOT tested.
+- **2026-10-10 (Stage 1 fixes):** Registration 500 fix + IntegrityError guard + views dedup. Tested: `py_compile` + `check` clean; live SMTP/duplicate POST NOT retested.
+- **2026-10-10 (Stage 1):** Audit complete — branch, 60 templates, duplicate views, homepage gap, Figma 02/03. No code changed.
+- **2026-10-09:** Tracker renamed to PROGRESS_STATUS.md; Figma found (40 JPGs); registration 500 diagnosed; role/workflow brief saved; homepage brief saved.
+- **2026-10-08:** Phase 11 polish (teal→slate-50, badges/hovers, footer, hero) + baseline tracker created.
+
+## 11. Known limitations (free-plan limits, untested items, risks)
+
+- **Render free tier (per README):** expect cold-start sleeps; verify plan + env (`EMAIL_HOST_USER/PASSWORD`, `DEFAULT_FROM_EMAIL`) in dashboard. Live SMTP delivery NOT tested.
+- **Untested by user:** browser look (1440/768/390) for homepage + auth + tabs; tab click behaviour; POST register/login; logged-in role views of `/`; booking flow end-to-end.
+- **Risks:** large uncommitted pile (`templates/`, `static/`, `templates/partials/`, this file) on `redesign-homepage` — commit soon. Old git history still contains `media/` uploads + pyc files (see §7 — needs history-cleanup decision before public push of those commits). `db.sqlite3` + `.env` must never be committed (now enforced by working `.gitignore`).
+
+## 12. Next recommended action
+
+1. **User visual review** of `/` (desktop + 390px): hero, 8 services, doctors + tabs, FAQ, footer — reply with fixes or "approved".
+2. **Commit** the pile on `redesign-homepage` (`git add templates/ static/ core/ smart/ PROGRESS_STATUS.md` → commit → push branch, never `main`).
+3. Then **Stage 5 test/fix** from review notes → **Stage 6 dashboards** (needs explicit approval per scope lock).
+
+---
+
 ## Update Template (copy for new entries)
+
 ```md
-- YYYY-MM-DD: <what done> — <files changed>. Tested: <how verified>.
+- YYYY-MM-DD (Stage N): <what done> — <files changed>. Tested: <how verified>. NOT tested: <what remains>.
 ```
-- On phase completion: update `%` = `completed/28*100`, move item from Remaining → Completed, update Progress bar (`█` = 5%).
+
+- On phase completion: update `39%` = `completed/28*100`, move item from §3 remaining list, redraw bar (`█` = 5%).

@@ -1,0 +1,42 @@
+{% comment %}
+Pagination control. Pass the paginated queryset as `page_obj`.
+Usage: {% include "partials/pagination.html" with page_obj=page_obj %}
+{% endcomment %}
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<nav class="app-pager" aria-label="Pagination">
+    <p class="app-pager__info">
+        Showing <strong>{{ page_obj.start_index }}&ndash;{{ page_obj.end_index }}</strong>
+        of <strong>{{ page_obj.paginator.count }}</strong>
+    </p>
+
+    <ul class="app-pager__list">
+        {% if page_obj.has_previous %}
+            <li><a href="?page={{ page_obj.previous_page_number }}{% if querystring %}&amp;{{ querystring }}{% endif %}" aria-label="Previous page">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 19l-7-7 7-7"/></svg>
+            </a></li>
+        {% else %}
+            <li><span class="is-disabled">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 19l-7-7 7-7"/></svg>
+            </span></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+                <li><span class="is-current" aria-current="page">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                <li><a href="?page={{ num }}{% if querystring %}&amp;{{ querystring }}{% endif %}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}{% if querystring %}&amp;{{ querystring }}{% endif %}" aria-label="Next page">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+            </a></li>
+        {% else %}
+            <li><span class="is-disabled">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+            </span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

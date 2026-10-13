@@ -359,6 +359,7 @@
                     AI Assistant
                 </button>
                 <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">Log in</a>
+                <a href="{% url 'patients:book_appointment' %}" class="btn btn-teal btn-sm">Book Appointment</a>
                 <a href="{% url 'demo' %}" class="btn btn-warn btn-sm">Live Demo</a>
             </div>
 
@@ -377,6 +378,7 @@
             <div class="pt-3 mt-2 border-t border-slate-100 space-y-2.5">
                 <button type="button" onclick="toggleAiModal()" class="btn btn-teal btn-block">AI Assistant</button>
                 <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-block">Log in</a>
+                <a href="{% url 'patients:book_appointment' %}" class="btn btn-teal btn-block">Book Appointment</a>
                 <a href="{% url 'demo' %}" class="btn btn-warn btn-block">Try Live Demo</a>
             </div>
         </div>

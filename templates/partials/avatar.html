@@ -1,0 +1,16 @@
+{% comment %}
+Person avatar + name/meta row.
+Usage: {% include "partials/avatar.html" with person=appt.patient.user meta="32 yrs" size="sm" %}
+Sizes: xs, sm (default ""), lg, xl
+{% endcomment %}
+<div class="app-person">
+    {% if person.profile_picture %}
+        <img src="{{ person.profile_picture.url }}" alt="" class="app-avatar{% if size %} app-avatar--{{ size }}{% endif %}">
+    {% else %}
+        <span class="app-avatar{% if size %} app-avatar--{{ size }}{% endif %}">{{ person.first_name|slice:":1"|default:"?" }}</span>
+    {% endif %}
+    <div class="app-person__info">
+        <strong>{{ person.get_full_name|default:person.email }}</strong>
+        {% if meta %}<span>{{ meta }}</span>{% endif %}
+    </div>
+</div>

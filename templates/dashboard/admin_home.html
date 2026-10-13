@@ -1,142 +1,283 @@
 {% extends 'base.html' %}
-
-{% block title %}Admin Dashboard{% endblock %}
+{% load static %}
+{% block title %}Admin Dashboard · SHMS{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold text-blue-700 mb-6">Admin Dashboard</h1>
 
-<!-- Stat Cards -->
-<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white shadow rounded-lg p-5 border-l-4 border-blue-500">
-        <p class="text-sm text-gray-500">Total Doctors</p>
-        <p class="text-3xl font-bold text-blue-700">{{ total_doctors }}</p>
-    </div>
-    <div class="bg-white shadow rounded-lg p-5 border-l-4 border-green-500">
-        <p class="text-sm text-gray-500">Total Patients</p>
-        <p class="text-3xl font-bold text-green-700">{{ total_patients }}</p>
-    </div>
-    <div class="bg-white shadow rounded-lg p-5 border-l-4 border-yellow-500">
-        <p class="text-sm text-gray-500">Total Appointments</p>
-        <p class="text-3xl font-bold text-yellow-700">{{ total_appointments }}</p>
-        <p class="text-xs text-gray-400 mt-1">{{ pending_appointments }} pending</p>
-    </div>
-    <div class="bg-white shadow rounded-lg p-5 border-l-4 border-purple-500">
-        <p class="text-sm text-gray-500">Total Revenue</p>
-        <p class="text-3xl font-bold text-purple-700">₦{{ total_revenue }}</p>
-    </div>
+{% include "partials/page_header.html" with eyebrow="Administration" title="Executive Overview" subtitle="Live operational picture across the hospital — revenue, scheduling and workforce." %}
+
+{% if request.session.is_demo %}
+<div class="app-form-alert app-form-alert--warn mb-6">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+    <div><strong>Sample data</strong>You are viewing demonstration figures. Exit demo mode to work with live records.</div>
 </div>
+{% endif %}
 
-<!-- Charts Row -->
-<div class="grid md:grid-cols-2 gap-6 mb-8">
+{# ================= KPI ROW ================= #}
+<section class="app-grid app-grid--4 mb-6" aria-label="Key performance indicators">
 
-    <!-- Doughnut Chart -->
-    <div class="bg-white shadow rounded-lg p-5">
-        <h2 class="text-lg font-semibold mb-4">Appointment Status Breakdown</h2>
-        <canvas id="appointmentChart" height="250"></canvas>
+    <article class="app-stat app-stat--accent">
+        <span class="app-icontile" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </span>
+        <div class="app-stat__body">
+            <p class="app-stat__label">Revenue Collected</p>
+            <p class="app-stat__value"><small>₦</small>{{ total_revenue|floatformat:0 }}</p>
+            <p class="app-stat__hint up">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M5 13l4 4L19 7"/></svg>
+                Paid invoices only
+            </p>
+        </div>
+    </article>
+
+    <article class="app-stat">
+        <span class="app-icontile app-icontile--amber" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </span>
+        <div class="app-stat__body">
+            <p class="app-stat__label">Outstanding</p>
+            <p class="app-stat__value"><small>₦</small>{{ pending_revenue|floatformat:0 }}</p>
+            <p class="app-stat__hint">Awaiting settlement</p>
+        </div>
+    </article>
+
+    <article class="app-stat">
+        <span class="app-icontile app-icontile--violet" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </span>
+        <div class="app-stat__body">
+            <p class="app-stat__label">Appointments</p>
+            <p class="app-stat__value">{{ total_appointments }}</p>
+            <p class="app-stat__hint {% if pending_appointments %}down{% endif %}">
+                {{ pending_appointments }} awaiting approval
+            </p>
+        </div>
+    </article>
+
+    <article class="app-stat">
+        <span class="app-icontile app-icontile--emerald" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </span>
+        <div class="app-stat__body">
+            <p class="app-stat__label">Active Workforce</p>
+            <p class="app-stat__value">{{ total_doctors }}<small> doctors</small></p>
+            <p class="app-stat__hint">{{ total_patients }} registered patients</p>
+        </div>
+    </article>
+</section>
+
+{# ================= PIPELINE + CHARTS ================= #}
+<section class="app-grid app-grid--split mb-6">
+
+    <article class="app-card">
+        <header class="app-card__head">
+            <div>
+                <h2>Appointment Pipeline</h2>
+                <p>Where every booking currently sits</p>
+            </div>
+            <div class="app-card__head-actions">
+                <a href="{% url 'appointments:appointment_list' %}" class="btn btn-outline btn-sm">View all</a>
+            </div>
+        </header>
+
+        <div class="app-card__body">
+            <div class="app-metrics mb-5">
+                <div class="app-metric">
+                    <dt>Pending</dt>
+                    <dd>{{ pending_appointments }}</dd>
+                </div>
+                <div class="app-metric">
+                    <dt>Approved</dt>
+                    <dd>{{ approved_appointments }}</dd>
+                </div>
+                <div class="app-metric">
+                    <dt>Completed</dt>
+                    <dd>{{ completed_appointments }}</dd>
+                </div>
+                <div class="app-metric">
+                    <dt>Cancelled</dt>
+                    <dd>{{ cancelled_appointments }}</dd>
+                </div>
+            </div>
+
+            <div class="app-chart-box">
+                <canvas id="statusChart" role="img" aria-label="Appointment status distribution"></canvas>
+            </div>
+        </div>
+    </article>
+
+    <article class="app-card">
+        <header class="app-card__head">
+            <div>
+                <h2>Revenue Position</h2>
+                <p>Collected versus outstanding invoices</p>
+            </div>
+            <div class="app-card__head-actions">
+                <a href="{% url 'billing:invoice_list' %}" class="btn btn-outline btn-sm">Billing</a>
+            </div>
+        </header>
+        <div class="app-card__body">
+            <div class="app-chart-box">
+                <canvas id="revenueChart" role="img" aria-label="Paid versus pending revenue"></canvas>
+            </div>
+
+            <div class="app-grid app-grid--2 mt-5" style="gap:12px;">
+                <div class="app-note app-note--success">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div><strong>Settled</strong>₦{{ total_revenue|floatformat:0 }} received to date.</div>
+                </div>
+                <div class="app-note app-note--warn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div><strong>Outstanding</strong>₦{{ pending_revenue|floatformat:0 }} still payable.</div>
+                </div>
+            </div>
+        </div>
+    </article>
+</section>
+
+{# ================= QUICK ACTIONS ================= #}
+<section class="app-card">
+    <header class="app-card__head">
+        <div>
+            <h2>Shortcuts</h2>
+            <p>Jump straight into the workflows you use most</p>
+        </div>
+    </header>
+    <div class="app-card__body">
+        <div class="app-grid app-grid--4" style="gap:14px;">
+            <a href="{% url 'appointments:appointment_list' %}" class="app-tile">
+                <span class="app-tile__icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></span>
+                <strong>Appointments</strong>
+                <p>Review, approve and reschedule bookings.</p>
+                <span class="app-tile__go">Manage
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+                </span>
+            </a>
+
+            <a href="{% url 'billing:invoice_list' %}" class="app-tile app-tile--emerald">
+                <span class="app-tile__icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg></span>
+                <strong>Billing</strong>
+                <p>Raise invoices and record settlements.</p>
+                <span class="app-tile__go">Open billing
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+                </span>
+            </a>
+
+            <a href="{% url 'pharmacy:medicine_list' %}" class="app-tile app-tile--violet">
+                <span class="app-tile__icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></span>
+                <strong>Pharmacy</strong>
+                <p>Stock levels, pricing and expiry dates.</p>
+                <span class="app-tile__go">Manage stock
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+                </span>
+            </a>
+
+            <a href="{% url 'laboratory:lab_test_list' %}" class="app-tile app-tile--teal">
+                <span class="app-tile__icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3"/></svg></span>
+                <strong>Laboratory</strong>
+                <p>Test requests, results and reports.</p>
+                <span class="app-tile__go">Open lab
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+                </span>
+            </a>
+        </div>
     </div>
+</section>
 
-    <!-- Bar Chart -->
-    <div class="bg-white shadow rounded-lg p-5">
-        <h2 class="text-lg font-semibold mb-4">Revenue Overview (₦)</h2>
-        <canvas id="revenueChart" height="250"></canvas>
-    </div>
+{% endblock %}
 
-</div>
-
-<!-- Quick Links -->
-<div class="bg-white shadow rounded-lg p-5">
-    <h2 class="text-lg font-semibold mb-3">Quick Links</h2>
-    <ul class="space-y-2 text-sm">
-        <li>
-            <a href="{% url 'appointments:appointment_list' %}"
-               class="text-blue-600 hover:underline">→ View All Appointments</a>
-        </li>
-        <li>
-            <a href="/admin/"
-               class="text-blue-600 hover:underline">→ Django Admin Panel</a>
-        </li>
-        <li>
-             <a href="{% url 'pharmacy:medicine_list' %}"
-             class="text-blue-600 hover:underline">→ Pharmacy Inventory</a>
-        </li>
-        <li>
-    <a href="{% url 'laboratory:lab_test_list' %}"
-       class="text-blue-600 hover:underline">→ Laboratory Tests</a>
-</li>
-<li>
-    <a href="{% url 'billing:invoice_list' %}"
-       class="text-blue-600 hover:underline">→ Billing & Invoices</a>
-</li>
-    </ul>
-</div>
-
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+{% block extra_scripts %}
+{# Local Chart.js — works offline (vendored from jsdelivr). #}
+<script src="{% static 'js/chart.umd.min.js' %}"></script>
 <script>
-    // Appointment Status Doughnut Chart
-    const appointmentCtx = document.getElementById('appointmentChart').getContext('2d');
-    new Chart(appointmentCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Pending', 'Approved', 'Completed', 'Cancelled'],
-            datasets: [{
-                data: [
-                    {{ pending_appointments }},
-                    {{ approved_appointments }},
-                    {{ completed_appointments }},
-                    {{ cancelled_appointments }}
-                ],
-                backgroundColor: [
-                    '#FBBF24',
-                    '#34D399',
-                    '#60A5FA',
-                    '#F87171'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
+(function () {
+    if (typeof Chart === 'undefined') return;
 
-    // Revenue Bar Chart
-    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-    new Chart(revenueCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Paid Revenue', 'Pending Revenue'],
-            datasets: [{
-                label: 'Amount (₦)',
-                data: [
-                    {{ total_revenue }},
-                    {{ pending_revenue }}
-                ],
-                backgroundColor: ['#34D399', '#FBBF24'],
-                borderRadius: 6,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false }
+    Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#6b7280';
+
+    var statusCanvas = document.getElementById('statusChart');
+    if (statusCanvas) {
+        new Chart(statusCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Approved', 'Completed', 'Cancelled'],
+                datasets: [{
+                    data: [
+                        {{ pending_appointments }},
+                        {{ approved_appointments }},
+                        {{ completed_appointments }},
+                        {{ cancelled_appointments }}
+                    ],
+                    backgroundColor: ['#f59e0b', '#0ea5e9', '#10b981', '#ef4444'],
+                    borderColor: '#ffffff',
+                    borderWidth: 3,
+                    hoverOffset: 8
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return '₦' + value.toLocaleString();
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '64%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, boxWidth: 8 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) {
+                                var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+                                var pct = total ? Math.round((ctx.parsed / total) * 100) : 0;
+                                return ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
+
+    var revenueCanvas = document.getElementById('revenueChart');
+    if (revenueCanvas) {
+        new Chart(revenueCanvas, {
+            type: 'bar',
+            data: {
+                labels: ['Collected', 'Outstanding'],
+                datasets: [{
+                    data: [{{ total_revenue }}, {{ pending_revenue }}],
+                    backgroundColor: ['#0d9488', '#f59e0b'],
+                    borderRadius: 10,
+                    borderSkipped: false,
+                    maxBarThickness: 78
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) { return '₦' + Number(ctx.parsed.x).toLocaleString(); }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: '#eef2f7', drawBorder: false },
+                        ticks: {
+                            callback: function (v) { return '₦' + Number(v).toLocaleString(); }
+                        }
+                    },
+                    y: { grid: { display: false }, border: { display: false } }
+                }
+            }
+        });
+    }
+})();
 </script>
 {% endblock %}
