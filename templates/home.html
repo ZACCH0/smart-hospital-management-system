@@ -44,7 +44,7 @@
 
 {% block public_content %}
 
-<div id="aiModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div id="aiModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-100 flex flex-col h-[600px]">
         <div class="bg-gradient-to-r from-primary to-secondary p-6 text-white flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -71,55 +71,59 @@
     </div>
 </div>
 
-<section class="bg-gradient-to-b from-white to-slate-50/80">
-<div class="max-w-7xl mx-auto px-6 py-20 md:py-28 grid md:grid-cols-2 gap-16 items-center">
-    <div class="space-y-8" data-aos="fade-right" data-aos-duration="1000">
-        <span class="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border border-primary/15">
+<section class="relative overflow-hidden" style="background:linear-gradient(180deg,#E8F7F6 0%,#F1F8F8 38%,#F8F9FA 70%,#ffffff 100%);">
+<div aria-hidden="true" class="pointer-events-none absolute inset-0">
+    <div class="absolute -top-24 -right-24 w-72 h-72 sm:w-96 sm:h-96 rounded-full opacity-20 blur-3xl" style="background:#489D9A;"></div>
+    <div class="absolute top-40 -left-24 w-72 h-72 sm:w-96 sm:h-96 rounded-full opacity-15 blur-3xl" style="background:#225A5D;"></div>
+</div>
+<div class="relative max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16 lg:py-20 xl:py-24 grid lg:grid-cols-2 gap-10 lg:gap-12 xl:gap-16 items-center">
+    <div class="space-y-6 sm:space-y-8 text-center lg:text-left" data-aos="fade-right" data-aos-duration="1000">
+        <span class="inline-block bg-white text-primary px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border border-primary/15 shadow-sm">
             Modern Healthcare Management, Simplified.
         </span>
-        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-[1.15]">
-            Experience the Future of <span class="text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Connected Care</span>
+        <h1 class="text-[32px] sm:text-5xl lg:text-[44px] xl:text-6xl font-extrabold text-slate-900 leading-[1.2] sm:leading-[1.15]">
+            Experience the Future of <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Connected Care</span>
         </h1>
-        <p class="text-lg text-slate-600 leading-relaxed max-w-xl">
+        <p class="text-[15px] sm:text-lg text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
             SHMS brings together appointments, medical records, billing, pharmacy, and laboratory management into one secure, intelligent, role-based platform.
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 pt-2">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 justify-center lg:justify-start">
             {% if user.is_authenticated %}
-                <a href="{% url 'accounts:role_redirect' %}" class="px-8 py-4 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-secondary transition shadow-lg shadow-primary/25 hover-pop">
+                <a href="{% url 'accounts:role_redirect' %}" class="w-full sm:w-auto px-8 py-4 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-secondary transition shadow-lg shadow-primary/25 hover-pop flex items-center justify-center">
                     Go to Dashboard
                 </a>
             {% else %}
-                <a href="{% url 'accounts:register' %}" class="px-8 py-4 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-secondary transition shadow-lg shadow-primary/25 hover-pop">
+                <a href="{% url 'accounts:register' %}" class="w-full sm:w-auto px-8 py-4 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-secondary transition shadow-lg shadow-primary/25 hover-pop flex items-center justify-center">
                     Register Patient
                 </a>
-                <a href="{% url 'accounts:login' %}" class="px-8 py-4 bg-slate-900 text-white rounded-2xl text-center font-semibold hover:bg-slate-800 transition hover-pop">
+                <a href="{% url 'accounts:login' %}" class="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-2xl text-center font-semibold hover:bg-slate-800 transition hover-pop flex items-center justify-center">
                     Staff Login
                 </a>
             {% endif %}
         </div>
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm text-slate-600">
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 pt-2 text-[13px] sm:text-sm text-slate-600">
             <span class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">✓</span> Role-based & secure</span>
             <span class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">✓</span> 9 modules in one place</span>
             <span class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">✓</span> 24/7 hospital-ready</span>
         </div>
     </div>
-    <div class="relative group" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+    <div class="relative group mx-1 sm:mx-0" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
         <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 bg-white">
-            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1000&q=80" alt="Doctors using digital tablet in modern hospital" class="w-full h-[420px] object-cover img-zoom">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-6">
+            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1000&q=80" alt="Doctors using digital tablet in modern hospital" class="w-full h-[260px] sm:h-[340px] lg:h-[400px] xl:h-[440px] object-cover img-zoom">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-5 sm:p-6">
                 <div class="text-white space-y-1">
-                    <p class="text-xs font-bold uppercase tracking-widest text-white bg-white/20 backdrop-blur-md px-3 py-1 rounded-full inline-block">Real-Time Sync</p>
-                    <p class="text-lg font-bold">Secure EHR & Patient Workflows</p>
+                    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-white bg-white/20 backdrop-blur-md px-3 py-1 rounded-full inline-block">Real-Time Sync</p>
+                    <p class="text-base sm:text-lg font-bold">Secure EHR & Patient Workflows</p>
                 </div>
             </div>
         </div>
-        <div class="absolute -top-4 -right-3 sm:-right-5 bg-white rounded-2xl shadow-xl border border-slate-100 px-4 py-3 flex items-center gap-3">
-            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">✓</span>
-            <div><p class="text-sm font-extrabold text-slate-900 leading-none">100%</p><p class="text-xs text-slate-500 mt-1">Role-based access</p></div>
+        <div class="absolute -top-3 right-3 sm:-top-4 sm:-right-5 bg-white rounded-2xl shadow-xl border border-slate-100 px-3 py-2.5 sm:px-4 sm:py-3 flex items-center gap-3 max-w-[calc(100%-24px)]">
+            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold flex-shrink-0">✓</span>
+            <div class="min-w-0"><p class="text-sm font-extrabold text-slate-900 leading-none">100%</p><p class="text-xs text-slate-500 mt-1 whitespace-nowrap">Role-based access</p></div>
         </div>
-        <div class="absolute -bottom-4 -left-3 sm:-left-5 bg-white rounded-2xl shadow-xl border border-slate-100 px-4 py-3 flex items-center gap-3">
-            <span class="w-9 h-9 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold">+</span>
-            <div><p class="text-sm font-extrabold text-slate-900 leading-none">4 roles • 9 modules</p><p class="text-xs text-slate-500 mt-1">One connected platform</p></div>
+        <div class="absolute -bottom-3 left-3 sm:-bottom-4 sm:-left-5 bg-white rounded-2xl shadow-xl border border-slate-100 px-3 py-2.5 sm:px-4 sm:py-3 flex items-center gap-3 max-w-[calc(100%-24px)]">
+            <span class="w-9 h-9 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold flex-shrink-0">+</span>
+            <div class="min-w-0"><p class="text-sm font-extrabold text-slate-900 leading-none whitespace-nowrap">4 roles • 9 modules</p><p class="text-xs text-slate-500 mt-1 whitespace-nowrap">One connected platform</p></div>
         </div>
     </div>
 </div>
@@ -165,7 +169,7 @@
     </div>
 </section>
 
-<section id="features" class="bg-slate-50 py-24 border-y border-slate-200/60">
+<section id="features" class="bg-slate-50 py-24 border-y border-slate-200/60 scroll-mt-[76px] sm:scroll-mt-[82px]">
     <div class="max-w-7xl mx-auto px-6 space-y-16">
         <div class="text-center max-w-3xl mx-auto space-y-4" data-aos="fade-up" data-aos-duration="800">
             <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-white rounded-full shadow-sm">Comprehensive Modules</span>
@@ -284,7 +288,7 @@
     </div>
 </section>
 
-<section id="roles" class="py-24 max-w-7xl mx-auto px-6">
+<section id="roles" class="py-24 max-w-7xl mx-auto px-6 scroll-mt-[76px] sm:scroll-mt-[82px]">
     <div class="text-center max-w-3xl mx-auto space-y-4 mb-16" data-aos="fade-up" data-aos-duration="800">
         <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-primary/10 rounded-full">Role-Based Ecosystem</span>
         <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Built for Every Role</h2>
@@ -477,7 +481,7 @@
     {% endif %}
 </section>
 
-<section id="stats" class="py-20 max-w-7xl mx-auto px-6">
+<section id="stats" class="py-20 max-w-7xl mx-auto px-6 scroll-mt-[76px] sm:scroll-mt-[82px]">
     <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
         <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-primary/10 rounded-full">How It Works</span>
         <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Care in Four Simple Steps</h2>
@@ -563,7 +567,7 @@
     </div>
 </section>
 
-<footer id="footer-section" class="bg-slate-900 text-slate-400 border-t border-slate-800" data-aos="fade-up" data-aos-duration="800">
+<footer id="footer-section" class="bg-slate-900 text-slate-400 border-t border-slate-800 scroll-mt-[76px] sm:scroll-mt-[82px]" data-aos="fade-up" data-aos-duration="800">
     <!-- Emergency strip -->
     <div class="bg-primary">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">

@@ -20,7 +20,7 @@
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
-- **Last updated:** 2026-10-13 | **Last pushed commit:** `77ec29d` (2026-09-23) | **Health:** `manage.py check` → no issues (verified 2026-10-13)
+- **Last updated:** 2026-10-13 | **Last pushed commit:** `a35834d` on `redesign-homepage` (2026-10-13) | **Health:** `manage.py check` → no issues (verified 2026-10-13)
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -149,6 +149,9 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-13 (fixed header):** public nav now `position:fixed` (stays pinned on scroll; was `sticky`) + `main` offset `pt-64/70px`; anchor sections (`features/roles/stats/footer`) got `scroll-mt` so jumps clear the bar; AI modal lifted to `z-90` above header. **Fault found 2026-10-13:** stray Tailwind `relative` class on the header was overriding the pin (same specificity, later CDN stylesheet) — removed + selector bumped to `header.pub-header` with a do-not-touch note. Tested: `check` clean, GET `/` + login + register + demo 200. NOT tested: real scroll/pinned behavior on device. **USER-CONFIRMED 2026-10-13: pin works.**
+
+- **2026-10-13 (commit):** `a35834d` pushed to `origin/redesign-homepage` — 163 files (homepage build + dashboard updates + static/partials first commit + 144 junk untracks). Secrets scanned clean, `main` untouched. Tree fully clean after push.
 - **2026-10-13 (review):** full fault sweep — dead UTF-16 `.gitignore` revived (UTF-8) + 144 tracked junk files untracked (`__pycache__`, `media/` uploads); no invalid filters left; all btn/badge CSS verified; 6 public pages render 200 (`/api/` 403 anonymous is pre-existing DRF auth, untouched). Tested: `check` clean; NOT tested: browser, logged-in pages.
 - **2026-10-13 (fix):** `status_badge.html` crash fix — explicit labels, all 12 statuses render-tested; `/`, register, login, demo all 200. Tested: `check` clean + render asserts; browser NOT tested.
 - **2026-10-13 (Stage 4b):** Homepage doctors specialty filter tabs (All + 8, JS-only, empty tabs auto-hide) per 06_preview. Full directory page DEFERRED. Tested: `check` clean, GET / 200 (9 tabs, 5 cards); browser NOT tested.
@@ -169,6 +172,8 @@ git log --oneline -10
 - **Risks:** large uncommitted pile (`templates/`, `static/`, `templates/partials/`, this file) on `redesign-homepage` — commit soon. Old git history still contains `media/` uploads + pyc files (see §7 — needs history-cleanup decision before public push of those commits). `db.sqlite3` + `.env` must never be committed (now enforced by working `.gitignore`).
 
 ## 12. Next recommended action
+
+> **PARKED 2026-10-13 — DONE same session:** `templates/base.html` user-flagged faults fixed (role-check `in` bug, AI-button crash guard, dead `brand-50` hover, avatar fallback) + hero reworked (positioning, teal-aligned bg, responsive 390→1440). Awaiting visual approval.
 
 1. **User visual review** of `/` (desktop + 390px): hero, 8 services, doctors + tabs, FAQ, footer — reply with fixes or "approved".
 2. **Commit** the pile on `redesign-homepage` (`git add templates/ static/ core/ smart/ PROGRESS_STATUS.md` → commit → push branch, never `main`).

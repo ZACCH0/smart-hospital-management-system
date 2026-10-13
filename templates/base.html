@@ -49,10 +49,12 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(34,90,93,.45); }
             50% { box-shadow: 0 0 0 9px rgba(34,90,93,0); }
         }
-        /* Public marketing header (anonymous pages only) */
-        .pub-header {
-            position: sticky; top: 0; z-index: 60;
-            background: rgba(255,255,255,.88);
+        /* Public marketing header (anonymous pages only) — fixed, stays put on scroll.
+           NOTE: do NOT add Tailwind `relative`/`sticky`/`fixed` classes on this
+           element — they override this pin (same specificity, later stylesheet). */
+        header.pub-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+            background: rgba(255,255,255,.9);
             backdrop-filter: saturate(180%) blur(12px);
             -webkit-backdrop-filter: saturate(180%) blur(12px);
             border-bottom: 1px solid #eef2f7;
@@ -110,11 +112,11 @@
                     {% if user.profile_picture %}
                         <img src="{{ user.profile_picture.url }}" alt="" class="app-avatar app-avatar--sm">
                     {% else %}
-                        <span class="app-avatar app-avatar--sm">{{ user.first_name|slice:":1" }}</span>
+                        <span class="app-avatar app-avatar--sm">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "S" %}</span>
                     {% endif %}
                     <span class="app-usermenu__meta">
                         <strong>{{ user.get_full_name|default:user.email }}</strong>
-                        <span>{{ user.role }}</span>
+                        <span>{{ user.role|capfirst }}</span>
                     </span>
                     <svg class="w-4 h-4 text-slate-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
@@ -135,7 +137,7 @@
                         Profile Settings
                     </a>
                     {% endif %}
-                    {% if user.role in 'admin,doctor' %}
+                    {% if user.role == 'admin' or user.role == 'doctor' %}
                     <a href="{% url 'accounts:disable_2fa' %}" class="app-menu__item" role="menuitem">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         Two-Factor Security
@@ -162,11 +164,11 @@
             {% if user.profile_picture %}
                 <img src="{{ user.profile_picture.url }}" alt="" class="app-avatar">
             {% else %}
-                <span class="app-avatar">{{ user.first_name|slice:":1" }}</span>
+                <span class="app-avatar">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "S" %}</span>
             {% endif %}
             <div class="app-sidebar__profile-info">
                 <strong>{{ user.get_full_name|default:user.email }}</strong>
-                <span>{{ user.role }}</span>
+                <span>{{ user.role|capfirst }}</span>
             </div>
         </div>
 
@@ -334,7 +336,7 @@
     {# ================= Public / anonymous shell ================= #}
     {% block pub_header %}
     <header class="pub-header">
-        <nav class="max-w-7xl mx-auto px-5 sm:px-6 h-[70px] flex items-center justify-between gap-4">
+        <nav class="max-w-7xl mx-auto px-5 sm:px-6 h-[64px] sm:h-[70px] flex items-center justify-between gap-4">
             <div class="flex items-center gap-9">
                 <a href="{% url 'home' %}" class="app-topbar__brand">
                     <span class="app-brandmark" aria-hidden="true">S</span>
@@ -343,7 +345,7 @@
                         <span>Smart Hospital</span>
                     </span>
                 </a>
-                <div class="hidden lg:flex items-center gap-7 text-[14px] font-medium text-slate-600">
+                <div class="hidden xl:flex items-center gap-7 text-[14px] font-medium text-slate-600">
                     <a href="{% url 'home' %}" class="pub-link">Home</a>
                     <a href="{% url 'home' %}#features" class="pub-link">Features</a>
                     <a href="{% url 'home' %}#roles" class="pub-link">Solutions</a>
@@ -353,39 +355,46 @@
                 </div>
             </div>
 
-            <div class="hidden lg:flex items-center gap-3">
-                <button type="button" onclick="toggleAiModal()" class="btn btn-teal btn-sm">
+            <div class="hidden xl:flex items-center gap-2.5">
+                <button type="button" onclick="if(window.toggleAiModal){window.toggleAiModal()}else{window.location.href='/'}" class="btn btn-soft btn-sm">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/></svg>
                     AI Assistant
                 </button>
                 <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">Log in</a>
-                <a href="{% url 'patients:book_appointment' %}" class="btn btn-teal btn-sm">Book Appointment</a>
-                <a href="{% url 'demo' %}" class="btn btn-warn btn-sm">Live Demo</a>
+                <a href="{% url 'patients:book_appointment' %}" class="btn btn-primary btn-sm">Book Appointment</a>
+                <a href="{% url 'demo' %}" class="btn btn-dark btn-sm"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" aria-hidden="true"></span>Live Demo</a>
             </div>
 
-            <button id="publicMenuBtn" class="app-iconbtn lg:hidden" type="button" aria-label="Open menu" aria-controls="publicMobileMenu" aria-expanded="false">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <button id="publicMenuBtn" class="app-iconbtn xl:hidden" type="button" aria-label="Open menu" aria-controls="publicMobileMenu" aria-expanded="false">
+                <svg id="publicMenuIconOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <svg id="publicMenuIconClose" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </nav>
 
-        <div id="publicMobileMenu" class="hidden lg:hidden bg-white border-t border-slate-100 px-5 py-5 space-y-1">
-            <a href="{% url 'home' %}" class="block px-3 py-2.5 rounded-lg text-slate-700 font-medium hover:bg-brand-50 hover:text-primary">Home</a>
-            <a href="{% url 'home' %}#features" class="block px-3 py-2.5 rounded-lg text-slate-700 font-medium hover:bg-brand-50 hover:text-primary">Features</a>
-            <a href="{% url 'home' %}#roles" class="block px-3 py-2.5 rounded-lg text-slate-700 font-medium hover:bg-brand-50 hover:text-primary">Solutions</a>
-            <a href="{% url 'home' %}#stats" class="block px-3 py-2.5 rounded-lg text-slate-700 font-medium hover:bg-brand-50 hover:text-primary">How It Works</a>
-            <a href="{% url 'home' %}#footer-section" class="block px-3 py-2.5 rounded-lg text-slate-700 font-medium hover:bg-brand-50 hover:text-primary">About</a>
-            <a href="{% url 'home' %}#footer-section" class="block px-3 py-2.5 rounded-lg text-slate-700 font-medium hover:bg-brand-50 hover:text-primary">Contact</a>
-            <div class="pt-3 mt-2 border-t border-slate-100 space-y-2.5">
-                <button type="button" onclick="toggleAiModal()" class="btn btn-teal btn-block">AI Assistant</button>
-                <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-block">Log in</a>
-                <a href="{% url 'patients:book_appointment' %}" class="btn btn-teal btn-block">Book Appointment</a>
-                <a href="{% url 'demo' %}" class="btn btn-warn btn-block">Try Live Demo</a>
+        <div id="publicMobileMenu" class="hidden xl:hidden absolute left-3 right-3 sm:left-auto sm:right-5 sm:w-[340px] top-[calc(100%+8px)] bg-white rounded-2xl border border-slate-200/80 shadow-xl shadow-slate-900/10 p-3 max-h-[calc(100dvh-90px)] overflow-y-auto z-[80]">
+            <p class="px-3 pt-1.5 pb-1 text-[11px] font-bold uppercase tracking-widest text-slate-400">Menu</p>
+            <a href="{% url 'home' %}" class="block px-3 py-2 rounded-lg text-[14px] text-slate-700 font-medium hover:bg-slate-100 hover:text-primary">Home</a>
+            <a href="{% url 'home' %}#features" class="block px-3 py-2 rounded-lg text-[14px] text-slate-700 font-medium hover:bg-slate-100 hover:text-primary">Features</a>
+            <a href="{% url 'home' %}#roles" class="block px-3 py-2 rounded-lg text-[14px] text-slate-700 font-medium hover:bg-slate-100 hover:text-primary">Solutions</a>
+            <a href="{% url 'home' %}#stats" class="block px-3 py-2 rounded-lg text-[14px] text-slate-700 font-medium hover:bg-slate-100 hover:text-primary">How It Works</a>
+            <a href="{% url 'home' %}#footer-section" class="block px-3 py-2 rounded-lg text-[14px] text-slate-700 font-medium hover:bg-slate-100 hover:text-primary">About</a>
+            <a href="{% url 'home' %}#footer-section" class="block px-3 py-2 rounded-lg text-[14px] text-slate-700 font-medium hover:bg-slate-100 hover:text-primary">Contact</a>
+            <div class="pt-2.5 mt-2 border-t border-slate-100">
+                <p class="px-3 pb-1.5 text-[11px] font-bold uppercase tracking-widest text-slate-400">Get started</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="if(window.toggleAiModal){window.toggleAiModal()}else{window.location.href='/'}" class="btn btn-soft btn-sm btn-block">AI Assistant</button>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm btn-block">Log in</a>
+                </div>
+                <div class="grid gap-2 mt-2">
+                    <a href="{% url 'patients:book_appointment' %}" class="btn btn-primary btn-sm btn-block">Book Appointment</a>
+                    <a href="{% url 'demo' %}" class="btn btn-dark btn-sm btn-block"><span class="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" aria-hidden="true"></span>Try Live Demo</a>
+                </div>
             </div>
         </div>
     </header>
     {% endblock %}
 
-    <main>
+    <main class="pt-[64px] sm:pt-[70px]">
         {% if messages %}
         <div class="max-w-7xl mx-auto px-5 sm:px-6 pt-6">
             {% for message in messages %}
@@ -453,10 +462,29 @@
     /* ---------- Public (anonymous) mobile menu ---------- */
     var pubBtn = document.getElementById('publicMenuBtn');
     var pubMenu = document.getElementById('publicMobileMenu');
+    var pubIconOpen = document.getElementById('publicMenuIconOpen');
+    var pubIconClose = document.getElementById('publicMenuIconClose');
+    function setPubMenu(open) {
+        if (!pubBtn || !pubMenu) return;
+        pubMenu.classList.toggle('hidden', !open);
+        pubBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        pubBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        if (pubIconOpen) pubIconOpen.classList.toggle('hidden', open);
+        if (pubIconClose) pubIconClose.classList.toggle('hidden', !open);
+    }
     if (pubBtn && pubMenu) {
-        pubBtn.addEventListener('click', function () {
-            var open = pubMenu.classList.toggle('hidden') === false;
-            pubBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        pubBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setPubMenu(pubMenu.classList.contains('hidden'));
+        });
+        pubMenu.addEventListener('click', function (e) {
+            if (e.target.closest('a')) setPubMenu(false);
+        });
+        document.addEventListener('click', function (e) {
+            if (!pubMenu.classList.contains('hidden') && !pubMenu.contains(e.target) && !pubBtn.contains(e.target)) setPubMenu(false);
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') setPubMenu(false);
         });
     }
 
