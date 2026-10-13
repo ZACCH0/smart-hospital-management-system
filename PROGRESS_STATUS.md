@@ -20,7 +20,7 @@
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
-- **Last updated:** 2026-10-13 | **Last pushed commit:** `c950a6a` on `redesign-homepage` (2026-10-13) | **Health:** `manage.py check` → no issues (verified 2026-10-13)
+- **Last updated:** 2026-10-13 | **Last pushed commit:** `c5b9f59` on `redesign-homepage` (2026-10-13) | **Health:** `manage.py check` → no issues (verified 2026-10-13)
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -148,6 +148,8 @@ git log --oneline -10
 ```
 
 ## 10. Last changes (dated, per stage, fixes + tests)
+
+- **2026-10-13 (push):** `c5b9f59` pushed to `origin/redesign-homepage` — 48 files (Stage 6 all: guards, reception board, Figma shell, teal sweep, mobile retrofit). Secrets scanned clean, `main` untouched, tree clean.
 
 - **2026-10-13 (Stage 6 mobile rail):** per user, icon rail now persistent on ALL sizes — phones get a slimmer 64px rail (tablets 84px), no hidden drawer, hamburger retired; content/topbar offset accordingly. Tested: `check` clean, 19/19 matrix ALL PASS. NOT tested: real Android device at 360–430px.
 
