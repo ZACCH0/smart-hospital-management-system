@@ -118,6 +118,7 @@
 - Patient booking links point to `patients:book_appointment` (login-required; anonymous users redirect to login — safe).
 - Homepage doctor cards show qualification + experience (no working-hours field exists on the model).
 - "View Profile" link omitted on homepage cards (no public doctor-profile route exists) — Book Appointment only.
+- **DEFERRED to doctor-pages pass (user 2026-10-14):** doctor self-toggle for Available/Unavailable (one tap on doctor dashboard). Receptionist chat declined — toggle chosen instead as the coordination fix. Receptionist board already reads `available`, so no board change needed when toggle lands. Build it when we reach doctor pages.
 
 **Superseded:**
 - "No new view" brief constraint → superseded 2026-10-13 by approved read-only `core/views.home` (needed for real DB doctors; no writes, no URL-name changes).
@@ -190,6 +191,7 @@ git log --oneline -10
 
 > **WHERE WE STOPPED (2026-10-14): ALL PAGES RESPONSIVE DONE — awaiting your visual approval.** Walk the receptionist flow on laptop + phone: Dashboard, All Appointments, Book, Billing (+ Create), Laboratory, My Profile. Bonus fix: Create Invoice page was crashing — opens now.
 > **WHAT NEXT:** 1) you reply fixes or "approved" → 2) I do fix-pass → 3) then Stage 7 QA + docs (README Phase 27 + final review Phase 28, currently LOCKED).
+> **DEFERRED (not building now):** doctor availability self-toggle — lands in the doctor-pages pass. Chat declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 
