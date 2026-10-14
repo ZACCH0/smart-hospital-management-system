@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `38b3f5c` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** All receptionist pages responsive (lists full-width, 6 form pages fluid) + fixed Create-Invoice 500 crash. Tested 20/20, pushed. Next = your look on laptop + phone.
+- **WHERE WE STOPPED (2026-10-14):** User approved all-pages responsive (receptionist flow) — no fix notes. Next = Stage 7 QA + docs (needs approval to unlock).
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -49,8 +49,8 @@
 | 4 Homepage build | 13 sections in place + read-only `core/views.home` + nav CTA | DONE, awaiting visual approval | 2026-10-13 |
 | 4b Doctors filter tabs | Specialty tabs (All + 8, JS-only) on homepage grid | DONE, awaiting visual approval | 2026-10-13 |
 | 5 Homepage test/fix | `check` + `/` + roles + 390px mobile from user review | DONE — user approved homepage as-is, no fix notes | 2026-10-13 |
-| 6 Dashboards | Admin/Doctor/Patient/Receptionist, homepage approval granted | DONE, awaiting visual approval | 2026-10-13 |
-| 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | LOCKED | — |
+| 6 Dashboards | Admin/Doctor/Patient/Receptionist + all-pages responsive fix-pass, user approved | DONE — approved, no fix notes | 2026-10-14 |
+| 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | LOCKED — awaiting approval to start | — |
 
 **Phase progress (28-phase plan):** Phases 1–11 complete; 12–28 remaining (see §10 tail list).
 - [x] 1 Security Foundation · [x] 2 Multi-profile Architecture · [x] 3 Audit Logging · [x] 4 2FA (TOTP) · [x] 5 DB Performance · [x] 6 Appointment Upgrade · [x] 7 Email Verification · [x] 8 Lab Access Control · [x] 9 Doctor Appointment Restrictions · [x] 10 Demo Environment · [x] 11 UI/UX Dark Sidebar + Homepage
@@ -151,6 +151,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (Stage 6 approval — user approved):** user replied "approved" for all-pages responsive receptionist flow, no fix notes. Tracker updated (§1, §3, §12). Tested: no code change. NOT tested: Stage 7 QA + docs (LOCKED, awaiting approval).
+
 - **2026-10-14 (Stage 6 fix-pass — ALL PAGES RESPONSIVE, last task done):** per your "all the stuff should adjust itself": all 9 receptionist-flow pages rebuilt — All Appointments + Invoices + Lab lists now full-width (`max-w-7xl`) with scaled headers/summaries/tables; Create Invoice + Record Payment + Request Lab Test + Upload Result + Cancel + No-Show now fluid cards (`lg:max-w-2xl`) with 2-col fields on tablet+ and stacked→row buttons on phone. **Fault found + fixed:** `billing/views.create_invoice` crashed 500 on every GET (audit `log_action` referenced unsaved `invoice`) — moved inside valid-POST branch; GET 200 verified. Note: Request Lab Test stays doctor-only by design (receptionist 403 is correct). Tested: `check` clean; 5 live GETs 200, 4 object-pages parse OK, 20/20 asserts PASS. NOT tested: your real eyes on laptop + phone + object-page GETs (cancel/record/upload need real records). STOP POINT = here.
 
 - **2026-10-14 (Stage 6 fix-pass — BOOK PAGE RESPONSIVE, last task done):** per your "adjust itself to screen size": `appointments/book_appointment.html` rebuilt — fluid card (`max-w-lg → md:2xl → lg:4xl`), padding/title scale up, form auto-splits into 2 columns on tablet+ (patient+doctor, date+time side by side; reason full row), Cancel + Book buttons stack on phone, row right-aligned on desktop. Tested: `check` clean; anon 302, recep GET 200, 6/6 asserts PASS (fluid card, grid, reason span, actions, all 6 fields render). NOT tested: your real eyes on laptop + phone + actual booking submit. STOP POINT = here.
@@ -189,11 +191,12 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): ALL PAGES RESPONSIVE DONE — awaiting your visual approval.** Walk the receptionist flow on laptop + phone: Dashboard, All Appointments, Book, Billing (+ Create), Laboratory, My Profile. Bonus fix: Create Invoice page was crashing — opens now.
-> **WHAT NEXT:** 1) you reply fixes or "approved" → 2) I do fix-pass → 3) then Stage 7 QA + docs (README Phase 27 + final review Phase 28, currently LOCKED).
+> **WHERE WE STOPPED (2026-10-14): ALL PAGES RESPONSIVE APPROVED by user — no fix notes.** Receptionist flow done.
+> **WHAT NEXT:** Stage 7 QA + docs (README Phase 27 + final review Phase 28, currently LOCKED) — needs your approval to start.
 > **DEFERRED (not building now):** doctor availability self-toggle — lands in the doctor-pages pass. Chat declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
+> **RECEPTIONIST FLOW APPROVED 2026-10-14 (user):** all 9 pages responsive + Create-Invoice fix approved as-is.
 
 1. **User visual review** of `/` (desktop + 390px): hero, 8 services, doctors + tabs, FAQ, footer — reply with fixes or "approved".
 2. **Commit** the pile on `redesign-homepage` (`git add templates/ static/ core/ smart/ PROGRESS_STATUS.md` → commit → push branch, never `main`).
