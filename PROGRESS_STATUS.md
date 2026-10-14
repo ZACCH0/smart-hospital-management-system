@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `ede70ec` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** Receptionist desktop responsiveness — hero/buttons/grid/profile stretched for laptop+desktop (avatar 96px, full-size side-by-side CTAs, 3-col grid from lg, wider profile page). Tested render matrix 11/11, ready to push. Next = your look on laptop + phone.
+- **WHERE WE STOPPED (2026-10-14):** Book Appointment page responsive — fluid card (phone→tablet→desktop), 2-col form on tablet+, full-width reason, stacked→row actions. Tested 6/6 asserts, ready to push. Next = your look on laptop + phone.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -150,6 +150,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (Stage 6 fix-pass — BOOK PAGE RESPONSIVE, last task done):** per your "adjust itself to screen size": `appointments/book_appointment.html` rebuilt — fluid card (`max-w-lg → md:2xl → lg:4xl`), padding/title scale up, form auto-splits into 2 columns on tablet+ (patient+doctor, date+time side by side; reason full row), Cancel + Book buttons stack on phone, row right-aligned on desktop. Tested: `check` clean; anon 302, recep GET 200, 6/6 asserts PASS (fluid card, grid, reason span, actions, all 6 fields render). NOT tested: your real eyes on laptop + phone + actual booking submit. STOP POINT = here.
+
 - **2026-10-14 (Stage 6 fix-pass — DESKTOP RESPONSIVENESS, last task done):** per your note (desktop hero/buttons/profile too small, space wasted): hero now scales up from `lg` (avatar 96px, title 30px, padding 32px, counts bigger); Book/All buttons sit side-by-side at full 44px size on desktop via new `.btn-sm.btn-desk` rule in `app.css` (still compact stacked on phone/tablet); schedule+approvals/doctors board now splits 2/3 + 1/3 from `lg` (was `xl`, so laptops 1024+ use the width); profile page widens to `lg:max-w-4xl` with taller banner + bigger avatar. Mobile/tablet classes untouched. Tested: `check` clean, both pages 200, 11/11 render asserts PASS (lg classes, desk buttons, grid breakpoint, pens intact). NOT tested: your real eyes on laptop + 390px phone. STOP POINT = here.
 
 - **2026-10-14 (Stage 6 correction — PENCIL EDIT on photo + banner, last task done):** per your correction, both images now carry a pencil button that opens its file chooser (instant preview, Save keeps). Banner became uploadable: new `CustomUser.profile_banner` + migration `accounts/0005` + `dashboard/forms.ReceptionistProfileForm` (photo + banner hidden inputs); `receptionist_profile.html` rebuilt with pencil overlays + preview JS; desk hero shows her banner photo under a dark-teal overlay (gradient fallback when none). Tested: `check` + migrate clean; anon 302, recep GET 200 (both pens + hidden inputs present), photo+banner POST upload 302 and saved, hero renders banner URL. Test uploads + temp users cleaned. NOT tested: your real tap-the-pencil + Save on phone/browser. STOP POINT = here.
@@ -184,7 +186,7 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): DESKTOP RESPONSIVENESS DONE — awaiting your visual approval.** Check `/dashboard/receptionist/` on laptop/desktop (big avatar, side-by-side full-size buttons, wide schedule + doctors board) + `/dashboard/receptionist/profile/` (wide card, tall banner) + phone 390px still neat.
+> **WHERE WE STOPPED (2026-10-14): BOOK PAGE RESPONSIVE DONE — awaiting your visual approval.** Open Book Appointment on laptop/desktop (wide card, 2-col fields) + phone 390px (single column, full-width Book button). Receptionist desk + profile from before still stand.
 > **WHAT NEXT:** 1) you reply fixes or "approved" → 2) I do fix-pass → 3) then Stage 7 QA + docs (README Phase 27 + final review Phase 28, currently LOCKED).
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
