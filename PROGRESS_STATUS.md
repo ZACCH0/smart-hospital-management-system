@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `7d82e66` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** 6b-iii Dashboard 07-lite APPROVED ("okay like this") + pushed to GitHub. Next = 6c Patient frontend (needs approval to start).
+- **WHERE WE STOPPED (2026-10-14, session paused):** 6b-iii approved + pushed (`a96969b`, tree clean, branch in sync). Doctor frontend complete. **To resume, say "start 6c".** Next = 6c Patient frontend.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -157,6 +157,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (session paused — resume point):** user paused ("ok later", "save where we are"). Verified: branch `redesign-homepage`, tree clean, local `a96969b` = `origin/redesign-homepage`, `main` untouched, `manage.py check` clean. Tracker updated (§1, §12) with resume pointer. Tested: no code change. TO RESUME: say "start 6c".
+
 - **2026-10-14 (Stage 6b-iii approval + push):** user replied "okay like this, let push to github". Pushed `f7ec156..7d82e66` to `origin/redesign-homepage` — PASS (`main` untouched). Tracker updated (§1 last-pushed, §3, §12). Tested: push verified. NOT tested: 6c (needs approval).
 
 - **2026-10-14 (Stage 6b-iii — DASHBOARD 07-LITE, last task done):** `doctor_home` gains About strip (specialty/experience/qualification/fee, real) + 3 totals cards (Today/Caseload/All-time, real counts) beside it + full-width Patients table (patient/last visit/reason/status/Open chart, latest 8, real); view supplies `total_appointments` + `recent_patients` in one ordered query. Deliberately omitted: 88% gauge, satisfied counts, room numbers, star feedback (all invented in Figma). Tested: `check` clean; home 200 with all sections + no invented content — 9/9 PASS. NOT tested: your real eyes on laptop + phone. STOP POINT = here.
@@ -213,8 +215,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): 6b-iii APPROVED + PUSHED to `redesign-homepage` (`7d82e66`, `main` untouched).** Doctor frontend complete: responsive pages, toggle, profile, 06-cards, 07-lite dashboard.
-> **WHAT NEXT:** 6c Patient frontend — needs your approval to start. (6b + 6b-ii fix notes still welcome anytime.)
+> **WHERE WE STOPPED (2026-10-14, session paused):** 6b-iii APPROVED + PUSHED (`a96969b`, tree clean, branch in sync with `origin/redesign-homepage`, `main` untouched). Doctor frontend complete: responsive pages, toggle, profile, 06-cards, 07-lite dashboard.
+> **TO RESUME:** say **"start 6c"** → 6c Patient frontend (`patient_home` + 5 patients pages + `billing/patient_invoices` responsive). (6b + 6b-ii fix notes still welcome anytime.)
 > **DEFERRED NOTE (closed 2026-10-14):** doctor availability self-toggle — BUILT in 6b (`doctors:toggle_availability` on doctor dashboard). Chat remains declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
