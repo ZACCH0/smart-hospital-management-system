@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `38b3f5c` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** 6b-ii Patient cards DONE — 06-style grid. Next = your look, then 6b-iii dashboard 07-lite.
+- **WHERE WE STOPPED (2026-10-14):** 6b-iii Dashboard 07-lite DONE — About + totals + Patients table. Next = your look (6b, 6b-ii fix notes still welcome).
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -52,7 +52,8 @@
 | 6 Dashboards | Admin/Doctor/Patient/Receptionist + all-pages responsive fix-pass, user approved | DONE — approved, no fix notes | 2026-10-14 |
 | 6b Doctor frontend | `doctor_home` + `doctors/patient_list,patient_detail,write_medical_record,add_prescription` responsive + availability self-toggle | DONE, awaiting visual approval | 2026-10-14 |
 | 6b-i Doctor profile | Doctor profile + edit (banner + photo pencils, clinical fields) + mobile banner-overlap fix | DONE — approved, no fix notes | 2026-10-14 |
-| 6b-ii Patient cards | My Patients as 06-style cards (photo, info sheet, Open Chart — real data only) | DONE, awaiting visual approval | 2026-10-14 |
+| 6b-ii Patient cards | My Patients as 06-style cards (photo, info sheet, Open Chart — real data only) | DONE, awaiting visual approval (user moved to 6b-iii, fix notes still welcome) | 2026-10-14 |
+| 6b-iii Dashboard 07-lite | About strip + real-count stats + Patients table on `doctor_home` (no invented gauge/feedback) | DONE, awaiting visual approval | 2026-10-14 |
 | 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive | QUEUED | — |
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish | QUEUED | — |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
@@ -156,6 +157,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (Stage 6b-iii — DASHBOARD 07-LITE, last task done):** `doctor_home` gains About strip (specialty/experience/qualification/fee, real) + 3 totals cards (Today/Caseload/All-time, real counts) beside it + full-width Patients table (patient/last visit/reason/status/Open chart, latest 8, real); view supplies `total_appointments` + `recent_patients` in one ordered query. Deliberately omitted: 88% gauge, satisfied counts, room numbers, star feedback (all invented in Figma). Tested: `check` clean; home 200 with all sections + no invented content — 9/9 PASS. NOT tested: your real eyes on laptop + phone. STOP POINT = here.
+
 - **2026-10-14 (Stage 6b-ii — PATIENT CARDS, last task done):** `patient_list` rebuilt as 06-style cards (grey card, name + blood badge, square photo or initial fallback, white sheet with gender · age, last-visit date, Open Chart mint button); grid 1→2→3→4 cols; view adds `select_related('user')` + real `last_visit` per patient (no invented hours/icons). Tested: `check` clean; list 200 with all card asserts — 8/8 PASS. NOT tested: your real eyes on laptop + phone. STOP POINT = here.
 
 - **2026-10-14 (Stage 6b-i approval — user approved):** user replied "good" for the banner-overlap fix, no fix notes. Tracker updated (§1, §3, §12). Tested: no code change. NOT tested: 6b-ii cards (needs approval).
@@ -208,8 +211,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): 6b-ii PATIENT CARDS DONE — awaiting your visual approval.** Check My Patients on laptop + phone: photo cards, info sheet, Open Chart.
-> **WHAT NEXT:** you reply fixes or "approved" → then 6b-iii dashboard 07-lite (real-count stats + patients table, no invented gauge/feedback).
+> **WHERE WE STOPPED (2026-10-14): 6b-iii DASHBOARD 07-LITE DONE — awaiting your visual approval.** Check Doctor Dashboard top-to-bottom on laptop + phone: hero, About, totals, tiles, schedule, Patients table.
+> **WHAT NEXT:** you reply fixes or "approved" → then 6c Patient frontend (needs approval to start).
 > **DEFERRED (not building now):** doctor availability self-toggle — lands in the doctor-pages pass. Chat declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.

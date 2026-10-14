@@ -75,11 +75,28 @@ def doctor_home(request):
         is_read=False
     )[:5]
 
+    all_appointments = doctor_profile.appointments.select_related(
+        'patient__user'
+    ).order_by('-appointment_date', '-appointment_time')
+    total_appointments = all_appointments.count()
+
+    seen = set()
+    recent_patients = []
+    for appt in all_appointments:
+        if appt.patient_id not in seen:
+            seen.add(appt.patient_id)
+            appt.patient.last_appt = appt
+            recent_patients.append(appt.patient)
+        if len(recent_patients) >= 8:
+            break
+
     context = {
         'doctor_profile': doctor_profile,
         'todays_appointments': todays_appointments,
         'patient_list': patient_list,
         'notifications': notifications,
+        'total_appointments': total_appointments,
+        'recent_patients': recent_patients,
     }
     return render(request, 'dashboard/doctor_home.html', context)
 
