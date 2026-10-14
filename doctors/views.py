@@ -41,11 +41,26 @@ def toggle_availability(request):
 @login_required
 @doctor_required
 def patient_list(request):
+    from django.db.models import Max
+
     doctor_profile = request.user.doctor_profile
     patient_ids = Appointment.objects.filter(
         doctor=doctor_profile
     ).values_list('patient', flat=True).distinct()
-    patients = PatientProfile.objects.filter(id__in=patient_ids)
+    patients = PatientProfile.objects.filter(
+        id__in=patient_ids
+    ).select_related('user')
+
+    last_visits = dict(
+        Appointment.objects.filter(
+            doctor=doctor_profile, patient_id__in=patient_ids
+        ).values('patient').annotate(last=Max('appointment_date')).values_list(
+            'patient', 'last'
+        )
+    )
+    for patient in patients:
+        patient.last_visit = last_visits.get(patient.id)
+
     return render(request, 'doctors/patient_list.html', {'patients': patients})
 
 

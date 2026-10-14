@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `38b3f5c` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** 6b-i Doctor profile APPROVED (banner-overlap fix confirmed good). Next = 6b-ii My Patients 06-style cards (needs approval to start).
+- **WHERE WE STOPPED (2026-10-14):** 6b-ii Patient cards DONE — 06-style grid. Next = your look, then 6b-iii dashboard 07-lite.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -52,6 +52,7 @@
 | 6 Dashboards | Admin/Doctor/Patient/Receptionist + all-pages responsive fix-pass, user approved | DONE — approved, no fix notes | 2026-10-14 |
 | 6b Doctor frontend | `doctor_home` + `doctors/patient_list,patient_detail,write_medical_record,add_prescription` responsive + availability self-toggle | DONE, awaiting visual approval | 2026-10-14 |
 | 6b-i Doctor profile | Doctor profile + edit (banner + photo pencils, clinical fields) + mobile banner-overlap fix | DONE — approved, no fix notes | 2026-10-14 |
+| 6b-ii Patient cards | My Patients as 06-style cards (photo, info sheet, Open Chart — real data only) | DONE, awaiting visual approval | 2026-10-14 |
 | 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive | QUEUED | — |
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish | QUEUED | — |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
@@ -155,6 +156,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (Stage 6b-ii — PATIENT CARDS, last task done):** `patient_list` rebuilt as 06-style cards (grey card, name + blood badge, square photo or initial fallback, white sheet with gender · age, last-visit date, Open Chart mint button); grid 1→2→3→4 cols; view adds `select_related('user')` + real `last_visit` per patient (no invented hours/icons). Tested: `check` clean; list 200 with all card asserts — 8/8 PASS. NOT tested: your real eyes on laptop + phone. STOP POINT = here.
+
 - **2026-10-14 (Stage 6b-i approval — user approved):** user replied "good" for the banner-overlap fix, no fix notes. Tracker updated (§1, §3, §12). Tested: no code change. NOT tested: 6b-ii cards (needs approval).
 
 - **2026-10-14 (Stage 6b-i fix — profile mobile):** per your "banner covers Neurology/Available badges": root cause was dark name+badges pulled up onto the dark banner by the overlap. Fixed: phones stack avatar over text (text fully below banner, never overlapping); tablets reduce overlap (`-mt-8`); email moved to its own line under the header row so name+badges always clear the banner on desktop too. Banner taller on phones (`h-44`). Desktop look unchanged otherwise. Tested: `check` clean; profile GET/POST re-run 10/10 PASS. NOT tested: your real eyes on 390px phone. STOP POINT = here.
@@ -205,8 +208,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): 6b-i DOCTOR PROFILE APPROVED by user — no fix notes.** Next = 6b-ii.
-> **WHAT NEXT:** 6b-ii My Patients 06-style cards — needs your approval to start. Then 6b-iii dashboard 07-lite.
+> **WHERE WE STOPPED (2026-10-14): 6b-ii PATIENT CARDS DONE — awaiting your visual approval.** Check My Patients on laptop + phone: photo cards, info sheet, Open Chart.
+> **WHAT NEXT:** you reply fixes or "approved" → then 6b-iii dashboard 07-lite (real-count stats + patients table, no invented gauge/feedback).
 > **DEFERRED (not building now):** doctor availability self-toggle — lands in the doctor-pages pass. Chat declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
