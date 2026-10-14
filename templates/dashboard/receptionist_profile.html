@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile — SHMS{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    {# Gradient banner (no upload — CSS only) with overlapping avatar #}
+    <div class="app-card overflow-hidden !border-0 !p-0 mb-5">
+        <div class="px-5 sm:px-6 pt-6 pb-14 text-white" style="background:linear-gradient(120deg,#13271E 0%,#225A5D 60%,#31798A 100%);">
+            <p class="text-[11px] font-bold uppercase tracking-widest text-white/70">Reception desk · My profile</p>
+            <h1 class="text-[21px] sm:text-[24px] font-extrabold tracking-tight mt-1">Your front-desk identity</h1>
+            <p class="text-[13px] text-white/75 mt-0.5">This photo and name show on the reception board greeting.</p>
+        </div>
+        <div class="px-5 sm:px-6 pb-5">
+            <div class="-mt-10 flex items-end gap-4">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profile photo" class="w-20 h-20 rounded-2xl object-cover shadow-lg ring-4 ring-white flex-shrink-0" style="--tw-ring-color:#ffffff;">
+                {% else %}
+                    <span class="w-20 h-20 rounded-2xl text-white flex items-center justify-center text-2xl font-extrabold shadow-lg ring-4 ring-white flex-shrink-0" style="background:linear-gradient(135deg,#225A5D,#489D9A);--tw-ring-color:#ffffff;">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "R" %}</span>
+                {% endif %}
+                <div class="min-w-0 pb-1">
+                    <p class="text-[16px] font-extrabold text-slate-900 truncate">{{ user.get_full_name|default:user.email }}</p>
+                    <p class="mt-1 flex items-center gap-2">
+                        <span class="badge badge-sky">Receptionist</span>
+                        <span class="text-[12.5px] text-slate-500 truncate">{{ user.email }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="app-card p-5 sm:p-6">
+        {% csrf_token %}
+        <h2 class="text-[15px] font-bold text-slate-900">Personal information</h2>
+        <p class="text-[12.5px] text-slate-500 mt-0.5 mb-4">Name and photo appear as “Hello {{ user.first_name|default:"there" }}” on the board.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.first_name.id_for_label }}">First name</label>
+                {{ form.first_name }}
+            </div>
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.last_name.id_for_label }}">Last name</label>
+                {{ form.last_name }}
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.phone.id_for_label }}">Phone number</label>
+            {{ form.phone }}
+        </div>
+
+        <div class="mb-5">
+            <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.profile_picture.id_for_label }}">Profile photo</label>
+            {{ form.profile_picture }}
+            <p class="text-[12px] text-slate-400 mt-1">Square photo works best. Shown round on the board.</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 mb-4 text-[13px] text-red-700">
+            Please fix the highlighted fields and try again.
+        </div>
+        {% endif %}
+
+        <div class="flex flex-col sm:flex-row gap-2">
+            <button type="submit" class="btn btn-primary flex-1 justify-center font-bold">Save changes</button>
+            <a href="{% url 'dashboard:receptionist_home' %}" class="btn btn-ghost flex-1 justify-center">Back to desk</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

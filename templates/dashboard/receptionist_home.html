@@ -7,15 +7,21 @@
 <div class="app-card overflow-hidden mb-5 !border-0 text-white" style="background:linear-gradient(120deg,#13271E 0%,#225A5D 60%,#31798A 100%);">
     <div class="p-5 sm:p-6 flex flex-col gap-5">
         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+            <a href="{% url 'dashboard:receptionist_profile' %}" title="Edit my profile" class="flex-shrink-0">
             {% if user.profile_picture %}
-                <img src="{{ user.profile_picture.url }}" alt="" class="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-2xl object-cover shadow-lg flex-shrink-0 ring-2 ring-white/40">
+                <img src="{{ user.profile_picture.url }}" alt="Your profile photo — edit profile" class="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-2xl object-cover shadow-lg ring-2 ring-white/40 hover:ring-white transition">
             {% else %}
-                <span class="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-2xl font-extrabold flex-shrink-0 ring-2 ring-white/40">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "R" %}</span>
+                <span class="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-2xl font-extrabold ring-2 ring-white/40 hover:bg-white/25 transition">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "R" %}</span>
             {% endif %}
+            </a>
             <div class="min-w-0 flex-1">
                 <p class="text-[11px] font-bold uppercase tracking-widest text-white/70">Reception desk · {{ today|date:"l, j F Y" }}</p>
                 <h1 class="text-[21px] sm:text-[26px] font-extrabold tracking-tight truncate">Hello {{ user.first_name|default:user.get_full_name }}</h1>
-                <p class="text-[13px] sm:text-[13.5px] text-white/75 mt-0.5">Here's today's front desk — schedule, approvals and live doctor availability.</p>
+                <p class="mt-1 flex items-center gap-2">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold" style="background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3);">Receptionist</span>
+                    <a href="{% url 'dashboard:receptionist_profile' %}" class="text-[12px] font-semibold text-white/80 underline underline-offset-2 hover:text-white">Edit my profile</a>
+                </p>
+                <p class="text-[13px] sm:text-[13.5px] text-white/75 mt-1">Here's today's front desk — schedule, approvals and live doctor availability.</p>
             </div>
             <div class="flex sm:flex-col gap-2 flex-shrink-0">
                 <a href="{% url 'appointments:book_appointment' %}" class="btn btn-sm flex-1 sm:flex-none justify-center font-bold" style="background:#ffffff;color:#225A5D;border:1px solid #ffffff;">+ Book Appointment</a>
