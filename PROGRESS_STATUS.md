@@ -20,7 +20,8 @@
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
-- **Last updated:** 2026-10-13 | **Last pushed commit:** `c5b9f59` on `redesign-homepage` (2026-10-13) | **Health:** `manage.py check` → no issues (verified 2026-10-13)
+- **Last updated:** 2026-10-14 | **Last pushed commit:** `c5b9f59` on `redesign-homepage` (2026-10-13) | **Health:** `manage.py check` → no issues (verified 2026-10-13)
+- **WHERE WE STOPPED (2026-10-13 night):** Receptionist page — `dashboard/views.receptionist_home` + `templates/dashboard/receptionist_home.html` rebuilt and pushed in `c5b9f59`. Awaiting your visual check at `/dashboard/receptionist/` (login as receptionist). Next = your approve/fix notes → then Stage 7 QA + docs (LOCKED until you approve).
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -149,6 +150,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-13 night (Stage 6 — RECEPTIONIST PAGE, last task done):** rebuilt `receptionist_home` view (today's schedule excl. cancelled/no_show, pending approvals top-10, doctor board with `today_load` + available/unavailable counts, `select_related` for perf, `@receptionist_required` guard) + rebuilt `receptionist_home.html` (gradient hero with profile + Book/All buttons + 3 counts, 3 Figma stat cards with mint footer strip, Today's Schedule table 12 max, Pending Approvals table with inline Approve + confirm modal, Doctors' Schedule live board with All/Available/Unavailable + per-doctor badge + booked-today). Part of `c5b9f59` (48 files) pushed to `origin/redesign-homepage`. Tested: `check` clean, 19/19 matrix ALL PASS. NOT tested: real browser look at 390px + approve-click flow by you. STOP POINT = here.
+
 - **2026-10-13 (push):** `c5b9f59` pushed to `origin/redesign-homepage` — 48 files (Stage 6 all: guards, reception board, Figma shell, teal sweep, mobile retrofit). Secrets scanned clean, `main` untouched, tree clean.
 
 - **2026-10-13 (Stage 6 mobile rail):** per user, icon rail now persistent on ALL sizes — phones get a slimmer 64px rail (tablets 84px), no hidden drawer, hamburger retired; content/topbar offset accordingly. Tested: `check` clean, 19/19 matrix ALL PASS. NOT tested: real Android device at 360–430px.
@@ -177,7 +180,9 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **STAGE 6 DONE 2026-10-13 — awaiting visual approval:** reception board + guards + patient refresh built and matrix-tested. Open `/dashboard/receptionist/` as receptionist and judge the beauty.
+> **WHERE WE STOPPED (2026-10-13 night): Stage 6 RECEPTIONIST PAGE DONE — awaiting your visual approval.** Open `/dashboard/receptionist/` as receptionist and judge: hero counts, Today's Schedule, Pending Approvals Approve button, Doctors' Schedule board, mobile 390px.
+> **WHAT NEXT:** 1) you reply fixes or "approved" → 2) I do fix-pass (Stage 5/6) → 3) then Stage 7 QA + docs (README Phase 27 + final review Phase 28, currently LOCKED).
+> **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 
 1. **User visual review** of `/` (desktop + 390px): hero, 8 services, doctors + tabs, FAQ, footer — reply with fixes or "approved".
