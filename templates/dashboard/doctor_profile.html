@@ -26,8 +26,8 @@
             </button>
         </div>
         <div class="px-4 sm:px-6 lg:px-8 pb-5">
-            <div class="-mt-8 sm:-mt-10 lg:-mt-12 flex items-center sm:items-end gap-3 sm:gap-4">
-                <div class="relative flex-shrink-0">
+            <div class="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+                <div class="relative flex-shrink-0 self-start -mt-10 sm:-mt-8 lg:-mt-12">
                     {% if user.profile_picture %}
                         <img id="photoPreviewImg" src="{{ user.profile_picture.url }}" alt="Profile photo" class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl object-cover shadow-lg ring-4 ring-white" style="--tw-ring-color:#ffffff;">
                     {% else %}
@@ -42,7 +42,7 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                     </button>
                 </div>
-                <div class="min-w-0 flex-1 pb-1">
+                <div class="min-w-0 flex-1 sm:pb-0.5">
                     <p class="text-[15px] sm:text-[16px] font-extrabold text-slate-900 truncate">Dr. {{ user.get_full_name|default:user.email }}</p>
                     <p class="mt-1 flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <span class="badge badge-sky">{{ doctor_profile.get_specialization_display }}</span>
@@ -52,9 +52,9 @@
                             <span class="badge badge-red">Unavailable</span>
                         {% endif %}
                     </p>
-                    <p class="text-[12px] sm:text-[12.5px] text-slate-500 truncate mt-1">{{ user.email }}</p>
                 </div>
             </div>
+            <p class="text-[12px] sm:text-[12.5px] text-slate-500 truncate mt-2">{{ user.email }}</p>
         </div>
     </div>
 
