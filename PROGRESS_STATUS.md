@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `c5b9f59` on `redesign-homepage` (2026-10-13) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** Receptionist My Profile — new `dashboard/receptionist/profile/` page (receptionist-only, gradient banner, edit name/phone/photo) + hero avatar now clickable with Receptionist badge + sidebar/user-menu links. Tested, ready to push. Next = your visual check of profile page + hero.
+- **WHERE WE STOPPED (2026-10-14):** Receptionist pencil-edit — photo + banner each have a pencil that opens its file chooser (banner now uploadable via new `profile_banner` field). Tested photo+banner upload round-trip, ready to push. Next = your visual check of pencils + banner on desk hero.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -150,7 +150,7 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
-- **2026-10-14 (Stage 6 follow-up — RECEPTIONIST MY PROFILE, last task done):** per your pick (receptionist-only + gradient banner, no DB change): new `dashboard/views.receptionist_profile` (`@receptionist_required`, reuses `UserProfileForm`: first/last name + phone + photo) at `dashboard/receptionist/profile/`; new `templates/dashboard/receptionist_profile.html` (gradient banner + overlapping avatar + role badge + save form); `receptionist_home.html` hero polished (clickable avatar, Receptionist badge, Edit-my-profile link); `base.html` wired (sidebar My Profile + user-menu My Profile for receptionists). Tested: `check` clean; anon 302 → login, receptionist GET 200 (form + banner render), patient GET 403, POST saves name (Sarah→Sarah2 verified), hero contains profile link + badge. NOT tested: real browser look at 390px + photo-upload round-trip by you. STOP POINT = here.
+- **2026-10-14 (Stage 6 correction — PENCIL EDIT on photo + banner, last task done):** per your correction, both images now carry a pencil button that opens its file chooser (instant preview, Save keeps). Banner became uploadable: new `CustomUser.profile_banner` + migration `accounts/0005` + `dashboard/forms.ReceptionistProfileForm` (photo + banner hidden inputs); `receptionist_profile.html` rebuilt with pencil overlays + preview JS; desk hero shows her banner photo under a dark-teal overlay (gradient fallback when none). Tested: `check` + migrate clean; anon 302, recep GET 200 (both pens + hidden inputs present), photo+banner POST upload 302 and saved, hero renders banner URL. Test uploads + temp users cleaned. NOT tested: your real tap-the-pencil + Save on phone/browser. STOP POINT = here.
 
 - **2026-10-13 night (Stage 6 — RECEPTIONIST PAGE, last task done):** rebuilt `receptionist_home` view (today's schedule excl. cancelled/no_show, pending approvals top-10, doctor board with `today_load` + available/unavailable counts, `select_related` for perf, `@receptionist_required` guard) + rebuilt `receptionist_home.html` (gradient hero with profile + Book/All buttons + 3 counts, 3 Figma stat cards with mint footer strip, Today's Schedule table 12 max, Pending Approvals table with inline Approve + confirm modal, Doctors' Schedule live board with All/Available/Unavailable + per-doctor badge + booked-today). Part of `c5b9f59` (48 files) pushed to `origin/redesign-homepage`. Tested: `check` clean, 19/19 matrix ALL PASS. NOT tested: real browser look at 390px + approve-click flow by you. STOP POINT = here.
 
@@ -182,7 +182,7 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): Stage 6 follow-up RECEPTIONIST MY PROFILE DONE — awaiting your visual approval.** Open `/dashboard/receptionist/profile/` as receptionist (edit name/phone/photo, gradient banner) + check `/dashboard/receptionist/` hero (clickable avatar, Receptionist badge, Edit link).
+> **WHERE WE STOPPED (2026-10-14): PENCIL EDIT DONE — awaiting your visual approval.** Open `/dashboard/receptionist/profile/` as receptionist: tap pencil on banner → choose image, tap pencil on photo → choose image, Save. Then check `/dashboard/receptionist/` hero shows her banner.
 > **WHAT NEXT:** 1) you reply fixes or "approved" → 2) I do fix-pass → 3) then Stage 7 QA + docs (README Phase 27 + final review Phase 28, currently LOCKED).
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.

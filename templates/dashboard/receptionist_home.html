@@ -4,8 +4,12 @@
 
 {% block content %}
 {# Hero — profile band, stacks on mobile #}
-<div class="app-card overflow-hidden mb-5 !border-0 text-white" style="background:linear-gradient(120deg,#13271E 0%,#225A5D 60%,#31798A 100%);">
-    <div class="p-5 sm:p-6 flex flex-col gap-5">
+<div class="app-card overflow-hidden mb-5 !border-0 text-white relative" style="background:linear-gradient(120deg,#13271E 0%,#225A5D 60%,#31798A 100%);">
+    {% if user.profile_banner %}
+    <img src="{{ user.profile_banner.url }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover">
+    <div class="absolute inset-0" aria-hidden="true" style="background:linear-gradient(120deg,rgba(19,39,30,.92) 0%,rgba(34,90,93,.85) 60%,rgba(49,121,138,.80) 100%);"></div>
+    {% endif %}
+    <div class="p-5 sm:p-6 flex flex-col gap-5 relative">
         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
             <a href="{% url 'dashboard:receptionist_profile' %}" title="Edit my profile" class="flex-shrink-0">
             {% if user.profile_picture %}

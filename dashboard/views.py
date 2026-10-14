@@ -130,10 +130,10 @@ def receptionist_home(request):
 def receptionist_profile(request):
     from django.contrib import messages
     from django.shortcuts import redirect
-    from patients.forms import UserProfileForm
+    from dashboard.forms import ReceptionistProfileForm
 
     if request.method == 'POST':
-        form = UserProfileForm(
+        form = ReceptionistProfileForm(
             request.POST, request.FILES, instance=request.user
         )
         if form.is_valid():
@@ -141,7 +141,7 @@ def receptionist_profile(request):
             messages.success(request, 'Profile updated successfully.')
             return redirect('dashboard:receptionist_profile')
     else:
-        form = UserProfileForm(instance=request.user)
+        form = ReceptionistProfileForm(instance=request.user)
 
     return render(request, 'dashboard/receptionist_profile.html', {
         'form': form,
