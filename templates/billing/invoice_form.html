@@ -3,19 +3,19 @@
 {% block title %}{{ title }} - SHMS{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto">
+<div class="w-full max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
 
     <div class="flex items-center gap-3 mb-6">
         <a href="{% url 'billing:invoice_list' %}"
            class="text-gray-400 hover:text-primary transition">← Back</a>
-        <h1 class="text-xl font-bold text-primary">{{ title }}</h1>
+        <h1 class="text-xl lg:text-2xl font-bold text-primary">{{ title }}</h1>
     </div>
 
-    <div class="bg-white shadow rounded-xl p-6">
-        <form method="post">
+    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 lg:p-8">
+        <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {% csrf_token %}
 
-            <div class="mb-4">
+            <div>
                 <label class="block text-sm font-medium mb-1">Patient</label>
                 {{ form.patient }}
                 {% if form.patient.errors %}
@@ -23,14 +23,14 @@
                 {% endif %}
             </div>
 
-            <div class="mb-4">
+            <div>
                 <label class="block text-sm font-medium mb-1">
                     Appointment <span class="text-gray-400">(optional)</span>
                 </label>
                 {{ form.appointment }}
             </div>
 
-            <div class="mb-4">
+            <div>
                 <label class="block text-sm font-medium mb-1">Amount (₦)</label>
                 {{ form.amount }}
                 {% if form.amount.errors %}
@@ -38,13 +38,13 @@
                 {% endif %}
             </div>
 
-            <div class="mb-6">
+            <div>
                 <label class="block text-sm font-medium mb-1">Status</label>
                 {{ form.status }}
             </div>
 
             <button type="submit"
-                    class="btn-shine w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary transition font-medium">
+                    class="md:col-span-2 btn-shine w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary transition font-medium">
                 {{ title }}
             </button>
         </form>

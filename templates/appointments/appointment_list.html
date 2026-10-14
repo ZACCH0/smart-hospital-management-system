@@ -3,9 +3,12 @@
 {% block title %}All Appointments{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 class="text-xl font-bold text-primary">All Appointments</h1>
+<div class="w-full max-w-7xl mx-auto">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div>
+            <h1 class="text-xl lg:text-2xl font-bold text-primary">All Appointments</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">Every booking across doctors and patients.</p>
+        </div>
         {% if not is_doctor %}
         <a href="{% url 'appointments:book_appointment' %}"
         class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
@@ -15,8 +18,8 @@
     </div>
 
 
-    <div class="bg-white shadow rounded-lg overflow-x-auto">
-        <table class="w-full text-sm min-w-[620px]">
+    <div class="bg-white shadow rounded-lg lg:rounded-xl overflow-x-auto">
+        <table class="w-full text-sm lg:text-[15px] min-w-[620px]">
             <thead class="bg-gray-100 text-left">
                 <tr>
                     <th class="px-4 py-2">Patient</th>

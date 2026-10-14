@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}Laboratory - SHMS{% endblock %}
 {% block content %}
-<div class="max-w-5xl mx-auto">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 class="text-xl sm:text-2xl font-bold text-primary">Laboratory Tests</h1>
+<div class="w-full max-w-7xl mx-auto">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div>
+            <h1 class="text-xl sm:text-2xl lg:text-[28px] font-bold text-primary">Laboratory Tests</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">Requests, processing and results.</p>
+        </div>
         {% if is_doctor %}
             <a href="{% url 'laboratory:request_lab_test' %}"
             class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
@@ -13,24 +16,24 @@
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-yellow-500">
-            <p class="text-xl sm:text-2xl font-bold text-yellow-600">{{ pending }}</p>
+    <div class="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-5 mb-6">
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-yellow-500">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-600">{{ pending }}</p>
             <p class="text-sm text-gray-500">Pending</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-primary">
-            <p class="text-xl sm:text-2xl font-bold text-secondary">{{ in_progress }}</p>
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-primary">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-secondary">{{ in_progress }}</p>
             <p class="text-sm text-gray-500">In Progress</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-green-500">
-            <p class="text-xl sm:text-2xl font-bold text-green-600">{{ completed }}</p>
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-green-500">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">{{ completed }}</p>
             <p class="text-sm text-gray-500">Completed</p>
         </div>
     </div>
 
     <!-- Tests Table -->
     <div class="bg-white shadow rounded-xl overflow-x-auto">
-        <table class="w-full text-sm min-w-[620px]">
+        <table class="w-full text-sm lg:text-[15px] min-w-[620px]">
             <thead class="bg-gray-50 text-left">
                 <tr>
                     <th class="px-4 py-3 font-semibold text-gray-600">Test Name</th>

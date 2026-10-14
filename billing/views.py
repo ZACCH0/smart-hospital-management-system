@@ -39,17 +39,17 @@ def create_invoice(request):
                 message=f'A new invoice of ₦{invoice.amount} has been generated for your visit. Status: {invoice.get_status_display()}.'
             )
             messages.success(request, 'Invoice created successfully.')
+            log_action(
+                request,
+                action='create',
+                model_name='Invoice',
+                object_id=invoice.id,
+                object_repr=str(invoice),
+                details=f'Amount: ₦{invoice.amount}, Status: {invoice.status}'
+            )
             return redirect('billing:invoice_list')
     else:
         form = InvoiceForm()
-    log_action(
-    request,
-    action='create',
-    model_name='Invoice',
-    object_id=invoice.id,
-    object_repr=str(invoice),
-    details=f'Amount: ₦{invoice.amount}, Status: {invoice.status}'
-)
 
     return render(request, 'billing/invoice_form.html', {
         'form': form,
