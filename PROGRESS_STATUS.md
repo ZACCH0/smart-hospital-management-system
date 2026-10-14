@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `38b3f5c` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** User approved all-pages responsive (receptionist flow) — no fix notes. Next = Stage 7 QA + docs (needs approval to unlock).
+- **WHERE WE STOPPED (2026-10-14):** User chose frontend-first — finish all frontend (6b/6c/6d) before Stage 7 QA+docs. Next = approve 6b Doctor frontend to start.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -50,7 +50,10 @@
 | 4b Doctors filter tabs | Specialty tabs (All + 8, JS-only) on homepage grid | DONE, awaiting visual approval | 2026-10-13 |
 | 5 Homepage test/fix | `check` + `/` + roles + 390px mobile from user review | DONE — user approved homepage as-is, no fix notes | 2026-10-13 |
 | 6 Dashboards | Admin/Doctor/Patient/Receptionist + all-pages responsive fix-pass, user approved | DONE — approved, no fix notes | 2026-10-14 |
-| 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | LOCKED — awaiting approval to start | — |
+| 6b Doctor frontend | `doctor_home` + `doctors/patient_list,patient_detail,write_medical_record,add_prescription` responsive + availability self-toggle | NEXT — awaiting approval to start | — |
+| 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive | QUEUED | — |
+| 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish | QUEUED | — |
+| 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
 
 **Phase progress (28-phase plan):** Phases 1–11 complete; 12–28 remaining (see §10 tail list).
 - [x] 1 Security Foundation · [x] 2 Multi-profile Architecture · [x] 3 Audit Logging · [x] 4 2FA (TOTP) · [x] 5 DB Performance · [x] 6 Appointment Upgrade · [x] 7 Email Verification · [x] 8 Lab Access Control · [x] 9 Doctor Appointment Restrictions · [x] 10 Demo Environment · [x] 11 UI/UX Dark Sidebar + Homepage
@@ -151,6 +154,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (plan — frontend-first):** user chose complete frontend of everything before Stage 7. Split remainder into 6b Doctor / 6c Patient / 6d Admin+shared, Stage 7 DEFERRED. 58 templates mapped; receptionist 9 + home/auth/base already approved. Tested: no code change. NOT tested: 6b/6c/6d pages.
+
 - **2026-10-14 (Stage 6 approval — user approved):** user replied "approved" for all-pages responsive receptionist flow, no fix notes. Tracker updated (§1, §3, §12). Tested: no code change. NOT tested: Stage 7 QA + docs (LOCKED, awaiting approval).
 
 - **2026-10-14 (Stage 6 fix-pass — ALL PAGES RESPONSIVE, last task done):** per your "all the stuff should adjust itself": all 9 receptionist-flow pages rebuilt — All Appointments + Invoices + Lab lists now full-width (`max-w-7xl`) with scaled headers/summaries/tables; Create Invoice + Record Payment + Request Lab Test + Upload Result + Cancel + No-Show now fluid cards (`lg:max-w-2xl`) with 2-col fields on tablet+ and stacked→row buttons on phone. **Fault found + fixed:** `billing/views.create_invoice` crashed 500 on every GET (audit `log_action` referenced unsaved `invoice`) — moved inside valid-POST branch; GET 200 verified. Note: Request Lab Test stays doctor-only by design (receptionist 403 is correct). Tested: `check` clean; 5 live GETs 200, 4 object-pages parse OK, 20/20 asserts PASS. NOT tested: your real eyes on laptop + phone + object-page GETs (cancel/record/upload need real records). STOP POINT = here.
@@ -191,8 +196,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): ALL PAGES RESPONSIVE APPROVED by user — no fix notes.** Receptionist flow done.
-> **WHAT NEXT:** Stage 7 QA + docs (README Phase 27 + final review Phase 28, currently LOCKED) — needs your approval to start.
+> **WHERE WE STOPPED (2026-10-14): FRONTEND-FIRST approved — finish 6b/6c/6d before Stage 7.** Receptionist flow approved.
+> **WHAT NEXT:** 6b Doctor frontend (`doctor_home` + 4 doctors pages + availability toggle) — needs your approval to start. Then 6c Patient, 6d Admin+shared, then Stage 7 QA+docs.
 > **DEFERRED (not building now):** doctor availability self-toggle — lands in the doctor-pages pass. Chat declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
