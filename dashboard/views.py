@@ -76,6 +76,7 @@ def doctor_home(request):
     )[:5]
 
     context = {
+        'doctor_profile': doctor_profile,
         'todays_appointments': todays_appointments,
         'patient_list': patient_list,
         'notifications': notifications,

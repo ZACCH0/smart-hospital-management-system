@@ -13,6 +13,33 @@ from core.audit import log_action
 
 @login_required
 @doctor_required
+def toggle_availability(request):
+    if request.method != 'POST':
+        return redirect('dashboard:doctor_home')
+    doctor_profile = request.user.doctor_profile
+    doctor_profile.available = not doctor_profile.available
+    doctor_profile.save(update_fields=['available'])
+    log_action(
+        request,
+        action='update',
+        model_name='DoctorProfile',
+        object_id=doctor_profile.id,
+        object_repr=str(doctor_profile),
+        details='Toggled availability to {}'.format(
+            'available' if doctor_profile.available else 'unavailable'
+        ),
+    )
+    messages.success(
+        request,
+        'You are now marked as {}.'.format(
+            'Available' if doctor_profile.available else 'Unavailable'
+        ),
+    )
+    return redirect('dashboard:doctor_home')
+
+
+@login_required
+@doctor_required
 def patient_list(request):
     doctor_profile = request.user.doctor_profile
     patient_ids = Appointment.objects.filter(

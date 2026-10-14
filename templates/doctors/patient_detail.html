@@ -3,24 +3,24 @@
 {% block title %}{{ patient.user.get_full_name }} - SHMS{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
+<div class="w-full max-w-3xl md:max-w-5xl lg:max-w-6xl mx-auto">
 
     <!-- Patient Header -->
-    <div class="bg-white shadow rounded-xl p-6 mb-6 reveal">
-        <div class="flex justify-between items-start">
-            <div class="flex items-center gap-4">
+    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 lg:p-8 mb-6 reveal">
+        <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div class="flex items-center gap-4 min-w-0 flex-1">
                 {% if patient.user.profile_picture %}
                     <img src="{{ patient.user.profile_picture.url }}"
-                         class="w-16 h-16 rounded-full object-cover">
+                         class="w-16 h-16 rounded-full object-cover flex-shrink-0">
                 {% else %}
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                         <span class="text-2xl font-bold text-primary">
                             {{ patient.user.first_name|slice:":1" }}
                         </span>
                     </div>
                 {% endif %}
-                <div>
-                    <h1 class="text-xl font-bold text-gray-800">
+                <div class="min-w-0 flex-1">
+                    <h1 class="text-xl lg:text-2xl font-bold text-gray-800 truncate">
                         {{ patient.user.get_full_name }}
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">
@@ -35,14 +35,14 @@
                 </div>
             </div>
             <a href="{% url 'doctors:write_medical_record' patient.id %}"
-               class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
+               class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition text-center sm:flex-shrink-0">
                 + Write Record
             </a>
         </div>
     </div>
 
     <!-- Appointments -->
-    <div class="bg-white shadow rounded-xl p-5 mb-6 reveal">
+    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 mb-6 reveal">
         <h2 class="text-lg font-semibold mb-3">Appointments</h2>
         {% if appointments %}
             <div class="space-y-2">
@@ -68,9 +68,9 @@
     <div class="reveal">
         <h2 class="text-lg font-semibold mb-3">Medical Records</h2>
         {% if records %}
-            <div class="space-y-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {% for record in records %}
-                    <div class="bg-white shadow rounded-xl p-5">
+                    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5">
                         <div class="flex justify-between items-start mb-3">
                             <p class="text-xs text-gray-400">
                                 {{ record.created_at|date:"F j, Y" }}

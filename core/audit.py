@@ -19,7 +19,8 @@ def log_action(request, action, model_name='', object_id='', object_repr='', det
         log_action(request, 'login')
         log_action(request, 'login_failed', details='Email: someone@gmail.com')
     """
-    user = request.user if request.user.is_authenticated else None
+    user_obj = getattr(request, 'user', None)
+    user = user_obj if user_obj and user_obj.is_authenticated else None
 
     AuditLog.objects.create(
         user=user,

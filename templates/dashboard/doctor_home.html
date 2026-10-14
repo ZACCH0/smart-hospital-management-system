@@ -16,9 +16,44 @@
     </div>
 {% else %}
 
-    {% with page_title="Welcome back, Dr. "|add:user.first_name %}
-        {% include "partials/page_header.html" with eyebrow="Clinical Workspace" title=page_title subtitle="Your clinic at a glance — today’s list, caseload and the next clinical action." %}
-    {% endwith %}
+    {# Hero — profile band with availability toggle, stacks on mobile #}
+    <div class="app-card overflow-hidden mb-5 !border-0 text-white relative" style="background:linear-gradient(120deg,#13271E 0%,#225A5D 60%,#31798A 100%);">
+        <div class="p-5 sm:p-6 lg:p-8 flex flex-col gap-5 lg:gap-6 relative">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-6">
+                <div class="flex-shrink-0">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Your profile photo" class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl object-cover shadow-lg ring-2 ring-white/40">
+                {% else %}
+                    <span class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-2xl lg:text-3xl font-extrabold ring-2 ring-white/40">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "D" %}</span>
+                {% endif %}
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-white/70">Clinical workspace · {% if doctor_profile %}{{ doctor_profile.get_specialization_display }}{% else %}Doctor{% endif %}</p>
+                    <h1 class="text-[21px] sm:text-[26px] lg:text-[30px] font-extrabold tracking-tight truncate">Hello Dr. {{ user.first_name|default:user.get_full_name }}</h1>
+                    <p class="mt-1 flex flex-wrap items-center gap-2">
+                        {% if doctor_profile and doctor_profile.available %}
+                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold" style="background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3);">● Available</span>
+                        {% else %}
+                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold" style="background:rgba(0,0,0,.25);color:#ffd9d9;border:1px solid rgba(255,255,255,.3);">● Unavailable</span>
+                        {% endif %}
+                        <span class="text-[12px] lg:text-[13px] text-white/80">{{ todays_appointments|length }} today · {{ patient_list|length }} in caseload</span>
+                    </p>
+                    <p class="text-[13px] sm:text-[13.5px] lg:text-[14.5px] text-white/75 mt-1">Today's list, caseload and the next clinical action.</p>
+                </div>
+                <div class="flex sm:flex-col lg:flex-row gap-2 flex-shrink-0">
+                    <form method="post" action="{% url 'doctors:toggle_availability' %}" class="flex-1 sm:flex-none">
+                        {% csrf_token %}
+                        {% if doctor_profile and doctor_profile.available %}
+                            <button type="submit" class="btn btn-sm btn-desk w-full sm:w-auto justify-center font-bold" style="background:#ffffff;color:#225A5D;border:1px solid #ffffff;">Go Unavailable</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-sm btn-desk w-full sm:w-auto justify-center font-bold" style="background:#ffffff;color:#225A5D;border:1px solid #ffffff;">Go Available</button>
+                        {% endif %}
+                    </form>
+                    <a href="{% url 'doctors:patient_list' %}" class="btn btn-sm btn-desk flex-1 sm:flex-none justify-center font-semibold" style="background:rgba(255,255,255,.12);color:#ffffff;border:1px solid rgba(255,255,255,.35);">My Patients</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {# ================= QUICK ACTIONS ================= #}
     <section class="app-grid app-grid--4 mb-6" aria-label="Clinical quick actions">

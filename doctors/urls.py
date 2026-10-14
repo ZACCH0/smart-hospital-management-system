@@ -4,6 +4,7 @@ from . import views
 app_name = 'doctors'
 
 urlpatterns = [
+    path('toggle-availability/', views.toggle_availability, name='toggle_availability'),
     path('patients/', views.patient_list, name='patient_list'),
     path('patients/<int:patient_id>/', views.patient_detail, name='patient_detail'),
     path('patients/<int:patient_id>/record/', views.write_medical_record, name='write_medical_record'),
