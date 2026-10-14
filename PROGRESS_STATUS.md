@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `38b3f5c` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** 6b-i Doctor profile DONE — banner + pencils + clinical edit. Next = your look, then 6b-ii cards.
+- **WHERE WE STOPPED (2026-10-14):** 6b-i Doctor profile APPROVED (banner-overlap fix confirmed good). Next = 6b-ii My Patients 06-style cards (needs approval to start).
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -51,7 +51,7 @@
 | 5 Homepage test/fix | `check` + `/` + roles + 390px mobile from user review | DONE — user approved homepage as-is, no fix notes | 2026-10-13 |
 | 6 Dashboards | Admin/Doctor/Patient/Receptionist + all-pages responsive fix-pass, user approved | DONE — approved, no fix notes | 2026-10-14 |
 | 6b Doctor frontend | `doctor_home` + `doctors/patient_list,patient_detail,write_medical_record,add_prescription` responsive + availability self-toggle | DONE, awaiting visual approval | 2026-10-14 |
-| 6b-i Doctor profile | Doctor profile + edit (banner + photo pencils like receptionist, clinical fields) | DONE, awaiting visual approval | 2026-10-14 |
+| 6b-i Doctor profile | Doctor profile + edit (banner + photo pencils, clinical fields) + mobile banner-overlap fix | DONE — approved, no fix notes | 2026-10-14 |
 | 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive | QUEUED | — |
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish | QUEUED | — |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
@@ -155,6 +155,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (Stage 6b-i approval — user approved):** user replied "good" for the banner-overlap fix, no fix notes. Tracker updated (§1, §3, §12). Tested: no code change. NOT tested: 6b-ii cards (needs approval).
+
 - **2026-10-14 (Stage 6b-i fix — profile mobile):** per your "banner covers Neurology/Available badges": root cause was dark name+badges pulled up onto the dark banner by the overlap. Fixed: phones stack avatar over text (text fully below banner, never overlapping); tablets reduce overlap (`-mt-8`); email moved to its own line under the header row so name+badges always clear the banner on desktop too. Banner taller on phones (`h-44`). Desktop look unchanged otherwise. Tested: `check` clean; profile GET/POST re-run 10/10 PASS. NOT tested: your real eyes on 390px phone. STOP POINT = here.
 
 - **2026-10-14 (Stage 6b-i — DOCTOR PROFILE, last task done):** new `dashboard:doctor_profile` view + `DoctorProfileForm`/`DoctorClinicalForm` + `doctor_profile.html` mirroring receptionist pestencil interaction (banner + photo pens, instant preview, hidden inputs, Save keeps); specialty shown read-only + Available badge; editable qualification/experience/fee + name/phone; hero avatar + "Edit my profile" link to it. Tested: `check` clean; profile GET 200 (pens, inputs, clinical fields, specialty, fluid card), POST 302 phone saved, hero links profile — 10/10 PASS. NOT tested: your real tap-pencil + Save on phone/browser + image upload. STOP POINT = here.
@@ -203,8 +205,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): 6b-i DOCTOR PROFILE DONE — awaiting your visual approval.** Check: Doctor Profile (banner + photo pencils, Save), hero avatar links to it.
-> **WHAT NEXT:** you reply fixes or "approved" → then 6b-ii My Patients 06-style cards. 6b-iii dashboard 07-lite after that.
+> **WHERE WE STOPPED (2026-10-14): 6b-i DOCTOR PROFILE APPROVED by user — no fix notes.** Next = 6b-ii.
+> **WHAT NEXT:** 6b-ii My Patients 06-style cards — needs your approval to start. Then 6b-iii dashboard 07-lite.
 > **DEFERRED (not building now):** doctor availability self-toggle — lands in the doctor-pages pass. Chat declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
