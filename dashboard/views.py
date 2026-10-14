@@ -127,6 +127,42 @@ def receptionist_home(request):
     })
 
 
+@doctor_required
+def doctor_profile(request):
+    from django.contrib import messages
+    from django.shortcuts import redirect
+    from dashboard.forms import DoctorProfileForm, DoctorClinicalForm
+
+    try:
+        doctor_profile = request.user.doctor_profile
+    except AttributeError:
+        return render(request, 'dashboard/doctor_home.html', {
+            'error': 'No doctor profile found for this account.'
+        })
+
+    if request.method == 'POST':
+        form = DoctorProfileForm(
+            request.POST, request.FILES, instance=request.user
+        )
+        clinical_form = DoctorClinicalForm(
+            request.POST, instance=doctor_profile
+        )
+        if form.is_valid() and clinical_form.is_valid():
+            form.save()
+            clinical_form.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('dashboard:doctor_profile')
+    else:
+        form = DoctorProfileForm(instance=request.user)
+        clinical_form = DoctorClinicalForm(instance=doctor_profile)
+
+    return render(request, 'dashboard/doctor_profile.html', {
+        'form': form,
+        'clinical_form': clinical_form,
+        'doctor_profile': doctor_profile,
+    })
+
+
 @receptionist_required
 def receptionist_profile(request):
     from django.contrib import messages

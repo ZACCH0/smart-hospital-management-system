@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
 - **Last updated:** 2026-10-14 | **Last pushed commit:** `38b3f5c` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** 6b Doctor frontend DONE — hero with availability toggle + 4 pages responsive. Next = your look on laptop + phone.
+- **WHERE WE STOPPED (2026-10-14):** 6b-i Doctor profile DONE — banner + pencils + clinical edit. Next = your look, then 6b-ii cards.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -51,6 +51,7 @@
 | 5 Homepage test/fix | `check` + `/` + roles + 390px mobile from user review | DONE — user approved homepage as-is, no fix notes | 2026-10-13 |
 | 6 Dashboards | Admin/Doctor/Patient/Receptionist + all-pages responsive fix-pass, user approved | DONE — approved, no fix notes | 2026-10-14 |
 | 6b Doctor frontend | `doctor_home` + `doctors/patient_list,patient_detail,write_medical_record,add_prescription` responsive + availability self-toggle | DONE, awaiting visual approval | 2026-10-14 |
+| 6b-i Doctor profile | Doctor profile + edit (banner + photo pencils like receptionist, clinical fields) | DONE, awaiting visual approval | 2026-10-14 |
 | 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive | QUEUED | — |
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish | QUEUED | — |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
@@ -154,6 +155,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (Stage 6b-i — DOCTOR PROFILE, last task done):** new `dashboard:doctor_profile` view + `DoctorProfileForm`/`DoctorClinicalForm` + `doctor_profile.html` mirroring receptionist pestencil interaction (banner + photo pens, instant preview, hidden inputs, Save keeps); specialty shown read-only + Available badge; editable qualification/experience/fee + name/phone; hero avatar + "Edit my profile" link to it. Tested: `check` clean; profile GET 200 (pens, inputs, clinical fields, specialty, fluid card), POST 302 phone saved, hero links profile — 10/10 PASS. NOT tested: your real tap-pencil + Save on phone/browser + image upload. STOP POINT = here.
+
 - **2026-10-14 (Stage 6b — DOCTOR FRONTEND, last task done):** hero with Available/Unavailable badge + one-tap POST toggle (`doctors:toggle_availability`, audit-logged, GET redirects) replacing duplicate page header; `patient_list` full-width `max-w-7xl` with 2-col cards on desktop; `patient_detail` fluid `3xl→5xl→6xl` with stacked→row header and 2-col records on desktop; `write_medical_record` + `add_prescription` fluid `lg:max-w-2xl` with scaled padding/titles (rx dosage/duration `sm:2-col`). **Fault found + fixed:** `core/audit.log_action` crashed on test-client logins (`request.user` missing) — now `getattr`-safe. Tested: `check` clean; home 200 (toggle+hero+desk), list 200 (full+grid), detail/write/rx 200 (fluid), toggle POST 302 flips False→True restored, GET 302 — 14/14 PASS. NOT tested: your real eyes on laptop + phone + toggle tap. STOP POINT = here.
 
 - **2026-10-14 (plan — frontend-first):** user chose complete frontend of everything before Stage 7. Split remainder into 6b Doctor / 6c Patient / 6d Admin+shared, Stage 7 DEFERRED. 58 templates mapped; receptionist 9 + home/auth/base already approved. Tested: no code change. NOT tested: 6b/6c/6d pages.
@@ -198,8 +201,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): 6b DOCTOR FRONTEND DONE — awaiting your visual approval.** Check: Doctor Dashboard (hero + toggle), My Patients, Patient Detail, Write Record, Add Prescription on laptop + phone.
-> **WHAT NEXT:** you reply fixes or "approved" → then 6c Patient frontend. Stage 7 QA+docs stays deferred.
+> **WHERE WE STOPPED (2026-10-14): 6b-i DOCTOR PROFILE DONE — awaiting your visual approval.** Check: Doctor Profile (banner + photo pencils, Save), hero avatar links to it.
+> **WHAT NEXT:** you reply fixes or "approved" → then 6b-ii My Patients 06-style cards. 6b-iii dashboard 07-lite after that.
 > **DEFERRED (not building now):** doctor availability self-toggle — lands in the doctor-pages pass. Chat declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.

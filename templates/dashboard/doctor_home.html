@@ -21,11 +21,13 @@
         <div class="p-5 sm:p-6 lg:p-8 flex flex-col gap-5 lg:gap-6 relative">
             <div class="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-6">
                 <div class="flex-shrink-0">
+                <a href="{% url 'dashboard:doctor_profile' %}" title="Edit my profile">
                 {% if user.profile_picture %}
-                    <img src="{{ user.profile_picture.url }}" alt="Your profile photo" class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl object-cover shadow-lg ring-2 ring-white/40">
+                    <img src="{{ user.profile_picture.url }}" alt="Your profile photo — edit profile" class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl object-cover shadow-lg ring-2 ring-white/40 hover:ring-white transition">
                 {% else %}
-                    <span class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-2xl lg:text-3xl font-extrabold ring-2 ring-white/40">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "D" %}</span>
+                    <span class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-2xl lg:text-3xl font-extrabold ring-2 ring-white/40 hover:bg-white/25 transition">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "D" %}</span>
                 {% endif %}
+                </a>
                 </div>
                 <div class="min-w-0 flex-1">
                     <p class="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-white/70">Clinical workspace · {% if doctor_profile %}{{ doctor_profile.get_specialization_display }}{% else %}Doctor{% endif %}</p>
@@ -37,6 +39,7 @@
                             <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold" style="background:rgba(0,0,0,.25);color:#ffd9d9;border:1px solid rgba(255,255,255,.3);">● Unavailable</span>
                         {% endif %}
                         <span class="text-[12px] lg:text-[13px] text-white/80">{{ todays_appointments|length }} today · {{ patient_list|length }} in caseload</span>
+                        <a href="{% url 'dashboard:doctor_profile' %}" class="text-[12px] lg:text-[13px] font-semibold text-white/80 underline underline-offset-2 hover:text-white">Edit my profile</a>
                     </p>
                     <p class="text-[13px] sm:text-[13.5px] lg:text-[14.5px] text-white/75 mt-1">Today's list, caseload and the next clinical action.</p>
                 </div>
