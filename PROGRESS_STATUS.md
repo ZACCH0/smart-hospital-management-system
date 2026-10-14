@@ -20,8 +20,8 @@
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
-- **Last updated:** 2026-10-14 | **Last pushed commit:** `38b3f5c` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14):** 6b-iii Dashboard 07-lite DONE — About + totals + Patients table. Next = your look (6b, 6b-ii fix notes still welcome).
+- **Last updated:** 2026-10-14 | **Last pushed commit:** `7d82e66` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
+- **WHERE WE STOPPED (2026-10-14):** 6b-iii Dashboard 07-lite APPROVED ("okay like this") + pushed to GitHub. Next = 6c Patient frontend (needs approval to start).
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -53,7 +53,7 @@
 | 6b Doctor frontend | `doctor_home` + `doctors/patient_list,patient_detail,write_medical_record,add_prescription` responsive + availability self-toggle | DONE, awaiting visual approval | 2026-10-14 |
 | 6b-i Doctor profile | Doctor profile + edit (banner + photo pencils, clinical fields) + mobile banner-overlap fix | DONE — approved, no fix notes | 2026-10-14 |
 | 6b-ii Patient cards | My Patients as 06-style cards (photo, info sheet, Open Chart — real data only) | DONE, awaiting visual approval (user moved to 6b-iii, fix notes still welcome) | 2026-10-14 |
-| 6b-iii Dashboard 07-lite | About strip + real-count stats + Patients table on `doctor_home` (no invented gauge/feedback) | DONE, awaiting visual approval | 2026-10-14 |
+| 6b-iii Dashboard 07-lite | About strip + real-count stats + Patients table on `doctor_home` (no invented gauge/feedback) | DONE — approved ("okay like this"), pushed | 2026-10-14 |
 | 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive | QUEUED | — |
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish | QUEUED | — |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
@@ -157,6 +157,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-14 (Stage 6b-iii approval + push):** user replied "okay like this, let push to github". Pushed `f7ec156..7d82e66` to `origin/redesign-homepage` — PASS (`main` untouched). Tracker updated (§1 last-pushed, §3, §12). Tested: push verified. NOT tested: 6c (needs approval).
+
 - **2026-10-14 (Stage 6b-iii — DASHBOARD 07-LITE, last task done):** `doctor_home` gains About strip (specialty/experience/qualification/fee, real) + 3 totals cards (Today/Caseload/All-time, real counts) beside it + full-width Patients table (patient/last visit/reason/status/Open chart, latest 8, real); view supplies `total_appointments` + `recent_patients` in one ordered query. Deliberately omitted: 88% gauge, satisfied counts, room numbers, star feedback (all invented in Figma). Tested: `check` clean; home 200 with all sections + no invented content — 9/9 PASS. NOT tested: your real eyes on laptop + phone. STOP POINT = here.
 
 - **2026-10-14 (Stage 6b-ii — PATIENT CARDS, last task done):** `patient_list` rebuilt as 06-style cards (grey card, name + blood badge, square photo or initial fallback, white sheet with gender · age, last-visit date, Open Chart mint button); grid 1→2→3→4 cols; view adds `select_related('user')` + real `last_visit` per patient (no invented hours/icons). Tested: `check` clean; list 200 with all card asserts — 8/8 PASS. NOT tested: your real eyes on laptop + phone. STOP POINT = here.
@@ -211,9 +213,9 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14): 6b-iii DASHBOARD 07-LITE DONE — awaiting your visual approval.** Check Doctor Dashboard top-to-bottom on laptop + phone: hero, About, totals, tiles, schedule, Patients table.
-> **WHAT NEXT:** you reply fixes or "approved" → then 6c Patient frontend (needs approval to start).
-> **DEFERRED (not building now):** doctor availability self-toggle — lands in the doctor-pages pass. Chat declined.
+> **WHERE WE STOPPED (2026-10-14): 6b-iii APPROVED + PUSHED to `redesign-homepage` (`7d82e66`, `main` untouched).** Doctor frontend complete: responsive pages, toggle, profile, 06-cards, 07-lite dashboard.
+> **WHAT NEXT:** 6c Patient frontend — needs your approval to start. (6b + 6b-ii fix notes still welcome anytime.)
+> **DEFERRED NOTE (closed 2026-10-14):** doctor availability self-toggle — BUILT in 6b (`doctors:toggle_availability` on doctor dashboard). Chat remains declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 > **RECEPTIONIST FLOW APPROVED 2026-10-14 (user):** all 9 pages responsive + Create-Invoice fix approved as-is.
