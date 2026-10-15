@@ -1,84 +1,56 @@
 {% extends 'base.html' %}
 
-{% block title %}My Appointments - SHMS{% endblock %}
+{% block title %}My Appointments — SHMS{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
+{% include "partials/page_header.html" with eyebrow="Patient workspace" title="My Appointments" subtitle="Your visits, soonest and latest — with approval status." action_url="/patients/book/" action_label="Book New" action_icon="book" back_url="/dashboard/patient/" back_label="Dashboard" %}
 
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 class="text-2xl font-bold text-primary">My Appointments</h1>
-        <a href="{% url 'patients:book_appointment' %}"
-           class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
-            + Book New
-        </a>
-    </div>
-
+<div class="w-full max-w-7xl mx-auto">
     {% if appointments %}
-        <div class="space-y-4">
-            {% for appt in appointments %}
-                <div class="bg-white shadow rounded-xl p-5 reveal">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-semibold text-gray-800">
-                                Dr. {{ appt.doctor.user.get_full_name }}
-                            </p>
-                            <p class="text-sm text-gray-500 mt-1">
-                                {{ appt.doctor.get_specialization_display }}
-                            </p>
-                            <p class="text-sm text-gray-600 mt-2">
-                                📅 {{ appt.appointment_date }} at {{ appt.appointment_time }}
-                            </p>
-                            {% if appt.reason %}
-                                <p class="text-sm text-gray-500 mt-1">
-                                    Reason: {{ appt.reason }}
-                                </p>
-                            {% endif %}
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-xs font-medium
-                            {% if appt.status == 'approved' %}bg-green-100 text-green-700
-                            {% elif appt.status == 'pending' %}bg-yellow-100 text-yellow-700
-                            {% elif appt.status == 'cancelled' %}bg-red-100 text-red-700
-                            {% else %}bg-primary/10 text-primary{% endif %}">
-                            {{ appt.get_status_display }}
-                        </span>
-                    </div>
-                </div>
-            {% endfor %}
+    <section class="app-card app-card--flush">
+        <div class="app-table-wrap">
+            <table class="app-table min-w-[640px]">
+                <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th>When</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments %}
+                    <tr>
+                        <td>
+                            {% include "partials/avatar.html" with person=appt.doctor.user size="xs" meta=appt.doctor.get_specialization_display %}
+                        </td>
+                        <td class="whitespace-nowrap">
+                            <span class="font-semibold text-slate-900">{{ appt.appointment_date|date:"D, j M Y" }}</span>
+                            <span class="block text-[12.5px] text-slate-500">{{ appt.appointment_time|time:"H:i" }}</span>
+                        </td>
+                        <td class="app-table__meta">{{ appt.reason|truncatechars:60|default:"—" }}</td>
+                        <td>{% include "partials/status_badge.html" with status=appt.status %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+    </section>
+
+    {% if page_obj.has_other_pages %}
+    <div class="app-pager">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline btn-sm">← Previous</a>
+        {% endif %}
+        <span class="app-pager__info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline btn-sm">Next →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
     {% else %}
-        <div class="bg-white shadow rounded-xl p-10 text-center">
-            <div class="text-5xl mb-4">📅</div>
-            <h2 class="text-lg font-semibold text-gray-700 mb-2">No appointments yet</h2>
-            <p class="text-gray-500 text-sm mb-4">Book your first appointment with one of our doctors</p>
-            <a href="{% url 'patients:book_appointment' %}"
-               class="btn-shine bg-primary text-white px-6 py-2 rounded-lg text-sm hover:bg-secondary transition">
-                Book Appointment →
-            </a>
-        </div>
-    {% endif %}
-
-</div>
-
-<!-- Pagination -->
-{% if page_obj.has_other_pages %}
-<div class="flex justify-center items-center gap-2 mt-6">
-    {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}"
-           class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition">
-            ← Previous
-        </a>
-    {% endif %}
-
-    <span class="text-sm text-gray-500">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-    </span>
-
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}"
-           class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50 transition">
-            Next →
-        </a>
+        {% include "partials/empty_state.html" with title="No appointments yet" text="Book your first appointment with one of our doctors." icon="calendar" action_url="/patients/book/" action_label="Book Appointment" %}
     {% endif %}
 </div>
-{% endif %}
 {% endblock %}

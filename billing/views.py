@@ -112,6 +112,15 @@ def patient_invoices(request):
 
     invoices = patient_profile.invoices.all().order_by('-issued_date')
 
+    total_paid = patient_profile.invoices.filter(
+        status='paid'
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_pending = patient_profile.invoices.filter(
+        status='pending'
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+
     return render(request, 'billing/patient_invoices.html', {
         'invoices': invoices,
+        'total_paid': total_paid,
+        'total_pending': total_pending,
     })

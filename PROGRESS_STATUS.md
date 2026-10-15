@@ -20,8 +20,8 @@
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
-- **Last updated:** 2026-10-14 | **Last pushed commit:** `7d82e66` on `redesign-homepage` (2026-10-14) | **Health:** `manage.py check` → no issues (verified 2026-10-14)
-- **WHERE WE STOPPED (2026-10-14, session paused):** 6b-iii approved + pushed (`a96969b`, tree clean, branch in sync). Doctor frontend complete. **To resume, say "start 6c".** Next = 6c Patient frontend.
+- **Last updated:** 2026-10-15 | **Last pushed commit:** see §10 push entry on `redesign-homepage` (2026-10-15) | **Health:** `manage.py check` → no issues (verified 2026-10-15)
+- **WHERE WE STOPPED (2026-10-15, 6c approved):** 6c APPROVED with no fix notes (incl. patient-banner mind-change). Patient frontend complete. **To continue, say "start 6d".** Next = 6d Admin + shared frontend.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -54,7 +54,7 @@
 | 6b-i Doctor profile | Doctor profile + edit (banner + photo pencils, clinical fields) + mobile banner-overlap fix | DONE — approved, no fix notes | 2026-10-14 |
 | 6b-ii Patient cards | My Patients as 06-style cards (photo, info sheet, Open Chart — real data only) | DONE, awaiting visual approval (user moved to 6b-iii, fix notes still welcome) | 2026-10-14 |
 | 6b-iii Dashboard 07-lite | About strip + real-count stats + Patients table on `doctor_home` (no invented gauge/feedback) | DONE — approved ("okay like this"), pushed | 2026-10-14 |
-| 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive | QUEUED | — |
+| 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive + patient banner mind-change | DONE — approved, no fix notes | 2026-10-15 |
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish | QUEUED | — |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
 
@@ -157,6 +157,12 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-15 (Stage 6c approval — user approved):** user replied "approved", no fix notes. Tracker updated (§1, §3, §12). Tested: no code change. NOT tested: 6d (needs explicit start).
+
+- **2026-10-15 (Stage 6c mind-change — patient banner, per your "can patient have banner too"):** `CustomUser.profile_banner` already existed for all roles — exposed it for patients: `UserProfileForm` gains `profile_banner` (hidden file input, same as doctor/receptionist); `profile_settings` rebuilt with banner + avatar pencil card (instant preview, Save keeps); `patient_home` hero renders banner photo under dark-teal overlay when set (gradient fallback otherwise). Tested: `check` clean; 13/13 GET asserts re-PASS; profile POST 302 re-verified. NOT tested: your real tap-pencil + Save + banner look on phone/browser. STOP POINT = here (6c still awaiting your visual approval).
+
+- **2026-10-15 (Stage 6c — PATIENT FRONTEND, last task done):** `patient_home` gains gradient hero (avatar, Patient badge, upcoming/total counts, Book + My Appointments) + 3 hero counts + 3 stat cards (Upcoming/Total visits/Pending ₦, all real) + 6 app-tiles + Upcoming/Notifications split; `my_appointments` rebuilt full-width `max-w-7xl` with `app-table` (Doctor/When/Reason/Status) + pager; `my_medical_records` as 2-col `app-card` grid (diagnosis/symptoms/treatment + rx badges); `my_prescriptions` as 1→2→3 `app-card` grid (dosage/duration + instructions + doctor/date); `book_appointment` fluid `lg:max-w-4xl` with 2-col fields incl. duration + Cancel/Book row; `profile_settings` fluid `lg:max-w-4xl` with photo pencil preview + Personal/Medical sections + Save/Back; `patient_invoices` full-width with Pending/Paid summary + `app-table` (Invoice/Amount/Issued/Status/Payment). Views: `patient_home` now supplies `upcoming_count/total_appointments/total_records/total_prescriptions/pending_invoices_count/pending_invoices_amount` (one query each, real); `patient_invoices` supplies `total_paid/total_pending` (real). Tested: `check` clean; 7 live GETs 200, 13/13 asserts PASS; profile POST 302 phone saved + restored. NOT tested: your real eyes on laptop + phone + actual booking submit. STOP POINT = here.
+
 - **2026-10-14 (session paused — resume point):** user paused ("ok later", "save where we are"). Verified: branch `redesign-homepage`, tree clean, local `a96969b` = `origin/redesign-homepage`, `main` untouched, `manage.py check` clean. Tracker updated (§1, §12) with resume pointer. Tested: no code change. TO RESUME: say "start 6c".
 
 - **2026-10-14 (Stage 6b-iii approval + push):** user replied "okay like this, let push to github". Pushed `f7ec156..7d82e66` to `origin/redesign-homepage` — PASS (`main` untouched). Tracker updated (§1 last-pushed, §3, §12). Tested: push verified. NOT tested: 6c (needs approval).
@@ -215,8 +221,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-14, session paused):** 6b-iii APPROVED + PUSHED (`a96969b`, tree clean, branch in sync with `origin/redesign-homepage`, `main` untouched). Doctor frontend complete: responsive pages, toggle, profile, 06-cards, 07-lite dashboard.
-> **TO RESUME:** say **"start 6c"** → 6c Patient frontend (`patient_home` + 5 patients pages + `billing/patient_invoices` responsive). (6b + 6b-ii fix notes still welcome anytime.)
+> **WHERE WE STOPPED (2026-10-15, 6c approved):** 6c Patient frontend APPROVED with no fix notes (incl. banner mind-change). Patient frontend complete: responsive pages, real totals, photo+banner pencil profile.
+> **TO CONTINUE:** say **"start 6d"** → 6d Admin + shared frontend (`admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish). (6b/6c fix notes still welcome anytime.)
 > **DEFERRED NOTE (closed 2026-10-14):** doctor availability self-toggle — BUILT in 6b (`doctors:toggle_availability` on doctor dashboard). Chat remains declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.

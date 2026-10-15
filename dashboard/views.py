@@ -223,8 +223,29 @@ def patient_home(request):
         is_read=False
     ).order_by('-created_at')[:5]
 
+    total_appointments = patient_profile.appointments.count()
+    total_records = patient_profile.medical_records.count()
+    from prescriptions.models import Prescription
+    total_prescriptions = Prescription.objects.filter(
+        medical_record__patient=patient_profile
+    ).count()
+    from billing.models import Invoice
+    from django.db.models import Sum as _Sum
+    pending_invoices_qs = patient_profile.invoices.filter(status='pending')
+    pending_invoices_count = pending_invoices_qs.count()
+    pending_invoices_amount = pending_invoices_qs.aggregate(
+        _Sum('amount')
+    )['amount__sum'] or 0
+
     context = {
+        'patient_profile': patient_profile,
         'upcoming_appointments': upcoming_appointments,
+        'upcoming_count': upcoming_appointments.count(),
+        'total_appointments': total_appointments,
+        'total_records': total_records,
+        'total_prescriptions': total_prescriptions,
+        'pending_invoices_count': pending_invoices_count,
+        'pending_invoices_amount': pending_invoices_amount,
         'notifications': notifications,
     }
     return render(request, 'dashboard/patient_home.html', context)
