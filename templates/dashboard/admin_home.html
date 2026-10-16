@@ -2,8 +2,59 @@
 {% load static %}
 {% block title %}Admin Dashboard · SHMS{% endblock %}
 
+{% block extra_head %}
+<style>
+    /* Scoped to the admin dashboard — entrance, hover and revenue blocks. */
+    .admin-dash .app-stat { animation: admin-rise .55s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0ms); }
+    @keyframes admin-rise {
+        from { opacity: 0; transform: translateY(14px) scale(.985); }
+        to { opacity: 1; transform: none; }
+    }
+    .admin-dash .app-stat::before {
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 3px 0 0 3px;
+        background: linear-gradient(180deg, #489D9A, #225A5D);
+        opacity: 0; transition: opacity .25s ease;
+    }
+    .admin-dash .app-stat:hover { transform: translateY(-5px); border-color: #99c6c4; box-shadow: 0 14px 30px -12px rgba(34,90,93,.35); }
+    .admin-dash .app-stat:hover::before { opacity: 1; }
+    .admin-dash .app-stat .app-icontile { transition: transform .25s ease, background .25s ease, color .25s ease, border-color .25s ease; }
+    .admin-dash .app-stat:hover .app-icontile { transform: scale(1.1) rotate(-4deg); background: #225A5D; border-color: #225A5D; color: #fff; }
+    .admin-dash .app-stat__value { font-size: clamp(20px, 5.2vw, 26px); }
+
+    /* Revenue split: settled vs outstanding — compact, wraps cleanly. */
+    .rev-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+    @media (max-width: 479px) { .rev-grid { grid-template-columns: minmax(0, 1fr); } }
+    .rev-block { border: 1px solid var(--border); border-radius: var(--r-md); padding: 13px 15px; background: #fff; min-width: 0; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+    .rev-block:hover { transform: translateY(-3px); box-shadow: var(--sh-md); }
+    .rev-block--set { border-left: 3px solid #0d9488; background: linear-gradient(140deg, #f0fdfa, #fff 65%); }
+    .rev-block--set:hover { border-color: #99f6e4; border-left-color: #0d9488; }
+    .rev-block--out { border-left: 3px solid #d97706; background: linear-gradient(140deg, #fffbeb, #fff 65%); }
+    .rev-block--out:hover { border-color: #fde68a; border-left-color: #d97706; }
+    .rev-block__label { font-size: 11px; font-weight: 750; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-500); }
+    .rev-block__amount { margin-top: 3px; font-size: clamp(18px, 4.6vw, 22px); font-weight: 800; letter-spacing: -.02em; color: var(--ink-900); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .rev-block__meta { margin-top: 2px; font-size: 12px; color: var(--ink-500); }
+    .rev-bar { margin-top: 9px; height: 7px; border-radius: 99px; background: var(--ink-100); overflow: hidden; }
+    .rev-bar > span { display: block; height: 100%; width: 0; border-radius: 99px; transition: width 1.1s cubic-bezier(.22,1,.36,1) .25s; }
+    .rev-block--set .rev-bar > span { background: linear-gradient(90deg, #14b8a6, #0d9488); }
+    .rev-block--out .rev-bar > span { background: linear-gradient(90deg, #fbbf24, #d97706); }
+
+    /* Doughnut centre total overlay. */
+    .donut-wrap { position: relative; }
+    .donut-centre {
+        position: absolute; inset: 0; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; text-align: center;
+        pointer-events: none; padding-bottom: 34px;
+    }
+    .donut-centre strong { font-size: clamp(24px, 6vw, 32px); font-weight: 800; letter-spacing: -.03em; color: var(--ink-900); font-variant-numeric: tabular-nums; }
+    .donut-centre span { font-size: 11px; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-400); }
+
+    @media (max-width: 640px) { .app-chart-box { height: 240px; } }
+</style>
+{% endblock %}
+
 {% block content %}
 
+<div class="admin-dash">
 {% include "partials/page_header.html" with eyebrow="Administration" title="Executive Overview" subtitle="Live operational picture across the hospital — revenue, scheduling and workforce." %}
 
 {% if request.session.is_demo %}
@@ -16,13 +67,13 @@
 {# ================= KPI ROW ================= #}
 <section class="app-grid app-grid--4 mb-6" aria-label="Key performance indicators">
 
-    <article class="app-stat app-stat--accent">
+    <article class="app-stat app-stat--accent" style="--d:0ms">
         <span class="app-icontile" aria-hidden="true">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </span>
         <div class="app-stat__body">
             <p class="app-stat__label">Revenue Collected</p>
-            <p class="app-stat__value"><small>₦</small>{{ total_revenue|floatformat:0 }}</p>
+            <p class="app-stat__value"><small>₦</small><span data-countup="{{ total_revenue|floatformat:0 }}">{{ total_revenue|floatformat:0 }}</span></p>
             <p class="app-stat__hint up">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M5 13l4 4L19 7"/></svg>
                 Paid invoices only
@@ -30,37 +81,37 @@
         </div>
     </article>
 
-    <article class="app-stat">
+    <article class="app-stat" style="--d:80ms">
         <span class="app-icontile app-icontile--amber" aria-hidden="true">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </span>
         <div class="app-stat__body">
             <p class="app-stat__label">Outstanding</p>
-            <p class="app-stat__value"><small>₦</small>{{ pending_revenue|floatformat:0 }}</p>
+            <p class="app-stat__value"><small>₦</small><span data-countup="{{ pending_revenue|floatformat:0 }}">{{ pending_revenue|floatformat:0 }}</span></p>
             <p class="app-stat__hint">Awaiting settlement</p>
         </div>
     </article>
 
-    <article class="app-stat">
+    <article class="app-stat" style="--d:160ms">
         <span class="app-icontile app-icontile--violet" aria-hidden="true">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
         </span>
         <div class="app-stat__body">
             <p class="app-stat__label">Appointments</p>
-            <p class="app-stat__value">{{ total_appointments }}</p>
+            <p class="app-stat__value"><span data-countup="{{ total_appointments }}">{{ total_appointments }}</span></p>
             <p class="app-stat__hint {% if pending_appointments %}down{% endif %}">
                 {{ pending_appointments }} awaiting approval
             </p>
         </div>
     </article>
 
-    <article class="app-stat">
+    <article class="app-stat" style="--d:240ms">
         <span class="app-icontile app-icontile--emerald" aria-hidden="true">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         </span>
         <div class="app-stat__body">
             <p class="app-stat__label">Active Workforce</p>
-            <p class="app-stat__value">{{ total_doctors }}<small> doctors</small></p>
+            <p class="app-stat__value"><span data-countup="{{ total_doctors }}">{{ total_doctors }}</span><small> doctors</small></p>
             <p class="app-stat__hint">{{ total_patients }} registered patients</p>
         </div>
     </article>
@@ -100,8 +151,12 @@
                 </div>
             </div>
 
-            <div class="app-chart-box">
+            <div class="app-chart-box donut-wrap">
                 <canvas id="statusChart" role="img" aria-label="Appointment status distribution"></canvas>
+                <div class="donut-centre" aria-hidden="true">
+                    <strong data-countup="{{ total_appointments }}">{{ total_appointments }}</strong>
+                    <span>Total bookings</span>
+                </div>
             </div>
         </div>
     </article>
@@ -121,14 +176,18 @@
                 <canvas id="revenueChart" role="img" aria-label="Paid versus pending revenue"></canvas>
             </div>
 
-            <div class="app-grid app-grid--2 mt-5" style="gap:12px;">
-                <div class="app-note app-note--success">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <div><strong>Settled</strong>₦{{ total_revenue|floatformat:0 }} received to date.</div>
+            <div class="rev-grid">
+                <div class="rev-block rev-block--set">
+                    <p class="rev-block__label">Settled</p>
+                    <p class="rev-block__amount">₦<span data-countup="{{ total_revenue|floatformat:0 }}">{{ total_revenue|floatformat:0 }}</span></p>
+                    <p class="rev-block__meta">{{ collected_share }}% of billed revenue</p>
+                    <div class="rev-bar" role="progressbar" aria-valuenow="{{ collected_share }}" aria-valuemin="0" aria-valuemax="100" aria-label="Share of revenue collected"><span data-bar="{{ collected_share }}"></span></div>
                 </div>
-                <div class="app-note app-note--warn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <div><strong>Outstanding</strong>₦{{ pending_revenue|floatformat:0 }} still payable.</div>
+                <div class="rev-block rev-block--out">
+                    <p class="rev-block__label">Outstanding</p>
+                    <p class="rev-block__amount">₦<span data-countup="{{ pending_revenue|floatformat:0 }}">{{ pending_revenue|floatformat:0 }}</span></p>
+                    <p class="rev-block__meta">{{ outstanding_share }}% still payable</p>
+                    <div class="rev-bar" role="progressbar" aria-valuenow="{{ outstanding_share }}" aria-valuemin="0" aria-valuemax="100" aria-label="Share of revenue outstanding"><span data-bar="{{ outstanding_share }}"></span></div>
                 </div>
             </div>
         </div>
@@ -183,6 +242,7 @@
         </div>
     </div>
 </section>
+</div>
 
 {% endblock %}
 
@@ -191,11 +251,59 @@
 <script src="{% static 'js/chart.umd.min.js' %}"></script>
 <script>
 (function () {
+    'use strict';
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function fmtNaira(n) { return Number(n).toLocaleString('en-US'); }
+    function fmtCompact(n) {
+        n = Number(n);
+        if (n >= 1000000) return '₦' + (Math.round(n / 100000) / 10) + 'M';
+        if (n >= 1000) return '₦' + (Math.round(n / 100) / 10) + 'k';
+        return '₦' + n;
+    }
+
+    /* Animated counters — static server values stay if JS is off. */
+    function countUp(el) {
+        var target = parseFloat(el.getAttribute('data-countup'));
+        if (isNaN(target)) return;
+        if (reduceMotion) { el.textContent = fmtNaira(Math.round(target)); return; }
+        var dur = 1200, start = null;
+        function frame(now) {
+            if (!start) start = now;
+            var p = Math.min((now - start) / dur, 1);
+            var eased = 1 - Math.pow(2, -10 * p);
+            if (p === 1) eased = 1;
+            el.textContent = fmtNaira(Math.round(target * eased));
+            if (p < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+    }
+    document.querySelectorAll('[data-countup]').forEach(countUp);
+
+    /* Revenue share bars — animate to their server-computed widths. */
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+            document.querySelectorAll('[data-bar]').forEach(function (bar) {
+                bar.style.width = Math.max(0, Math.min(100, parseFloat(bar.getAttribute('data-bar')) || 0)) + '%';
+            });
+        });
+    });
+
     if (typeof Chart === 'undefined') return;
 
     Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
     Chart.defaults.font.size = 12;
     Chart.defaults.color = '#6b7280';
+
+    var tooltipStyle = {
+        backgroundColor: '#0f172a',
+        titleFont: { weight: '700', size: 12 },
+        bodyFont: { size: 12 },
+        padding: 12,
+        cornerRadius: 10,
+        boxWidth: 8,
+        boxPadding: 4
+    };
 
     var statusCanvas = document.getElementById('statusChart');
     if (statusCanvas) {
@@ -211,29 +319,39 @@
                         {{ cancelled_appointments }}
                     ],
                     backgroundColor: ['#f59e0b', '#0ea5e9', '#10b981', '#ef4444'],
+                    hoverBackgroundColor: ['#d97706', '#0284c7', '#059669', '#dc2626'],
                     borderColor: '#ffffff',
                     borderWidth: 3,
-                    hoverOffset: 8
+                    hoverOffset: 10,
+                    spacing: 2,
+                    borderRadius: 5
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '64%',
+                cutout: '68%',
+                layout: { padding: 6 },
+                animation: reduceMotion ? false : {
+                    duration: 1400,
+                    easing: 'easeOutQuart',
+                    animateRotate: true,
+                    animateScale: true
+                },
                 plugins: {
                     legend: {
                         position: 'bottom',
                         labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, boxWidth: 8 }
                     },
-                    tooltip: {
+                    tooltip: Object.assign({}, tooltipStyle, {
                         callbacks: {
                             label: function (ctx) {
                                 var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
                                 var pct = total ? Math.round((ctx.parsed / total) * 100) : 0;
-                                return ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
+                                return ' ' + ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
                             }
                         }
-                    }
+                    })
                 }
             }
         });
@@ -241,36 +359,51 @@
 
     var revenueCanvas = document.getElementById('revenueChart');
     if (revenueCanvas) {
+        var ctx2d = revenueCanvas.getContext('2d');
+        var gradSettled = ctx2d.createLinearGradient(0, 0, revenueCanvas.width || 400, 0);
+        gradSettled.addColorStop(0, '#14b8a6');
+        gradSettled.addColorStop(1, '#0d9488');
+        var gradOutstanding = ctx2d.createLinearGradient(0, 0, revenueCanvas.width || 400, 0);
+        gradOutstanding.addColorStop(0, '#fbbf24');
+        gradOutstanding.addColorStop(1, '#d97706');
+
         new Chart(revenueCanvas, {
             type: 'bar',
             data: {
                 labels: ['Collected', 'Outstanding'],
                 datasets: [{
                     data: [{{ total_revenue }}, {{ pending_revenue }}],
-                    backgroundColor: ['#0d9488', '#f59e0b'],
+                    backgroundColor: [gradSettled, gradOutstanding],
+                    hoverBackgroundColor: ['#0f766e', '#b45309'],
                     borderRadius: 10,
                     borderSkipped: false,
-                    maxBarThickness: 78
+                    maxBarThickness: 64
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 indexAxis: 'y',
+                animation: reduceMotion ? false : {
+                    duration: 1200,
+                    easing: 'easeOutQuart',
+                    delay: function (ctx) { return ctx.dataIndex * 180; }
+                },
                 plugins: {
                     legend: { display: false },
-                    tooltip: {
+                    tooltip: Object.assign({}, tooltipStyle, {
                         callbacks: {
-                            label: function (ctx) { return '₦' + Number(ctx.parsed.x).toLocaleString(); }
+                            label: function (ctx) { return ' ₦' + fmtNaira(ctx.parsed.x); }
                         }
-                    }
+                    })
                 },
                 scales: {
                     x: {
                         beginAtZero: true,
-                        grid: { color: '#eef2f7', drawBorder: false },
+                        grid: { color: '#eef2f7' },
                         ticks: {
-                            callback: function (v) { return '₦' + Number(v).toLocaleString(); }
+                            maxTicksLimit: 5,
+                            callback: function (v) { return fmtCompact(v); }
                         }
                     },
                     y: { grid: { display: false }, border: { display: false } }

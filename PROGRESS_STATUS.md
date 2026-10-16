@@ -20,8 +20,8 @@
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
-- **Last updated:** 2026-10-15 | **Last pushed commit:** `e1a5bb2` on `redesign-homepage` (2026-10-15) | **Health:** `manage.py check` → no issues (verified 2026-10-15)
-- **WHERE WE STOPPED (2026-10-15, 6c approved):** 6c APPROVED with no fix notes (incl. patient-banner mind-change). Patient frontend complete. **To continue, say "start 6d".** Next = 6d Admin + shared frontend.
+- **Last updated:** 2026-10-16 | **Last pushed commit:** `e1a5bb2` on `redesign-homepage` (2026-10-15) + unpushed `4956a8d` tracker + uncommitted 6d pile | **Health:** `manage.py check` → no issues (verified 2026-10-16)
+- **WHERE WE STOPPED (2026-10-16, 6d approved):** 6d APPROVED with no fix notes (incl. admin card-animation + revenue-responsiveness mind-change). All frontends complete: doctor + patient + admin/shared. **To continue, say "start 7".** Next = Stage 7 QA + docs (README cleanup Phase 27 + final review Phase 28).
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -55,7 +55,7 @@
 | 6b-ii Patient cards | My Patients as 06-style cards (photo, info sheet, Open Chart — real data only) | DONE, awaiting visual approval (user moved to 6b-iii, fix notes still welcome) | 2026-10-14 |
 | 6b-iii Dashboard 07-lite | About strip + real-count stats + Patients table on `doctor_home` (no invented gauge/feedback) | DONE — approved ("okay like this"), pushed | 2026-10-14 |
 | 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive + patient banner mind-change | DONE — approved, no fix notes | 2026-10-15 |
-| 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish | QUEUED | — |
+| 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish + admin animation mind-change | DONE — approved, no fix notes | 2026-10-16 |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
 
 **Phase progress (28-phase plan):** Phases 1–11 complete; 12–28 remaining (see §10 tail list).
@@ -157,6 +157,12 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-16 (Stage 6d approval + push):** user replied "approved", no fix notes. Pushed to `origin/redesign-homepage` — PASS (`main` untouched). Tracker updated (§1 last-pushed, §3, §12). Tested: push verified. NOT tested: Stage 7 (needs explicit start).
+
+- **2026-10-16 (Stage 6d mind-change — admin animation + revenue responsiveness, per your "make it good like a professional analyst"):** KPI cards gain staggered fade-up entrance + hover change (lift, teal accent bar, icon tile fills teal + tilts) + animated count-up numbers (static server values stay if JS off); Settled/Outstanding rebuilt from cramped `app-note` pair into responsive `rev-grid` mini-panels (2 cols desktop/tablet, stack < 480px, tabular amounts, share % + animated progress bars from new `collected_share/outstanding_share` view context); charts upgraded — doughnut (68% cutout, rotate+scale entrance, centre total overlay, dark tooltips with %) + revenue bars (teal/amber gradients, staggered bar delay, compact ₦k/₦M axis, full-₦ tooltips), all reduced-motion safe. Files: `templates/dashboard/admin_home.html` + `dashboard/views.py` (shares only, no logic change). Tested: `check` clean; admin_home 200 (rev-grid, donut centre, countup, shares present). NOT tested: your real eyes on phone + laptop + hover feel.
+
+- **2026-10-16 (Stage 6d — ADMIN + SHARED FRONTEND, last task done):** `admin_home` reviewed — already on app-system (page_header + app-stat + charts + tiles), no change. Rebuilt: `pharmacy/medicine_list` (page_header + 3 app-stats + app-table + badge + styled delete-confirm + empty_state) + `medicine_form` (fluid card, 2-col, Cancel/Save row); `notifications/list` (page_header + unread row + app-card list, no emoji); `404/403/500` dual-block (auth `content` + anon `public_content` — anon 404/403/500 previously blank); `demo_page` (app-cards, SVG tiles, no emojis); `accounts/choose_role` (app-cards); `verification_sent/failed` + `password_reset*` polished AND fixed to `public_content` (reset/done/confirm/complete + verification_failed previously `content`-only → blank for logged-out users); `verify/setup/disable_2fa` polished (app-cards, numeric input). **Faults found + fixed:** 7 templates blank for anonymous users (wrong block). Tested: `check` clean; anon 5/5 GET 200 (demo/login/reset/sent/done); auth pharmacy 200 + add 200 + notifications 200 + admin 200 (charts present); no-emoji asserts PASS. NOT tested: your real eyes on laptop + phone + actual medicine add/edit/delete submit + demo logins. STOP POINT = here.
+
 - **2026-10-15 (Stage 6c approval + push):** user replied "approved", no fix notes. Pushed `1d4e9d8..e1a5bb2` to `origin/redesign-homepage` — PASS (`main` untouched). Tracker updated (§1 last-pushed, §3, §12). Tested: push verified. NOT tested: 6d (needs explicit start).
 
 - **2026-10-15 (Stage 6c approval — user approved):** user replied "approved", no fix notes. Tracker updated (§1, §3, §12). Tested: no code change. NOT tested: 6d (needs explicit start).
@@ -223,8 +229,8 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-15, 6c approved):** 6c Patient frontend APPROVED with no fix notes (incl. banner mind-change). Patient frontend complete: responsive pages, real totals, photo+banner pencil profile.
-> **TO CONTINUE:** say **"start 6d"** → 6d Admin + shared frontend (`admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish). (6b/6c fix notes still welcome anytime.)
+> **WHERE WE STOPPED (2026-10-16, 6d approved):** 6d Admin + shared frontend APPROVED with no fix notes (incl. admin card-animation + revenue-responsiveness mind-change). All frontends complete.
+> **TO CONTINUE:** say **"start 7"** → Stage 7 QA + docs (README cleanup Phase 27 + final review Phase 28).
 > **DEFERRED NOTE (closed 2026-10-14):** doctor availability self-toggle — BUILT in 6b (`doctors:toggle_availability` on doctor dashboard). Chat remains declined.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.

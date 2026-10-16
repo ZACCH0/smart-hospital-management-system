@@ -32,6 +32,13 @@ def admin_home(request):
         status='pending'
     ).aggregate(Sum('amount'))['amount__sum'] or 0
 
+    revenue_total = (total_revenue or 0) + (pending_revenue or 0)
+    if revenue_total:
+        collected_share = round(float(total_revenue or 0) / float(revenue_total) * 100)
+    else:
+        collected_share = 0
+    outstanding_share = 100 - collected_share if revenue_total else 0
+
     context = {
         'total_doctors': total_doctors,
         'total_patients': total_patients,
@@ -42,6 +49,8 @@ def admin_home(request):
         'cancelled_appointments': cancelled_appointments,
         'total_revenue': total_revenue,
         'pending_revenue': pending_revenue,
+        'collected_share': collected_share,
+        'outstanding_share': outstanding_share,
     }
     return render(request, 'dashboard/admin_home.html', context)
 
