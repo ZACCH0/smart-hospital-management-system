@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **46% (13 / 28 phases)** — `█████████░░░░░░░░░░░ 46%`
 - **Last updated:** 2026-10-18 | **Last pushed commit:** `fe15385` on `redesign-homepage` (2026-10-16) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
-- **WHERE WE STOPPED (2026-10-18, Stage 7 complete, awaiting approval):** Stage 7 QA + docs done — README cleanup (Phase 27: tutorial moved verbatim to `docs/readme-tutorial-archive.md`, README rebuilt) + final review (Phase 28: check clean, 5 smoke GETs pass, placeholders intact, secrets clean) + fault fix (`requirements.txt` UTF-16 → UTF-8). **Awaiting your review/approval of Stage 7.** Next after approval = backend phases 12–26 (start with Phase 12 EMR Improvement, or name one).
+- **WHERE WE STOPPED (2026-10-18, Stage 7b complete, 2 decisions needed):** User fix notes handled: "Dr. Dr" seed bug FIXED (DB `Dr. James`→`James`, `Dr Hilda`→`Hilda` + data.json 12 strings; homepage renders 0 "Dr. Dr"); empty orphan `accounts/accounts.html` moved to `templates/legacy/`. **Key finding: the "undesigned" pages (demo, choose-role, verify page) ARE redesigned on this branch — the live site runs `main` (old blue/emoji design, confirmed by fetching live `/demo/`).** **DECISIONS NEEDED: (1) merge `redesign-homepage` → `main` to update live? (2) stray `DoctorProfile id=4` = patient Allison Ade shown as doctor on homepage — delete (cascades 1 test appointment) or keep?**
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -57,6 +57,7 @@
 | 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive + patient banner mind-change | DONE — approved, no fix notes | 2026-10-15 |
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish + admin animation mind-change | DONE — approved, no fix notes | 2026-10-16 |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DONE — awaiting approval | 2026-10-18 |
+| 7b User fix notes | "Dr. Dr" seed fix + empty accounts.html → legacy + live-vs-branch diagnosis | DONE — 2 decisions needed | 2026-10-18 |
 
 **Phase progress (28-phase plan):** Phases 1–11 + 27–28 complete; 12–26 remaining (see §10 tail list).
 - [x] 1 Security Foundation · [x] 2 Multi-profile Architecture · [x] 3 Audit Logging · [x] 4 2FA (TOTP) · [x] 5 DB Performance · [x] 6 Appointment Upgrade · [x] 7 Email Verification · [x] 8 Lab Access Control · [x] 9 Doctor Appointment Restrictions · [x] 10 Demo Environment · [x] 11 UI/UX Dark Sidebar + Homepage · [x] 27 Documentation (README cleanup 2026-10-18) · [x] 28 Final Quality Review (2026-10-18)
@@ -86,7 +87,7 @@
 | `[HOSPITAL_EMAIL_TO_BE_PROVIDED]` | Homepage footer contact + emergency strip | Hospital owner |
 | `[HOSPITAL_PHONE_TO_BE_PROVIDED]` | Homepage footer contact + emergency strip Call button | Hospital owner |
 | `[HOSPITAL_ADDRESS_TO_BE_PROVIDED]` | Homepage footer contact block | Hospital owner |
-| Seed data cleanup ("Dr" inside some first names → renders "Dr. Dr …") | DB seed / demo data | Developer (on request) |
+| Seed data cleanup ("Dr" inside some first names → renders "Dr. Dr …") | DB seed / demo data | Developer (on request) — **CLOSED 2026-10-18:** DB (`Dr. James`→`James`, `Dr Hilda`→`Hilda`) + `data.json` (12 strings) fixed, homepage verified 0 "Dr. Dr" |
 
 ## 6. Design / brand (colours, fonts, tone)
 
@@ -111,6 +112,8 @@
 - **`requirements.txt` was UTF-16 LE (FOUND + FIXED 2026-10-18):** same class of bug as the old `.gitignore` — git/pip/tooling see it as binary, diffs impossible. Converted to UTF-8 (no BOM), 16 lines content-identical (line-by-line compared), `pip install -r requirements.txt` parses exit 0. All other root files already UTF-8.
 - **Dead `.gitignore` (FOUND + FIXED 2026-10-13):** file was UTF-16 encoded — git cannot parse it, so zero patterns worked. Consequence: ~125 `__pycache__/*.pyc` files AND 18 `media/` user uploads (profile photos, lab-report PDFs) got committed. Fixed: converted `.gitignore` to UTF-8 (verified via `check-ignore`), `git rm --cached` all pyc/media (working tree untouched, 0 remain tracked). Secrets check: no `.env`/sqlite ever tracked. Remaining risk: old commits still contain those files — needs history cleanup (`filter-repo`) before any public push of those commits, or leave history and go forward clean (decision needed).
 - **`partials/status_badge.html` broken filter (CLOSED 2026-10-13):** used non-existent `replace` filter — latent crash on any page rendering it with data (e.g. doctor dashboard with appointments). Fixed with explicit labels (`No Show`, `In Progress`, `capfirst` for rest); all 12 statuses render-tested. Homepage never used it (inline badges).
+- **Stray `DoctorProfile id=4` (OPEN, decision 2026-10-18):** user `precious@gmail.com` is `role=patient` (renamed "Allison Ade" during testing) yet has a doctor profile (available=True) → renders as "Dr. Allison Ade" on the public homepage doctors grid. NOT in fixture (only pks 1-3 seeded) = test-created. Has 1 appointment attached (also test data). Options: delete both (cascade) vs set `available=False`. Awaiting user decision.
+- **"Undesigned pages" report (DIAGNOSED 2026-10-18):** user reported demo/verify/two-profile pages as undesigned — all three ARE redesigned on `redesign-homepage` (verified templates + local 200s); live site runs `main` with old design (fetched live `/demo/`: 🎭 emojis, blue heading, checkmark lists). Root cause = redesign never merged to `main` (deploy rule). Fix = user approves merge.
 
 ## 8. Decisions (answered / working defaults / superseded)
 
@@ -157,6 +160,8 @@ git log --oneline -10
 ```
 
 ## 10. Last changes (dated, per stage, fixes + tests)
+
+- **2026-10-18 (Stage 7b — USER FIX NOTES, last task done):** per your notes on undesigned pages + "Dr. Dr". **"Dr. Dr" FIXED:** root cause = seed first names contained titles (`Dr. James` id19, `Dr Hilda` id3) + templates print `Dr. {{ name }}`. Local DB names cleaned → `James`/`Hilda`; `data.json` cleaned (12 occurrences: first_name + seeded notification/audit strings → "Dr. Hilda …" where prefixed). Verified: homepage now renders `Dr. James Adeyemi`, `Dr. Hilda Ashio Titiloye`, 0× "Dr. Dr"; DB-wide scan for `Dr. Dr`/`Dr Hilda`/`Dr. James` = 0 hits. **Empty file moved:** `templates/accounts/accounts.html` (0 lines, referenced by no view) → `templates/legacy/accounts_accounts.html` (rule: move, never delete). **Diagnosis:** demo/choose-role/verification pages ARE redesigned on this branch (templates verified); live runs `main` — fetched live `/demo/` = old design (emojis/blue) confirmed. **Found:** stray `DoctorProfile id=4` = patient shown as homepage doctor (decision needed, §7). Tested: homepage render asserts above; `data.json` regex 0 leftover. NOT tested: your real eyes locally; live after merge. STOP POINT = here (2 decisions needed).
 
 - **2026-10-18 (Stage 7 — QA + DOCS, Phases 27 + 28, last task done):** **README cleanup (Phase 27):** old lines 39-282 (pasted tutorial chat) moved verbatim to `docs/readme-tutorial-archive.md` with provenance header; README rebuilt — Features / Tech Stack / Setup / Project Structure tree (real apps incl. `core/`) / Live Demo / Developer; stack line updated to match requirements (added WhiteNoise, django-otp). **Final review (Phase 28):** `check` clean; smoke GETs `/` + login + register + demo = 200, unknown URL = 404; 4 footer placeholders intact; 0 TODO/FIXME in py/html; no `.env`/sqlite/`.pyc` tracked; `SECRET_KEY = config('SECRET_KEY')` env-only; `main` = `origin/main` untouched; branch in sync with origin. **Fault found + fixed:** `requirements.txt` UTF-16 LE → UTF-8 (content-identical, pip exit 0). **QA notes:** `manage.py test` runs 0 tests (all `tests.py` are empty stubs — Phase 21 open); test client needs `SERVER_NAME='localhost'` because local `.env` overrides the `ALLOWED_HOSTS='*'` default. Tested: everything above. NOT tested: your real eyes on README render, live Render deploy with new UTF-8 requirements.txt, logged-in page re-sweep this stage. STOP POINT = here (awaiting Stage 7 approval).
 
@@ -233,16 +238,18 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-18, Stage 7 complete):** Stage 7 QA + docs (Phases 27 + 28) DONE — README rebuilt + tutorial archived to `docs/`, `requirements.txt` encoding fixed, full final review passed. **Awaiting your approval of Stage 7.**
-> **TO CONTINUE:** reply **"approved"** (or fix notes) for Stage 7 → then pick the next backend phase: **12 EMR Improvement** is the recommended start; remaining = 12–26.
+> **WHERE WE STOPPED (2026-10-18, Stage 7b complete):** "Dr. Dr" seed bug fixed + verified; empty `accounts.html` moved to legacy; live-vs-branch diagnosis done (pages you called "undesigned" are done on this branch — live site runs old `main`).
+> **TO CONTINUE — 2 DECISIONS:** **(1)** approve merge `redesign-homepage` → `main` so the live site gets all redesigned pages (demo, choose-role, verification, dashboards, README)? **(2)** stray `DoctorProfile id=4` (patient Allison Ade appears as a doctor on the homepage) — delete it + its 1 test appointment, or keep?
+> **AFTER THAT:** Stage 7 approval stands? Then next backend phase = **12 EMR Improvement** (remaining = 12–26).
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 > **RECEPTIONIST FLOW APPROVED 2026-10-14 (user):** all 9 pages responsive + Create-Invoice fix approved as-is.
 > **ALL FRONTENDS APPROVED (user, 6b-i/6b-iii/6c/6d):** doctor + patient + admin + shared templates approved as-is.
 
-1. **Stage 7 approval** — review the new `README.md` + `docs/readme-tutorial-archive.md` + this tracker update; reply "approved" or fix notes.
-2. **Commit + push** Stage 7 on `redesign-homepage` after approval (never `main`).
-3. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).
+1. **Decision 1:** merge `redesign-homepage` → `main` now (updates live Render site — all redesigned pages go live; only on your explicit approval per deploy rule).
+2. **Decision 2:** stray `DoctorProfile id=4` — delete + its 1 test appointment, or keep it but hide?
+3. **Stage 7 + 7b approval** — then push this branch; next build phase = 12 EMR Improvement (or pick from 12–26).
+4. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).
 
 ---
 
@@ -252,4 +259,4 @@ git log --oneline -10
 - YYYY-MM-DD (Stage N): <what done> — <files changed>. Tested: <how verified>. NOT tested: <what remains>.
 ```
 
-- On phase completion: update `39%` = `completed/28*100`, move item from §3 remaining list, redraw bar (`█` = 5%).
+- On phase completion: update `%` = `completed/28*100`, move item from §3 remaining list, redraw bar (`█` = 5%).
