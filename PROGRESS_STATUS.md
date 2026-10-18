@@ -19,9 +19,9 @@
 - **GitHub:** https://github.com/ZACCH0/smart-hospital-management-system
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
-- **Completion:** **39% (11 / 28 phases)** — `████████░░░░░░░░░░░░ 39%`
-- **Last updated:** 2026-10-16 | **Last pushed commit:** `e2df426` on `redesign-homepage` (2026-10-16) | **Health:** `manage.py check` → no issues (verified 2026-10-16)
-- **WHERE WE STOPPED (2026-10-16, 6d approved):** 6d APPROVED with no fix notes (incl. admin card-animation + revenue-responsiveness mind-change). All frontends complete: doctor + patient + admin/shared. **To continue, say "start 7".** Next = Stage 7 QA + docs (README cleanup Phase 27 + final review Phase 28).
+- **Completion:** **46% (13 / 28 phases)** — `█████████░░░░░░░░░░░ 46%`
+- **Last updated:** 2026-10-18 | **Last pushed commit:** `fe15385` on `redesign-homepage` (2026-10-16) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
+- **WHERE WE STOPPED (2026-10-18, Stage 7 complete, awaiting approval):** Stage 7 QA + docs done — README cleanup (Phase 27: tutorial moved verbatim to `docs/readme-tutorial-archive.md`, README rebuilt) + final review (Phase 28: check clean, 5 smoke GETs pass, placeholders intact, secrets clean) + fault fix (`requirements.txt` UTF-16 → UTF-8). **Awaiting your review/approval of Stage 7.** Next after approval = backend phases 12–26 (start with Phase 12 EMR Improvement, or name one).
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -56,11 +56,11 @@
 | 6b-iii Dashboard 07-lite | About strip + real-count stats + Patients table on `doctor_home` (no invented gauge/feedback) | DONE — approved ("okay like this"), pushed | 2026-10-14 |
 | 6c Patient frontend | `patient_home` + `patients/my_appointments,my_medical_records,my_prescriptions,book_appointment,profile_settings` + `billing/patient_invoices` responsive + patient banner mind-change | DONE — approved, no fix notes | 2026-10-15 |
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish + admin animation mind-change | DONE — approved, no fix notes | 2026-10-16 |
-| 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DEFERRED — after 6b/6c/6d per user 2026-10-14 | — |
+| 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DONE — awaiting approval | 2026-10-18 |
 
-**Phase progress (28-phase plan):** Phases 1–11 complete; 12–28 remaining (see §10 tail list).
-- [x] 1 Security Foundation · [x] 2 Multi-profile Architecture · [x] 3 Audit Logging · [x] 4 2FA (TOTP) · [x] 5 DB Performance · [x] 6 Appointment Upgrade · [x] 7 Email Verification · [x] 8 Lab Access Control · [x] 9 Doctor Appointment Restrictions · [x] 10 Demo Environment · [x] 11 UI/UX Dark Sidebar + Homepage
-- [ ] 12 EMR Improvement · [ ] 13 Prescriptions · [ ] 14 Pharmacy · [ ] 15 Laboratory · [ ] 16 Billing · [ ] 17 IPD/Ward · [ ] 18 Notifications · [ ] 19 REST API Pro · [ ] 20 Dashboards & Analytics · [ ] 21 Automated Testing · [ ] 22 Audit & Security UI · [ ] 23 Backup & Recovery · [ ] 24 Multi-tenancy · [ ] 25 Hospital Registration · [ ] 26 Subscriptions · [ ] 27 Documentation (README lines 39-282 tutorial cleanup) · [ ] 28 Final Quality Review
+**Phase progress (28-phase plan):** Phases 1–11 + 27–28 complete; 12–26 remaining (see §10 tail list).
+- [x] 1 Security Foundation · [x] 2 Multi-profile Architecture · [x] 3 Audit Logging · [x] 4 2FA (TOTP) · [x] 5 DB Performance · [x] 6 Appointment Upgrade · [x] 7 Email Verification · [x] 8 Lab Access Control · [x] 9 Doctor Appointment Restrictions · [x] 10 Demo Environment · [x] 11 UI/UX Dark Sidebar + Homepage · [x] 27 Documentation (README cleanup 2026-10-18) · [x] 28 Final Quality Review (2026-10-18)
+- [ ] 12 EMR Improvement · [ ] 13 Prescriptions · [ ] 14 Pharmacy · [ ] 15 Laboratory · [ ] 16 Billing · [ ] 17 IPD/Ward · [ ] 18 Notifications · [ ] 19 REST API Pro · [ ] 20 Dashboards & Analytics · [ ] 21 Automated Testing · [ ] 22 Audit & Security UI · [ ] 23 Backup & Recovery · [ ] 24 Multi-tenancy · [ ] 25 Hospital Registration · [ ] 26 Subscriptions
 
 ## 4. Confirmed info (facts I approved)
 
@@ -107,7 +107,8 @@
 - **Homepage gaps vs 13-section brief (CLOSED 2026-10-13):** trust strip, About, 2 service cards, Why SHMS, Doctors, How It Works, appointment/final CTAs, FAQ all missing; `#stats` mislabeled as How It Works; no Book Appointment CTA. All built 2026-10-13.
 - **`home` was context-less TemplateView (CLOSED 2026-10-13):** could not supply real doctors. Superseded: read-only `core/views.home` (see §8).
 - **Dead AI modal API key (OPEN, kept per user):** `home.html` Gemini call has empty `apiKey`. User chose to keep as-is 2026-10-13.
-- **README polluted (OPEN):** lines 39-282 contain pasted tutorial — move to docs in Phase 27, never silently delete.
+- **README polluted (CLOSED 2026-10-18):** lines 39-282 contained pasted tutorial — moved verbatim to `docs/readme-tutorial-archive.md` (nothing deleted), README rebuilt clean (features/stack/setup/structure/live/demo/dev, every claim verified against `requirements.txt` + `settings.py`).
+- **`requirements.txt` was UTF-16 LE (FOUND + FIXED 2026-10-18):** same class of bug as the old `.gitignore` — git/pip/tooling see it as binary, diffs impossible. Converted to UTF-8 (no BOM), 16 lines content-identical (line-by-line compared), `pip install -r requirements.txt` parses exit 0. All other root files already UTF-8.
 - **Dead `.gitignore` (FOUND + FIXED 2026-10-13):** file was UTF-16 encoded — git cannot parse it, so zero patterns worked. Consequence: ~125 `__pycache__/*.pyc` files AND 18 `media/` user uploads (profile photos, lab-report PDFs) got committed. Fixed: converted `.gitignore` to UTF-8 (verified via `check-ignore`), `git rm --cached` all pyc/media (working tree untouched, 0 remain tracked). Secrets check: no `.env`/sqlite ever tracked. Remaining risk: old commits still contain those files — needs history cleanup (`filter-repo`) before any public push of those commits, or leave history and go forward clean (decision needed).
 - **`partials/status_badge.html` broken filter (CLOSED 2026-10-13):** used non-existent `replace` filter — latent crash on any page rendering it with data (e.g. doctor dashboard with appointments). Fixed with explicit labels (`No Show`, `In Progress`, `capfirst` for rest); all 12 statuses render-tested. Homepage never used it (inline badges).
 
@@ -156,6 +157,8 @@ git log --oneline -10
 ```
 
 ## 10. Last changes (dated, per stage, fixes + tests)
+
+- **2026-10-18 (Stage 7 — QA + DOCS, Phases 27 + 28, last task done):** **README cleanup (Phase 27):** old lines 39-282 (pasted tutorial chat) moved verbatim to `docs/readme-tutorial-archive.md` with provenance header; README rebuilt — Features / Tech Stack / Setup / Project Structure tree (real apps incl. `core/`) / Live Demo / Developer; stack line updated to match requirements (added WhiteNoise, django-otp). **Final review (Phase 28):** `check` clean; smoke GETs `/` + login + register + demo = 200, unknown URL = 404; 4 footer placeholders intact; 0 TODO/FIXME in py/html; no `.env`/sqlite/`.pyc` tracked; `SECRET_KEY = config('SECRET_KEY')` env-only; `main` = `origin/main` untouched; branch in sync with origin. **Fault found + fixed:** `requirements.txt` UTF-16 LE → UTF-8 (content-identical, pip exit 0). **QA notes:** `manage.py test` runs 0 tests (all `tests.py` are empty stubs — Phase 21 open); test client needs `SERVER_NAME='localhost'` because local `.env` overrides the `ALLOWED_HOSTS='*'` default. Tested: everything above. NOT tested: your real eyes on README render, live Render deploy with new UTF-8 requirements.txt, logged-in page re-sweep this stage. STOP POINT = here (awaiting Stage 7 approval).
 
 - **2026-10-16 (Stage 6d approval + push):** user replied "approved", no fix notes. Pushed to `origin/redesign-homepage` — PASS (`main` untouched). Tracker updated (§1 last-pushed, §3, §12). Tested: push verified. NOT tested: Stage 7 (needs explicit start).
 
@@ -226,19 +229,20 @@ git log --oneline -10
 - **Render free tier (per README):** expect cold-start sleeps; verify plan + env (`EMAIL_HOST_USER/PASSWORD`, `DEFAULT_FROM_EMAIL`) in dashboard. Live SMTP delivery NOT tested.
 - **Untested by user:** browser look (1440/768/390) for homepage + auth + tabs; tab click behaviour; POST register/login; logged-in role views of `/`; booking flow end-to-end.
 - **Risks:** large uncommitted pile (`templates/`, `static/`, `templates/partials/`, this file) on `redesign-homepage` — commit soon. Old git history still contains `media/` uploads + pyc files (see §7 — needs history-cleanup decision before public push of those commits). `db.sqlite3` + `.env` must never be committed (now enforced by working `.gitignore`).
+- **Zero automated tests (Phase 21 open):** every `tests.py` is an empty stub — `manage.py test` runs 0 tests. When tests are written, use `Client(SERVER_NAME='localhost')` (or override `ALLOWED_HOSTS`) or every request 400s locally, because `.env` sets `ALLOWED_HOSTS` explicitly and beats the `'*'` default in `settings.py:9`.
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-16, 6d approved):** 6d Admin + shared frontend APPROVED with no fix notes (incl. admin card-animation + revenue-responsiveness mind-change). All frontends complete.
-> **TO CONTINUE:** say **"start 7"** → Stage 7 QA + docs (README cleanup Phase 27 + final review Phase 28).
-> **DEFERRED NOTE (closed 2026-10-14):** doctor availability self-toggle — BUILT in 6b (`doctors:toggle_availability` on doctor dashboard). Chat remains declined.
+> **WHERE WE STOPPED (2026-10-18, Stage 7 complete):** Stage 7 QA + docs (Phases 27 + 28) DONE — README rebuilt + tutorial archived to `docs/`, `requirements.txt` encoding fixed, full final review passed. **Awaiting your approval of Stage 7.**
+> **TO CONTINUE:** reply **"approved"** (or fix notes) for Stage 7 → then pick the next backend phase: **12 EMR Improvement** is the recommended start; remaining = 12–26.
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 > **RECEPTIONIST FLOW APPROVED 2026-10-14 (user):** all 9 pages responsive + Create-Invoice fix approved as-is.
+> **ALL FRONTENDS APPROVED (user, 6b-i/6b-iii/6c/6d):** doctor + patient + admin + shared templates approved as-is.
 
-1. **User visual review** of `/` (desktop + 390px): hero, 8 services, doctors + tabs, FAQ, footer — reply with fixes or "approved".
-2. **Commit** the pile on `redesign-homepage` (`git add templates/ static/ core/ smart/ PROGRESS_STATUS.md` → commit → push branch, never `main`).
-3. Then **Stage 5 test/fix** from review notes → **Stage 6 dashboards** (needs explicit approval per scope lock).
+1. **Stage 7 approval** — review the new `README.md` + `docs/readme-tutorial-archive.md` + this tracker update; reply "approved" or fix notes.
+2. **Commit + push** Stage 7 on `redesign-homepage` after approval (never `main`).
+3. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).
 
 ---
 
