@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **46% (13 / 28 phases)** — `█████████░░░░░░░░░░░ 46%`
 - **Last updated:** 2026-10-18 | **Last pushed commit:** `ac5770a` on `redesign-homepage` (2026-10-18) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
-- **WHERE WE STOPPED (2026-10-18, Stage 9 approved + pushed):** Phase 28 + Stage 9 (demo role-picker redesign) approved; pushed to `origin/redesign-homepage`, `main` untouched (branch rule: no `main` until all design finished). **WhatsApp Notifications** flagged as missing from the 28-phase list (in user's master brief) — awaiting master prompt to scope. **TO CONTINUE:** Stage 8b `/doctors/` directory (needs nav-link yes/no) · stray `DoctorProfile id=4` delete/keep · send master prompt → WhatsApp Notifications phase.
+- **WHERE WE STOPPED (2026-10-18, Stage 8b complete, awaiting approval):** `/doctors/` directory page built (nav link added to base.html with user's yes); Phase 28 + Stage 9 approved + pushed earlier same day. Stray-doctor answer given: Allison = patient role with a stray DoctorProfile id=4 (1 test appointment), NOT enrolled as a doctor — delete/keep still pending. **TO CONTINUE:** Stage 8b approval · Allison profile decision · WhatsApp Notifications (master prompt awaited).
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -59,6 +59,7 @@
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DONE — approved (Phase 28 approved 2026-10-18) | 2026-10-18 |
 | 7b User fix notes | "Dr. Dr" seed fix + empty accounts.html → legacy + live-vs-branch diagnosis | DONE — approved; merge decision superseded by branch-only rule | 2026-10-18 |
 | 9 Demo page redesign | Role-picker hero + 3-step strip + persona cards (real demo users) per user fix note | DONE — approved | 2026-10-18 |
+| 8b Doctors directory page | `/doctors/` public page (06-style cards, specialty tabs, contact chips) + "Doctors" nav link in base.html (user yes) | DONE — awaiting approval | 2026-10-18 |
 | 8 Homepage doctor card 06-style | name top-right + availability, photo, role, WhatsApp/Call (real phone), Book + click-to-show-number fix — mind-change on approved homepage | DONE — approved, no fix notes | 2026-10-18 |
 
 **Phase progress (28-phase plan):** Phases 1–11 + 27–28 complete; 12–26 remaining (see §10 tail list).
@@ -165,6 +166,9 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-18 (Stage 8b — doctors directory, user "yes" to nav link):** `/doctors/` built — public, read-only. Page head with real count ("5 doctors on the platform"), **specialty tabs derived from DB** (All + General Medicine/Dermatology/Neurology — only specialties that actually have doctors; empty tabs impossible), all doctors as **06-style cards** (same approved card as homepage: availability badge, photo/initials, qualification, phone-gated WhatsApp/Call click-to-reveal chips, Book), specialty filter JS + contact toggle JS, honest empty state. New `doctors.views.directory` (no auth) + `doctors.urls` root path (was 404) + `templates/doctors/directory.html`. **"Doctors" nav link added to `base.html`** public header (desktop + mobile drawer) per user approval. Tested: `check` clean; `/doctors/` 200 — ALL PASS (count text, 4 tabs matching DB, 5 cards, 5 Book links (+2 header), 6 toggle buttons/3 chips with paired ids, tel+wa links, nav link ×2 on home, home still 200, 0 emojis). NOT tested: your real eyes, clicking tabs/chips on device.
+- **2026-10-18 (stray-doctor investigation, user asked "is patient Allison also enrol as doctor"):** answer — **NO.** Allison Ade (user id 11, precious@gmail.com) role = `patient`, has PatientProfile; she only has a stray **DoctorProfile id=4** (Dermatology) pointing at her user — that's why she shows on the homepage as a doctor. It carries **1 test appointment**. Decision pending: delete the DoctorProfile (cascades that 1 appointment) or keep.
+
 - **2026-10-18 (Stage 9 approval + push):** user replied "approved", no fix notes. Pushed `868b7b1..ac5770a` (Stage 9) to `origin/redesign-homepage` — PASS (`main` untouched). Tracker updated (§1, §3, §12). Tested: push verified. NOT tested: Stage 8b (needs nav-link yes/no); WhatsApp Notifications (needs master prompt).
 
 - **2026-10-18 (Stage 9 — demo role-picker redesign, user fix note "select their role needs to be designed well"):** demo page rebuilt — hero "Pick a Role, See It in Action" + amber demo badge, **3-step strip** (Pick a role → Explore → Leave anytime), 4 role cards now titled by plain role name with **persona line showing the real demo account they'll become** (`You'll be logged in as James Adeyemi` — names read from DB, not invented; doctor shows Dr. + real specialization from profile), teal **"Enter as Admin/Doctor/…" pill button** per card for affordance (whole card still clickable), footer keeps fictional-data note + Back to Homepage + **"Have a real account? Log in"** link. Backend: new read-only `core.views.demo_page` (replaces bare TemplateView; URL `name='demo'` unchanged); unused TemplateView import removed. Tested: `check` clean; `/demo/` 200 — **15/15 asserts PASS** (hero copy, steps, 4 demo_login links, 4 persona lines with real DB names incl. Dr. James Adeyemi + General Medicine, Enter buttons, login/back links, 0 emojis). NOT tested: your real eyes on the page; clicking a role card (demo_login flow unchanged — tested in Stage 7). STOP POINT = here (Stage 9 awaiting visual approval).
@@ -252,16 +256,16 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-18, Stage 9 approved + pushed):** Demo role-picker redesign APPROVED; pushed to `origin/redesign-homepage`, `main` untouched (branch rule: no `main` until all design finished). **WhatsApp Notifications** noted — awaiting user's master prompt to scope.
-> **TO CONTINUE:** **Stage 8b** = `/doctors/` directory page — reply **yes** (with "Doctors" nav link in `base.html`) or **no nav link**, or give fix notes. Still open: stray `DoctorProfile id=4` delete/keep; WhatsApp Notifications once master prompt arrives. After all design: merge to `main` on your go.
+> **WHERE WE STOPPED (2026-10-18, Stage 8b complete, awaiting approval):** `/doctors/` directory + "Doctors" nav link built; ALL PASS. Stray-doctor answer: Allison = patient with stray DoctorProfile id=4 (1 appt), not a real doctor.
+> **TO CONTINUE:** reply **"approved"** (or fix notes) for Stage 8b → then: Allison profile delete/keep · WhatsApp Notifications once master prompt arrives · after all design: merge to `main` on your go.
 > **AFTER THAT:** Stage 7 approval stands? Then next backend phase = **12 EMR Improvement** (remaining = 12–26).
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 > **RECEPTIONIST FLOW APPROVED 2026-10-14 (user):** all 9 pages responsive + Create-Invoice fix approved as-is.
 > **ALL FRONTENDS APPROVED (user, 6b-i/6b-iii/6c/6d):** doctor + patient + admin + shared templates approved as-is.
 
-1. **Stage 8b:** `/doctors/` directory page — awaiting your yes/no on the "Doctors" nav link in locked `base.html`.
-2. **Stray `DoctorProfile id=4`** (patient Allison Ade on homepage) — delete + its 1 test appointment, or keep?
+1. **Stage 8b approval:** `/doctors/` directory + nav link — awaiting your eyes.
+2. **Stray `DoctorProfile id=4`** — ANSWERED 2026-10-18: Allison is a patient with a stray doctor profile (1 test appointment), not enrolled as doctor — **delete or keep?**
 3. **WhatsApp Notifications** — user says it's in their master brief; awaiting master prompt to scope as a phase.
 4. **Merge to `main`:** BLOCKED by user rule until ALL design is finished — then explicit go.
 5. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).

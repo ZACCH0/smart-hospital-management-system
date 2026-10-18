@@ -11,6 +11,28 @@ from core.decorators import doctor_required
 from core.audit import log_action
 
 
+def directory(request):
+    """Public doctors directory — read-only, no auth required."""
+    doctors = DoctorProfile.objects.select_related("user").order_by(
+        "-available", "specialization", "user__first_name"
+    )
+    present = set(doctors.values_list("specialization", flat=True))
+    specialties = [
+        (value, label)
+        for value, label in DoctorProfile.SPECIALIZATION_CHOICES
+        if value in present
+    ]
+    return render(
+        request,
+        "doctors/directory.html",
+        {
+            "directory_doctors": doctors,
+            "directory_count": doctors.count(),
+            "directory_specialties": specialties,
+        },
+    )
+
+
 @login_required
 @doctor_required
 def toggle_availability(request):
