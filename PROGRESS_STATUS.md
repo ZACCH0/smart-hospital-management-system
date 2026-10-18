@@ -20,8 +20,8 @@
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **46% (13 / 28 phases)** — `█████████░░░░░░░░░░░ 46%`
-- **Last updated:** 2026-10-18 | **Last pushed commit:** `1c410aa` on `redesign-homepage` (2026-10-18) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
-- **WHERE WE STOPPED (2026-10-18, Stage 9 demo redesign complete, awaiting approval):** Phase 28 approved. Demo page rebuilt so role selection makes sense: hero + 3-step strip + persona cards showing the real demo account each role becomes (read-only DB personas; doctor shows real specialization). 15/15 asserts PASS. **Branch rule stands: push `redesign-homepage` only — NO merge/push to `main` until ALL design work is finished.** **WhatsApp Notifications** flagged by user as missing from the 28-phase list (it's in their master brief) — awaiting master prompt to scope.
+- **Last updated:** 2026-10-18 | **Last pushed commit:** `ac5770a` on `redesign-homepage` (2026-10-18) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
+- **WHERE WE STOPPED (2026-10-18, Stage 9 approved + pushed):** Phase 28 + Stage 9 (demo role-picker redesign) approved; pushed to `origin/redesign-homepage`, `main` untouched (branch rule: no `main` until all design finished). **WhatsApp Notifications** flagged as missing from the 28-phase list (in user's master brief) — awaiting master prompt to scope. **TO CONTINUE:** Stage 8b `/doctors/` directory (needs nav-link yes/no) · stray `DoctorProfile id=4` delete/keep · send master prompt → WhatsApp Notifications phase.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -58,7 +58,7 @@
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish + admin animation mind-change | DONE — approved, no fix notes | 2026-10-16 |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DONE — approved (Phase 28 approved 2026-10-18) | 2026-10-18 |
 | 7b User fix notes | "Dr. Dr" seed fix + empty accounts.html → legacy + live-vs-branch diagnosis | DONE — approved; merge decision superseded by branch-only rule | 2026-10-18 |
-| 9 Demo page redesign | Role-picker hero + 3-step strip + persona cards (real demo users) per user fix note | DONE — awaiting approval | 2026-10-18 |
+| 9 Demo page redesign | Role-picker hero + 3-step strip + persona cards (real demo users) per user fix note | DONE — approved | 2026-10-18 |
 | 8 Homepage doctor card 06-style | name top-right + availability, photo, role, WhatsApp/Call (real phone), Book + click-to-show-number fix — mind-change on approved homepage | DONE — approved, no fix notes | 2026-10-18 |
 
 **Phase progress (28-phase plan):** Phases 1–11 + 27–28 complete; 12–26 remaining (see §10 tail list).
@@ -165,6 +165,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-18 (Stage 9 approval + push):** user replied "approved", no fix notes. Pushed `868b7b1..ac5770a` (Stage 9) to `origin/redesign-homepage` — PASS (`main` untouched). Tracker updated (§1, §3, §12). Tested: push verified. NOT tested: Stage 8b (needs nav-link yes/no); WhatsApp Notifications (needs master prompt).
+
 - **2026-10-18 (Stage 9 — demo role-picker redesign, user fix note "select their role needs to be designed well"):** demo page rebuilt — hero "Pick a Role, See It in Action" + amber demo badge, **3-step strip** (Pick a role → Explore → Leave anytime), 4 role cards now titled by plain role name with **persona line showing the real demo account they'll become** (`You'll be logged in as James Adeyemi` — names read from DB, not invented; doctor shows Dr. + real specialization from profile), teal **"Enter as Admin/Doctor/…" pill button** per card for affordance (whole card still clickable), footer keeps fictional-data note + Back to Homepage + **"Have a real account? Log in"** link. Backend: new read-only `core.views.demo_page` (replaces bare TemplateView; URL `name='demo'` unchanged); unused TemplateView import removed. Tested: `check` clean; `/demo/` 200 — **15/15 asserts PASS** (hero copy, steps, 4 demo_login links, 4 persona lines with real DB names incl. Dr. James Adeyemi + General Medicine, Enter buttons, login/back links, 0 emojis). NOT tested: your real eyes on the page; clicking a role card (demo_login flow unchanged — tested in Stage 7). STOP POINT = here (Stage 9 awaiting visual approval).
 
 - **2026-10-18 (Stage 8 approval + branch push):** user replied "approved", no fix notes. Pushed `32ca6f5..1c410aa` (Stages 7, 7b, 8 + fix) to `origin/redesign-homepage` — PASS (`main` untouched). **Branch strategy confirmed:** no `main` push until all design finished (recorded §4). Tracker updated (§1, §3, §4, §12). Tested: push verified. NOT tested: Stage 8b (needs your nav-link yes/no).
@@ -250,20 +252,19 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-18, Stage 9 demo redesign complete, awaiting approval):** Demo role-picker rebuilt — hero + 3-step strip + persona cards showing the real demo user each role becomes (read from DB). 15/15 asserts PASS. Phase 28 approved earlier same day. **WhatsApp Notifications noted (user says it's in their master brief, not in the 28-phase list) — awaiting master prompt to scope.**
-> **TO CONTINUE:** reply **"approved"** (or fix notes) for Stage 9 → Stage 8b `/doctors/` directory (needs nav-link yes/no) · stray `DoctorProfile id=4` delete/keep · WhatsApp Notifications once master prompt arrives · after all design: merge to `main` on your go.
+> **WHERE WE STOPPED (2026-10-18, Stage 9 approved + pushed):** Demo role-picker redesign APPROVED; pushed to `origin/redesign-homepage`, `main` untouched (branch rule: no `main` until all design finished). **WhatsApp Notifications** noted — awaiting user's master prompt to scope.
+> **TO CONTINUE:** **Stage 8b** = `/doctors/` directory page — reply **yes** (with "Doctors" nav link in `base.html`) or **no nav link**, or give fix notes. Still open: stray `DoctorProfile id=4` delete/keep; WhatsApp Notifications once master prompt arrives. After all design: merge to `main` on your go.
 > **AFTER THAT:** Stage 7 approval stands? Then next backend phase = **12 EMR Improvement** (remaining = 12–26).
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 > **RECEPTIONIST FLOW APPROVED 2026-10-14 (user):** all 9 pages responsive + Create-Invoice fix approved as-is.
 > **ALL FRONTENDS APPROVED (user, 6b-i/6b-iii/6c/6d):** doctor + patient + admin + shared templates approved as-is.
 
-1. **Stage 9 approval:** demo role-picker redesign — awaiting your eyes.
-2. **Stage 8b:** `/doctors/` directory page — awaiting your yes/no on the "Doctors" nav link in locked `base.html`.
-3. **Stray `DoctorProfile id=4`** (patient Allison Ade on homepage) — delete + its 1 test appointment, or keep?
-4. **WhatsApp Notifications** — user says it's in their master brief; awaiting master prompt to scope as a phase.
-5. **Merge to `main`:** BLOCKED by user rule until ALL design is finished — then explicit go.
-6. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).
+1. **Stage 8b:** `/doctors/` directory page — awaiting your yes/no on the "Doctors" nav link in locked `base.html`.
+2. **Stray `DoctorProfile id=4`** (patient Allison Ade on homepage) — delete + its 1 test appointment, or keep?
+3. **WhatsApp Notifications** — user says it's in their master brief; awaiting master prompt to scope as a phase.
+4. **Merge to `main`:** BLOCKED by user rule until ALL design is finished — then explicit go.
+5. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).
 
 ---
 
