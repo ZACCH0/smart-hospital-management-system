@@ -32,9 +32,9 @@
             <div class="px-5 pt-3">
                 <div class="bg-slate-50 rounded-2xl p-3">
                     {% if doctor.user.profile_picture %}
-                    <img src="{{ doctor.user.profile_picture.url }}" alt="Dr. {{ doctor.user.get_full_name }}" class="w-full h-44 object-cover rounded-xl" loading="lazy">
+                    <img src="{{ doctor.user.profile_picture.url }}" alt="Dr. {{ doctor.user.get_full_name }}" class="block w-40 h-48 sm:w-44 sm:h-52 mx-auto object-cover object-top rounded-xl" loading="lazy">
                     {% else %}
-                    <div class="w-full h-44 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-4xl font-extrabold text-primary" aria-hidden="true">{{ doctor.user.first_name|slice:":1" }}{{ doctor.user.last_name|slice:":1" }}</div>
+                    <div class="w-40 h-48 sm:w-44 sm:h-52 mx-auto rounded-xl bg-white border border-slate-100 flex items-center justify-center text-4xl font-extrabold text-primary" aria-hidden="true">{{ doctor.user.first_name|slice:":1" }}{{ doctor.user.last_name|slice:":1" }}</div>
                     {% endif %}
                 </div>
             </div>

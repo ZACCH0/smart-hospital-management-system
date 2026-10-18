@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **46% (13 / 28 phases)** — `█████████░░░░░░░░░░░ 46%`
 - **Last updated:** 2026-10-18 | **Last pushed commit:** `ac5770a` on `redesign-homepage` (2026-10-18) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
-- **WHERE WE STOPPED (2026-10-18, Stage 8b complete, awaiting approval):** `/doctors/` directory page built (nav link added to base.html with user's yes); Phase 28 + Stage 9 approved + pushed earlier same day. Stray-doctor answer given: Allison = patient role with a stray DoctorProfile id=4 (1 test appointment), NOT enrolled as a doctor — delete/keep still pending. **TO CONTINUE:** Stage 8b approval · Allison profile decision · WhatsApp Notifications (master prompt awaited).
+- **WHERE WE STOPPED (2026-10-18, Stage 8b fix notes applied, awaiting approval):** `/doctors/` directory + nav link built; photo fix applied (portrait frame + object-top on homepage & directory cards); Allison profile KEPT per user. ALL PASS. **TO CONTINUE:** Stage 8b visual approval · WhatsApp Notifications (master prompt awaited) · after all design: merge to `main` on your go.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -74,6 +74,8 @@
 | Tracker canonical file = `PROGRESS_STATUS.md`; `PROJECT_PROGRESS.md` / `PROJECT_STATUS.md` are aliases, never create duplicates | 2026-10-09 |
 | No push to `main`; work on `redesign-homepage` + ZIP delivery | 2026-10-09 |
 | Contact placeholders AISLE (never invent real ones) | 2026-10-09 |
+| Stray `DoctorProfile id=4` (Allison Ade): **KEEP** — user decision "keep allison" | 2026-10-18 |
+| Doctor card photo = portrait frame + `object-top` (head always visible, body small) — user fix note | 2026-10-18 |
 | **No merge/push to `main` until ALL design is finished; branch pushes only (reconfirmed 2026-10-18)** | 2026-10-18 |
 | Footer uses `[HOSPITAL_*_TO_BE_PROVIDED]` placeholders | 2026-10-13 |
 | Keep AI modal + AOS + gradients on homepage as-is (no removal) | 2026-10-13 |
@@ -166,6 +168,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-18 (Stage 8b fix notes — user: "keep Allison" + photo must show head):** **(1) Allison's stray DoctorProfile id=4 KEPT per user** (recorded §8 — stays on homepage as a doctor card). **(2) Doctor card photo fixed on `home.html` + `directory.html`:** old frame was wide landscape (`w-full h-44`) — for portrait uploads (e.g. Allison 1200×1802) `object-cover` center-crop cut the head off. New frame = **centered portrait ID-style photo (`w-40 h-48 sm:w-44 sm:h-52 mx-auto`) with `object-top`** — head always visible at top, neck + a little shoulders show, body cropped small, so people can identify the doctor. Initials fallback matches the new frame. Tested: `check` clean; `/` + `/doctors/` 200 — ALL PASS (new classes present, old wide frame gone, 6 toggles/5 cards intact). NOT tested: your real eyes on photos. STOP POINT = here (Stage 8b awaiting visual approval).
+
 - **2026-10-18 (Stage 8b — doctors directory, user "yes" to nav link):** `/doctors/` built — public, read-only. Page head with real count ("5 doctors on the platform"), **specialty tabs derived from DB** (All + General Medicine/Dermatology/Neurology — only specialties that actually have doctors; empty tabs impossible), all doctors as **06-style cards** (same approved card as homepage: availability badge, photo/initials, qualification, phone-gated WhatsApp/Call click-to-reveal chips, Book), specialty filter JS + contact toggle JS, honest empty state. New `doctors.views.directory` (no auth) + `doctors.urls` root path (was 404) + `templates/doctors/directory.html`. **"Doctors" nav link added to `base.html`** public header (desktop + mobile drawer) per user approval. Tested: `check` clean; `/doctors/` 200 — ALL PASS (count text, 4 tabs matching DB, 5 cards, 5 Book links (+2 header), 6 toggle buttons/3 chips with paired ids, tel+wa links, nav link ×2 on home, home still 200, 0 emojis). NOT tested: your real eyes, clicking tabs/chips on device.
 - **2026-10-18 (stray-doctor investigation, user asked "is patient Allison also enrol as doctor"):** answer — **NO.** Allison Ade (user id 11, precious@gmail.com) role = `patient`, has PatientProfile; she only has a stray **DoctorProfile id=4** (Dermatology) pointing at her user — that's why she shows on the homepage as a doctor. It carries **1 test appointment**. Decision pending: delete the DoctorProfile (cascades that 1 appointment) or keep.
 
@@ -256,16 +260,16 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-18, Stage 8b complete, awaiting approval):** `/doctors/` directory + "Doctors" nav link built; ALL PASS. Stray-doctor answer: Allison = patient with stray DoctorProfile id=4 (1 appt), not a real doctor.
-> **TO CONTINUE:** reply **"approved"** (or fix notes) for Stage 8b → then: Allison profile delete/keep · WhatsApp Notifications once master prompt arrives · after all design: merge to `main` on your go.
+> **WHERE WE STOPPED (2026-10-18, Stage 8b fix notes applied, awaiting approval):** `/doctors/` directory + nav link + portrait head-focused photo crop (both cards); Allison profile KEPT per user. ALL PASS.
+> **TO CONTINUE:** reply **"approved"** (or fix notes) for Stage 8b → then WhatsApp Notifications once master prompt arrives · after all design: merge to `main` on your go.
 > **AFTER THAT:** Stage 7 approval stands? Then next backend phase = **12 EMR Improvement** (remaining = 12–26).
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 > **RECEPTIONIST FLOW APPROVED 2026-10-14 (user):** all 9 pages responsive + Create-Invoice fix approved as-is.
 > **ALL FRONTENDS APPROVED (user, 6b-i/6b-iii/6c/6d):** doctor + patient + admin + shared templates approved as-is.
 
-1. **Stage 8b approval:** `/doctors/` directory + nav link — awaiting your eyes.
-2. **Stray `DoctorProfile id=4`** — ANSWERED 2026-10-18: Allison is a patient with a stray doctor profile (1 test appointment), not enrolled as doctor — **delete or keep?**
+1. **Stage 8b approval:** directory page + photo crop fix — awaiting your eyes.
+2. ~~Stray `DoctorProfile id=4`~~ — **RESOLVED: KEEP (Allison stays on homepage as a doctor).**
 3. **WhatsApp Notifications** — user says it's in their master brief; awaiting master prompt to scope as a phase.
 4. **Merge to `main`:** BLOCKED by user rule until ALL design is finished — then explicit go.
 5. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).
