@@ -20,8 +20,8 @@
 - **Branch:** work on `redesign-homepage` | live is `main` | **Developer:** Alade Zaccheous Kehinde (ZacchTech)
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **46% (13 / 28 phases)** — `█████████░░░░░░░░░░░ 46%`
-- **Last updated:** 2026-10-18 | **Last pushed commit:** `fe15385` on `redesign-homepage` (2026-10-16) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
-- **WHERE WE STOPPED (2026-10-18, Stage 7b complete, 2 decisions needed):** User fix notes handled: "Dr. Dr" seed bug FIXED (DB `Dr. James`→`James`, `Dr Hilda`→`Hilda` + data.json 12 strings; homepage renders 0 "Dr. Dr"); empty orphan `accounts/accounts.html` moved to `templates/legacy/`. **Key finding: the "undesigned" pages (demo, choose-role, verify page) ARE redesigned on this branch — the live site runs `main` (old blue/emoji design, confirmed by fetching live `/demo/`).** **DECISIONS NEEDED: (1) merge `redesign-homepage` → `main` to update live? (2) stray `DoctorProfile id=4` = patient Allison Ade shown as doctor on homepage — delete (cascades 1 test appointment) or keep?**
+- **Last updated:** 2026-10-18 | **Last pushed commit:** `1c410aa` on `redesign-homepage` (2026-10-18) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
+- **WHERE WE STOPPED (2026-10-18, Stage 8 approved + branch pushed):** Stage 8 (06-style doctor cards + click-to-show-number fix) APPROVED, no fix notes; pushed `32ca6f5..1c410aa` to `origin/redesign-homepage`. **Branch strategy confirmed by user 2026-10-18: push `redesign-homepage` only — NO merge/push to `main` until ALL design work is finished** (live untouched meanwhile; low risk because `main` has not diverged → later merge is clean). **TO CONTINUE:** Stage 8b = `/doctors/` directory page — needs your yes/no on the "Doctors" nav link in locked `base.html`; still open: stray `DoctorProfile id=4` delete/keep. Old open (now superseded by branch strategy): merge timing = when you finish all design.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -58,7 +58,7 @@
 | 6d Admin + shared frontend | `admin_home` + `pharmacy/*, notifications/*, 404/500/403, demo, accounts/*` polish + admin animation mind-change | DONE — approved, no fix notes | 2026-10-16 |
 | 7 QA + docs | README cleanup (Phase 27), final review (Phase 28) | DONE — awaiting approval | 2026-10-18 |
 | 7b User fix notes | "Dr. Dr" seed fix + empty accounts.html → legacy + live-vs-branch diagnosis | DONE — 2 decisions needed | 2026-10-18 |
-| 8 Homepage doctor card 06-style | name top-right + availability, photo, role, WhatsApp/Call (real phone), Book — mind-change on approved homepage | DONE — contact-reveal fix applied, awaiting visual approval | 2026-10-18 |
+| 8 Homepage doctor card 06-style | name top-right + availability, photo, role, WhatsApp/Call (real phone), Book + click-to-show-number fix — mind-change on approved homepage | DONE — approved, no fix notes | 2026-10-18 |
 
 **Phase progress (28-phase plan):** Phases 1–11 + 27–28 complete; 12–26 remaining (see §10 tail list).
 - [x] 1 Security Foundation · [x] 2 Multi-profile Architecture · [x] 3 Audit Logging · [x] 4 2FA (TOTP) · [x] 5 DB Performance · [x] 6 Appointment Upgrade · [x] 7 Email Verification · [x] 8 Lab Access Control · [x] 9 Doctor Appointment Restrictions · [x] 10 Demo Environment · [x] 11 UI/UX Dark Sidebar + Homepage · [x] 27 Documentation (README cleanup 2026-10-18) · [x] 28 Final Quality Review (2026-10-18)
@@ -71,6 +71,7 @@
 | Tracker canonical file = `PROGRESS_STATUS.md`; `PROJECT_PROGRESS.md` / `PROJECT_STATUS.md` are aliases, never create duplicates | 2026-10-09 |
 | No push to `main`; work on `redesign-homepage` + ZIP delivery | 2026-10-09 |
 | Contact placeholders AISLE (never invent real ones) | 2026-10-09 |
+| **No merge/push to `main` until ALL design is finished; branch pushes only (reconfirmed 2026-10-18)** | 2026-10-18 |
 | Footer uses `[HOSPITAL_*_TO_BE_PROVIDED]` placeholders | 2026-10-13 |
 | Keep AI modal + AOS + gradients on homepage as-is (no removal) | 2026-10-13 |
 | Home may become a function view supplying real doctors (read-only) | 2026-10-13 |
@@ -162,6 +163,8 @@ git log --oneline -10
 
 ## 10. Last changes (dated, per stage, fixes + tests)
 
+- **2026-10-18 (Stage 8 approval + branch push):** user replied "approved", no fix notes. Pushed `32ca6f5..1c410aa` (Stages 7, 7b, 8 + fix) to `origin/redesign-homepage` — PASS (`main` untouched). **Branch strategy confirmed:** no `main` push until all design finished (recorded §4). Tracker updated (§1, §3, §4, §12). Tested: push verified. NOT tested: Stage 8b (needs your nav-link yes/no).
+
 - **2026-10-18 (Stage 8 fix note — CLICK-TO-SHOW NUMBER, per your request):** contact icons no longer navigate directly — each is now a `<button>` that reveals a hidden chip under the icon row showing the doctor's **actual number** (raw, as saved: `+234…`/`08…`) as a tappable `tel:` link + an "Open WhatsApp →" link (234-converted `wa.me`). Chip ids pair 1:1 with the doctor (`contact-num-<id>`), toggled by one delegated vanilla-JS listener; `aria-controls`/`aria-label` set. Also confirmed (no code needed): icons already render **live from the profile** — a doctor without a number gets them the moment they save **Edit Profile → Phone**. Tested: `check` clean; `/` 200 — 12/12 asserts PASS (6 buttons = 3 phone-doctors × 2, 3 unique chips, all button→chip targets exist, chips start hidden, raw tel digits present, wa 234 conversion, JS toggle, tabs/grid/book/no-"Dr. Dr" intact). NOT tested: your real tap on phone/laptop (chip appear + call/WhatsApp handoff). STOP POINT = here (Stage 8 awaiting visual approval).
 
 - **2026-10-18 (Stage 8 — HOMEPAGE DOCTOR CARD 06-STYLE, last task done):** per your 06-card description + accepted plan (Book label, no chat, availability badge instead of date/time, phone-gated icons). Card rebuilt: top row = availability badge (left) + doctor name (right, truncate); photo in slate panel (rectangular h-44, initials fallback); role + qualification/experience centered under photo; bottom row = WhatsApp icon (`wa.me`, real phone → 0-prefix converted to 234, opens new tab) + Call icon (`tel:`) — **both hidden when doctor has no phone** — and `Book Appointment` (ml-auto, wraps if tight). WhatsApp uses the real SimpleIcons glyph (fetched, not hand-drawn). **No view/model changes** — `doctor.user.phone` via existing `select_related`; tabs JS + `data-specialization` untouched; date/time NOT added (no schedule field — real data only). Decision recorded: chat icon omitted (no chat feature exists). Tested: `check` clean; `/` 200 — 16/16 asserts PASS (5 card divs, 9 tabs, name top-right, badges incl. 1 Unavailable, photo panel, role, book link per card, wa.me 3 numbers w/ 234 conversion, tel: links, real glyph path, filter attrs kept, 0× "Dr. Dr"). NOT tested: your real eyes on laptop + 390px phone, tap-to-WhatsApp/call on a device, hover feel. STOP POINT = here (awaiting visual approval).
@@ -243,17 +246,17 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-18, Stage 8 complete incl. click-to-show-number fix, awaiting visual approval):** Homepage doctor cards 06-style (name top-right + availability badge, rectangular photo, role, WhatsApp/Call icons, Book) + **click an icon → chip reveals the real number** (tel: link + Open WhatsApp). Doctors without a phone get icons automatically once they save Phone in Edit Profile. 12/12 latest asserts PASS.
-> **TO CONTINUE:** reply **"approved"** (or fix notes) for Stage 8 → then **Stage 8b** = `/doctors/` directory page (needs your yes/no on "Doctors" nav link in locked `base.html`). **Still open from 7b: (1)** merge to `main`? **(2)** stray `DoctorProfile id=4` delete or keep?
+> **WHERE WE STOPPED (2026-10-18, Stage 8 approved + pushed):** 06-style doctor cards + click-to-show-number APPROVED; branch pushed, `main` untouched (user rule: no `main` until all design finished).
+> **TO CONTINUE:** **Stage 8b** = `/doctors/` directory page — reply **yes** (with "Doctors" nav link in `base.html`) or **no nav link**, or give fix notes. Still open: stray `DoctorProfile id=4` delete/keep. After all design: merge to `main` on your explicit go.
 > **AFTER THAT:** Stage 7 approval stands? Then next backend phase = **12 EMR Improvement** (remaining = 12–26).
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
 > **BASE APPROVED 2026-10-13 (user):** `templates/base.html` done for now. No further base edits without new request.
 > **RECEPTIONIST FLOW APPROVED 2026-10-14 (user):** all 9 pages responsive + Create-Invoice fix approved as-is.
 > **ALL FRONTENDS APPROVED (user, 6b-i/6b-iii/6c/6d):** doctor + patient + admin + shared templates approved as-is.
 
-1. **Decision 1:** merge `redesign-homepage` → `main` now (updates live Render site — all redesigned pages go live; only on your explicit approval per deploy rule).
-2. **Decision 2:** stray `DoctorProfile id=4` — delete + its 1 test appointment, or keep it but hide?
-3. **Stage 7/7b/8 approval** — then push this branch; Stage 8b = `/doctors/` directory page; then backend phase 12 EMR Improvement (or pick from 12–26).
+1. **Stage 8b:** `/doctors/` directory page — awaiting your yes/no on the "Doctors" nav link in locked `base.html`.
+2. **Stray `DoctorProfile id=4`** (patient Allison Ade on homepage) — delete + its 1 test appointment, or keep?
+3. **Merge to `main`:** BLOCKED by user rule until ALL design is finished — then explicit go.
 4. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).
 
 ---
