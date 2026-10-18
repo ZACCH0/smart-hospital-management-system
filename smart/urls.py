@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
 
 from core import views as core_views
 
@@ -40,6 +39,6 @@ urlpatterns = [
     path('pharmacy/', include('pharmacy.urls')),
     path('laboratory/', include('laboratory.urls')),
     path('billing/', include('billing.urls')),
-    path('demo/', TemplateView.as_view(template_name='demo/demo_page.html'), name='demo'),
+    path('demo/', core_views.demo_page, name='demo'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

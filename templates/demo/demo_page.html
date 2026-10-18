@@ -3,13 +3,44 @@
 {% block title %}Try Live Demo — SHMS{% endblock %}
 
 {% block public_content %}
-<div class="max-w-7xl mx-auto px-5 sm:px-6 py-8 sm:py-10">
-    <div class="w-full max-w-4xl mx-auto">
-        <div class="text-center mb-8">
-            <p class="app-pagehead__eyebrow">Demonstration</p>
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Try the Live Demo</h1>
-            <p class="text-[13.5px] sm:text-sm text-slate-500 max-w-xl mx-auto mt-2">Explore the Smart Hospital Management System with one click. All data shown is fictional and for demonstration purposes only.</p>
-            <p class="mt-3"><span class="badge badge-amber">Demo environment — no real patient data</span></p>
+<div class="max-w-7xl mx-auto px-5 sm:px-6 py-8 sm:py-14">
+    <div class="w-full max-w-5xl mx-auto">
+
+        <div class="text-center mb-6 sm:mb-8">
+            <p class="app-pagehead__eyebrow">Interactive Demo</p>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mt-1">Pick a Role, See It in Action</h1>
+            <p class="text-[13.5px] sm:text-[15px] text-slate-500 max-w-2xl mx-auto mt-3">One click signs you in to that role's real workspace — no password needed. Every record you see is fictional demo data.</p>
+            <p class="mt-4"><span class="badge badge-amber">Demo environment — no real patient data</span></p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+            <div class="app-card p-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-full bg-teal-700 text-white text-sm font-bold flex items-center justify-center shrink-0">1</span>
+                    <div>
+                        <p class="font-bold text-slate-900 text-sm">Pick a role</p>
+                        <p class="text-[12.5px] text-slate-500">Choose admin, doctor, receptionist or patient below.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="app-card p-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-full bg-teal-700 text-white text-sm font-bold flex items-center justify-center shrink-0">2</span>
+                    <div>
+                        <p class="font-bold text-slate-900 text-sm">Explore the workspace</p>
+                        <p class="text-[12.5px] text-slate-500">You land inside the real app, with fictional data.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="app-card p-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-full bg-teal-700 text-white text-sm font-bold flex items-center justify-center shrink-0">3</span>
+                    <div>
+                        <p class="font-bold text-slate-900 text-sm">Leave anytime</p>
+                        <p class="text-[12.5px] text-slate-500">The Sign out button in the top bar ends the session.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -19,7 +50,7 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     </span>
                     <div class="min-w-0">
-                        <h2 class="font-bold text-slate-900">Demo Admin</h2>
+                        <h2 class="font-bold text-slate-900">Admin</h2>
                         <p class="text-[13px] text-teal-700 font-medium">Full system access</p>
                     </div>
                 </div>
@@ -28,6 +59,12 @@
                     <li>Manage all users and roles</li>
                     <li>Revenue and appointment statistics</li>
                 </ul>
+                {% if demo_personas.admin %}
+                <p class="mt-3 pt-3 border-t border-slate-100 text-[12.5px] text-slate-500">You'll be logged in as <strong class="text-slate-700">{{ demo_personas.admin.name }}</strong></p>
+                {% endif %}
+                <div class="mt-4">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-700 px-4 py-2 text-[13px] font-semibold text-white">Enter as Admin <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+                </div>
             </a>
 
             <a href="{% url 'accounts:demo_login' 'doctor' %}" class="app-card p-5 sm:p-6 hover-lift block">
@@ -36,8 +73,8 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </span>
                     <div class="min-w-0">
-                        <h2 class="font-bold text-slate-900">Demo Doctor</h2>
-                        <p class="text-[13px] text-teal-700 font-medium">General Medicine</p>
+                        <h2 class="font-bold text-slate-900">Doctor</h2>
+                        <p class="text-[13px] text-teal-700 font-medium">{% if demo_personas.doctor.extra %}{{ demo_personas.doctor.extra }}{% else %}Doctor workspace{% endif %}</p>
                     </div>
                 </div>
                 <ul class="text-[13px] text-slate-500 space-y-1">
@@ -45,6 +82,12 @@
                     <li>Access patient medical records</li>
                     <li>Write diagnoses and prescriptions</li>
                 </ul>
+                {% if demo_personas.doctor %}
+                <p class="mt-3 pt-3 border-t border-slate-100 text-[12.5px] text-slate-500">You'll be logged in as <strong class="text-slate-700">Dr. {{ demo_personas.doctor.name }}</strong>{% if demo_personas.doctor.extra %} · {{ demo_personas.doctor.extra }}{% endif %}</p>
+                {% endif %}
+                <div class="mt-4">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-700 px-4 py-2 text-[13px] font-semibold text-white">Enter as Doctor <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+                </div>
             </a>
 
             <a href="{% url 'accounts:demo_login' 'receptionist' %}" class="app-card p-5 sm:p-6 hover-lift block">
@@ -53,7 +96,7 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </span>
                     <div class="min-w-0">
-                        <h2 class="font-bold text-slate-900">Demo Receptionist</h2>
+                        <h2 class="font-bold text-slate-900">Receptionist</h2>
                         <p class="text-[13px] text-teal-700 font-medium">Front-desk workspace</p>
                     </div>
                 </div>
@@ -62,6 +105,12 @@
                     <li>Approve and cancel appointments</li>
                     <li>Generate invoices and record payments</li>
                 </ul>
+                {% if demo_personas.receptionist %}
+                <p class="mt-3 pt-3 border-t border-slate-100 text-[12.5px] text-slate-500">You'll be logged in as <strong class="text-slate-700">{{ demo_personas.receptionist.name }}</strong></p>
+                {% endif %}
+                <div class="mt-4">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-700 px-4 py-2 text-[13px] font-semibold text-white">Enter as Receptionist <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+                </div>
             </a>
 
             <a href="{% url 'accounts:demo_login' 'patient' %}" class="app-card p-5 sm:p-6 hover-lift block">
@@ -70,7 +119,7 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     </span>
                     <div class="min-w-0">
-                        <h2 class="font-bold text-slate-900">Demo Patient</h2>
+                        <h2 class="font-bold text-slate-900">Patient</h2>
                         <p class="text-[13px] text-teal-700 font-medium">Personal health workspace</p>
                     </div>
                 </div>
@@ -79,13 +128,22 @@
                     <li>Access medical records and prescriptions</li>
                     <li>Check lab results and invoices</li>
                 </ul>
+                {% if demo_personas.patient %}
+                <p class="mt-3 pt-3 border-t border-slate-100 text-[12.5px] text-slate-500">You'll be logged in as <strong class="text-slate-700">{{ demo_personas.patient.name }}</strong></p>
+                {% endif %}
+                <div class="mt-4">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-700 px-4 py-2 text-[13px] font-semibold text-white">Enter as Patient <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+                </div>
             </a>
         </div>
 
         <div class="app-card p-4 text-center text-[13px] text-slate-500">
             All demo accounts use fictional data. No real medical information is stored or displayed.
-            <br>
-            <a href="{% url 'home' %}" class="text-teal-700 font-semibold hover:underline mt-1 inline-block">Back to Homepage</a>
+            <div class="mt-2 flex items-center justify-center gap-4">
+                <a href="{% url 'home' %}" class="text-teal-700 font-semibold hover:underline">Back to Homepage</a>
+                <span class="text-slate-300" aria-hidden="true">·</span>
+                <a href="{% url 'accounts:login' %}" class="text-teal-700 font-semibold hover:underline">Have a real account? Log in</a>
+            </div>
         </div>
     </div>
 </div>
