@@ -21,7 +21,7 @@
 - **Local path:** `C:\Users\DELL-7280\Videos\PYTHON ROAD MAP\Desktop\SMART HOSPITAL\smart`
 - **Completion:** **46% (13 / 28 phases)** — `█████████░░░░░░░░░░░ 46%`
 - **Last updated:** 2026-10-18 | **Last pushed commit:** `ac5770a` on `redesign-homepage` (2026-10-18) | **Health:** `manage.py check` → no issues (verified 2026-10-18)
-- **WHERE WE STOPPED (2026-10-18, Stage 8b fix notes applied, awaiting approval):** `/doctors/` directory + nav link built; photo fix applied (portrait frame + object-top on homepage & directory cards); Allison profile KEPT per user. ALL PASS. **TO CONTINUE:** Stage 8b visual approval · WhatsApp Notifications (master prompt awaited) · after all design: merge to `main` on your go.
+- **WHERE WE STOPPED (2026-10-18, Stage 8b APPROVED 2026-10-19):** `/doctors/` directory + nav link built; photo fix applied (portrait frame + object-top on homepage & directory cards); Allison profile KEPT per user. ALL PASS. **TO CONTINUE:** WhatsApp Notifications (master prompt awaited) · after all design: merge to `main` on your go.
 
 ## 2. Workflow rules (the hard rules above)
 
@@ -260,7 +260,7 @@ git log --oneline -10
 
 ## 12. Next recommended action
 
-> **WHERE WE STOPPED (2026-10-18, Stage 8b fix notes applied, awaiting approval):** `/doctors/` directory + nav link + portrait head-focused photo crop (both cards); Allison profile KEPT per user. ALL PASS.
+> **WHERE WE STOPPED (2026-10-18, Stage 8b APPROVED 2026-10-19):** `/doctors/` directory + nav link + portrait head-focused photo crop (both cards); Allison profile KEPT per user. ALL PASS.
 > **TO CONTINUE:** reply **"approved"** (or fix notes) for Stage 8b → then WhatsApp Notifications once master prompt arrives · after all design: merge to `main` on your go.
 > **AFTER THAT:** Stage 7 approval stands? Then next backend phase = **12 EMR Improvement** (remaining = 12–26).
 > **HI-RULE (user 2026-10-14):** anytime you say "hi", I reply with Where-stopped + What-next from this section, no extra digging.
