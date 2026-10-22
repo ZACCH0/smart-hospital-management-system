@@ -1,9 +1,14 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 
 from accounts.models import CustomUser
+from core.ai import answer_question
 from core.decorators import role_required
 from core.models import AuditLog
 from doctors.models import DoctorProfile
@@ -116,4 +121,30 @@ def audit_log_list(request):
         'selected_action': action,
         'selected_model': model_name,
         'querystring': querystring.urlencode(),
+    })
+
+
+@require_POST
+def ai_chat(request):
+    """Public homepage chatbot. The message is used for the reply only and is
+    never stored; rate limiting is handled by the shared middleware."""
+    try:
+        data = json.loads(request.body or b'{}')
+    except ValueError:
+        data = request.POST
+
+    message = str(data.get('message', '')).strip()
+    if not message:
+        return JsonResponse({'error': 'Please type a message.'}, status=400)
+    if len(message) > 500:
+        return JsonResponse(
+            {'error': 'Please keep your message under 500 characters.'},
+            status=400,
+        )
+
+    result = answer_question(message)
+    return JsonResponse({
+        'reply': result['reply'],
+        'source': result['source'],
+        'disclaimer': result['disclaimer'],
     })

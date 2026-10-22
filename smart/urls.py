@@ -41,6 +41,7 @@ urlpatterns = [
     path('ipd/', include('ipd.urls')),
     path('billing/', include('billing.urls')),
     path('demo/', core_views.demo_page, name='demo'),
+    path('ai/chat/', core_views.ai_chat, name='ai_chat'),
     path('audit-log/', core_views.audit_log_list, name='audit_log'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

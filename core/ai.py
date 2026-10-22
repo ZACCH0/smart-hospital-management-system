@@ -153,3 +153,81 @@ def suggest_department(symptoms):
     if not symptoms:
         return None
     return _ai_suggest(symptoms) or _rule_based(symptoms)
+
+
+CHAT_SYSTEM_PROMPT = (
+    'You are the SHMS hospital assistant on the public homepage. Answer in at '
+    'most 120 words about hospital services, appointments, departments, '
+    'pharmacy, laboratory, billing, telehealth, or how to use the website. '
+    'You may suggest a department when someone describes symptoms, but never '
+    'diagnose or prescribe. For emergencies, tell the user to seek immediate '
+    'emergency care. Never invent prices, addresses, phone numbers, or staff '
+    'names. Keep a calm, professional tone.'
+)
+
+
+def _fallback_answer(message):
+    urgent = any(keyword in message.lower() for keyword in URGENT_KEYWORDS)
+    if urgent:
+        reply = (
+            'Your message mentions symptoms that may need urgent attention. '
+            'Please go to the emergency department now or call your local '
+            'emergency number. This is general guidance, not a diagnosis.'
+        )
+    else:
+        reply = (
+            'I can help with appointments, departments, pharmacy, laboratory, '
+            'billing, telehealth and using the website. For symptom guidance, '
+            'log in as a patient and open the Health Assistant, or book an '
+            'appointment so a doctor can assess you. This is general guidance, '
+            'not a diagnosis.'
+        )
+    return {'reply': reply, 'source': 'rules', 'disclaimer': DISCLAIMER}
+
+
+def answer_question(message):
+    """Free-text chat reply for the public homepage widget.
+
+    Uses the configured OpenAI-compatible provider when available and always
+    falls back to a safe, helpful message. Never raises and never stores the
+    message.
+    """
+    message = (message or '').strip()
+    if not message:
+        return None
+
+    api_key = getattr(settings, 'AI_API_KEY', '')
+    if not api_key:
+        return _fallback_answer(message)
+
+    base = settings.AI_BASE_URL.rstrip('/')
+    payload = {
+        'model': settings.AI_MODEL,
+        'temperature': 0.3,
+        'messages': [
+            {'role': 'system', 'content': CHAT_SYSTEM_PROMPT},
+            {'role': 'user', 'content': message[:500]},
+        ],
+    }
+    request = urlrequest.Request(
+        f'{base}/chat/completions',
+        data=json.dumps(payload).encode('utf-8'),
+        headers={
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json',
+            'User-Agent': 'SHMS/1.0 (+https://smart-hospital-management-system-8zgy.onrender.com)',
+        },
+        method='POST',
+    )
+
+    try:
+        with urlrequest.urlopen(request, timeout=settings.AI_TIMEOUT) as response:
+            body = json.loads(response.read().decode('utf-8'))
+        reply = str(body['choices'][0]['message']['content']).strip()
+    except (URLError, KeyError, ValueError, IndexError, OSError) as exc:
+        logger.warning('AI chat failed, falling back to a static answer: %s', exc)
+        return _fallback_answer(message)
+
+    if not reply:
+        return _fallback_answer(message)
+    return {'reply': reply, 'source': 'ai', 'disclaimer': DISCLAIMER}

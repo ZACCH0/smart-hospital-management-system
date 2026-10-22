@@ -1,3 +1,4 @@
+import json
 from unittest import mock
 from urllib.error import URLError
 
@@ -101,3 +102,62 @@ class HealthAssistantViewTests(TestCase):
         self.client.force_login(self.doctor_user.user)
         response = self.client.get(reverse('patients:health_assistant'))
         self.assertEqual(response.status_code, 403)
+
+
+@override_settings(AI_API_KEY='')
+class HomepageChatTests(TestCase):
+    def setUp(self):
+        self.client = Client(SERVER_NAME='localhost')
+        self.url = reverse('ai_chat')
+
+    def post(self, payload):
+        return self.client.post(
+            self.url,
+            data=json.dumps(payload),
+            content_type='application/json',
+        )
+
+    def test_get_is_not_allowed(self):
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+
+    def test_empty_message_is_rejected(self):
+        response = self.post({'message': '   '})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('error', response.json())
+
+    def test_oversized_message_is_rejected(self):
+        response = self.post({'message': 'x' * 501})
+        self.assertEqual(response.status_code, 400)
+
+    def test_rules_fallback_without_key(self):
+        response = self.post({'message': 'How do I book an appointment?'})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['source'], 'rules')
+        self.assertIn('not a diagnosis', data['reply'])
+        self.assertTrue(data['disclaimer'])
+
+    def test_urgent_symptoms_get_emergency_fallback(self):
+        response = self.post({'message': 'I have severe chest pain'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('emergency', response.json()['reply'].lower())
+
+    @mock.patch('core.views.answer_question')
+    def test_ai_answer_is_returned(self, answer_question):
+        answer_question.return_value = {
+            'reply': 'Book from your patient dashboard.',
+            'source': 'ai',
+            'disclaimer': 'General guidance only.',
+        }
+        response = self.post({'message': 'How do I book?'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['reply'], 'Book from your patient dashboard.')
+        self.assertEqual(response.json()['source'], 'ai')
+        answer_question.assert_called_once_with('How do I book?')
+
+    def test_homepage_widget_is_wired_to_backend(self):
+        response = self.client.get(reverse('home'))
+        self.assertContains(response, '/ai/chat/')
+        self.assertContains(response, 'aiCsrfToken')
+        self.assertNotContains(response, 'generativelanguage.googleapis.com')
+        self.assertNotContains(response, 'const apiKey')

@@ -16,6 +16,7 @@ DEFAULT_RULES = (
     ('2fa_setup', r'^/accounts/2fa/setup/$', 'POST', 10, 300),
     ('2fa_verify', r'^/accounts/2fa/verify/$', 'POST', 10, 300),
     ('demo_login', r'^/accounts/demo/', 'GET', 30, 3600),
+    ('ai_chat', r'^/ai/chat/$', 'POST', 20, 3600),
 )
 
 COMPILED_RULES = tuple(
