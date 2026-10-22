@@ -1,0 +1,41 @@
+{% comment %}
+Page header block.
+Usage:
+  {% include "partials/page_header.html" with eyebrow="Clinical" title="My Patients" subtitle="..." %}
+  {% include "partials/page_header.html" with title="..." action_url="..." action_label="Add new" %}
+Optional: back_url, back_label (renders breadcrumbs), action_icon (svg name: plus/book/edit).
+{% endcomment %}
+<header class="app-pagehead">
+    <div class="min-w-0">
+        {% if back_url %}
+        <nav class="app-crumbs" aria-label="Breadcrumb">
+            <a href="{{ back_url }}">{{ back_label|default:"Back" }}</a>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+            <span class="current">{{ title }}</span>
+        </nav>
+        {% endif %}
+        {% if eyebrow %}<p class="app-pagehead__eyebrow">{{ eyebrow }}</p>{% endif %}
+        <h1>{{ title }}</h1>
+        {% if subtitle %}<p>{{ subtitle }}</p>{% endif %}
+    </div>
+
+    {% if action_url or action_slot %}
+    <div class="app-pagehead__actions">
+        {{ action_slot }}
+        {% if action_url %}
+        <a href="{{ action_url }}" class="btn btn-primary">
+            {% if action_icon == 'book' %}
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            {% elif action_icon == 'edit' %}
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            {% elif action_icon == 'download' %}
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
+            {% else %}
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"/></svg>
+            {% endif %}
+            {{ action_label }}
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</header>

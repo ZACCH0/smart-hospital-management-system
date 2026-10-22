@@ -38,6 +38,11 @@ class AuditLog(models.Model):
         ordering = ['-timestamp']
         verbose_name = 'Audit Log'
         verbose_name_plural = 'Audit Logs'
+        indexes = [
+            models.Index(fields=['user', 'timestamp'], name='audit_user_time_idx'),
+            models.Index(fields=['action', 'timestamp'], name='audit_action_time_idx'),
+            models.Index(fields=['model_name', 'object_id'], name='audit_object_idx'),
+        ]
 
     def __str__(self):
         user_str = self.user.get_full_name() if self.user else 'Anonymous'

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Ward Board – SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-7xl mx-auto">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">Inpatient</p>
+            <h1 class="text-xl sm:text-2xl lg:text-[28px] font-bold text-primary mt-1">Ward Board</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">Live bed occupancy across all wards.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'ipd:admission_list' %}"
+               class="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm hover:bg-slate-50 transition">
+                Admissions
+            </a>
+            <a href="{% url 'ipd:admit_patient' %}"
+               class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
+                + Admit Patient
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-6">
+        <div class="bg-white shadow rounded-xl p-4 border-l-4 border-slate-400">
+            <p class="text-2xl font-bold text-slate-800">{{ wards|length }}</p>
+            <p class="text-sm text-gray-500">Active Wards</p>
+        </div>
+        <div class="bg-white shadow rounded-xl p-4 border-l-4 border-primary">
+            <p class="text-2xl font-bold text-primary">{{ total_beds }}</p>
+            <p class="text-sm text-gray-500">Total Beds</p>
+        </div>
+        <div class="bg-white shadow rounded-xl p-4 border-l-4 border-red-500">
+            <p class="text-2xl font-bold text-red-600">{{ occupied_beds }}</p>
+            <p class="text-sm text-gray-500">Occupied</p>
+        </div>
+        <div class="bg-white shadow rounded-xl p-4 border-l-4 border-green-500">
+            <p class="text-2xl font-bold text-green-600">{{ available_beds }}</p>
+            <p class="text-sm text-gray-500">Available</p>
+        </div>
+    </div>
+
+    {% for ward in wards %}
+    <section class="bg-white shadow rounded-xl mb-4 overflow-hidden">
+        <div class="px-4 lg:px-5 py-3 border-b bg-slate-50 flex flex-wrap items-center gap-2 justify-between">
+            <div>
+                <h2 class="font-semibold text-slate-800">{{ ward.name }}</h2>
+                <p class="text-xs text-slate-500">
+                    {{ ward.get_ward_type_display }}{% if ward.floor %} · {{ ward.floor }}{% endif %}
+                    · {{ ward.active_beds|length }} bed(s)
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-medium text-slate-600">
+                    {{ ward.active_beds|length }} beds
+                </span>
+                {% if user.role == 'admin' %}
+                <a href="{% url 'ipd:bed_create' ward.id %}" class="text-xs text-primary hover:underline">+ Add bed</a>
+                <a href="{% url 'ipd:ward_edit' ward.id %}" class="text-xs text-slate-500 hover:underline">Edit</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="p-4 lg:p-5 flex flex-wrap gap-2">
+            {% for bed in ward.active_beds %}
+                {% with admission=bed.active_admissions.0 %}
+                <div class="w-40 rounded-lg border px-3 py-2 text-xs
+                    {% if admission %}border-red-200 bg-red-50{% else %}border-green-200 bg-green-50{% endif %}">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-700">Bed {{ bed.bed_number }}</span>
+                        <span class="{% if admission %}text-red-600{% else %}text-green-600{% endif %}">
+                            {% if admission %}Occupied{% else %}Free{% endif %}
+                        </span>
+                    </div>
+                    {% if admission %}
+                        <p class="mt-1 text-slate-700 truncate">{{ admission.patient.user.get_full_name }}</p>
+                        <p class="text-slate-500">{{ admission.admitted_at|date:"M j, Y" }}</p>
+                        {% if user.role != 'patient' %}
+                        <a href="{% url 'ipd:discharge_patient' admission.id %}"
+                           class="text-primary hover:underline">Discharge →</a>
+                        {% endif %}
+                    {% else %}
+                        <p class="mt-1 text-slate-500">Ready for admission</p>
+                    {% endif %}
+                </div>
+                {% endwith %}
+            {% empty %}
+                <p class="text-sm text-slate-500">No beds in this ward yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% empty %}
+        <div class="bg-white shadow rounded-xl p-8 text-center">
+            <p class="text-slate-600 font-medium">No wards yet.</p>
+            <p class="text-sm text-slate-500 mt-1">Create a ward, add beds, then admit patients.</p>
+            {% if user.role == 'admin' %}
+            <a href="{% url 'ipd:ward_create' %}" class="inline-block mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm">
+                + Add Ward
+            </a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

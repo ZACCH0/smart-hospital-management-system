@@ -9,9 +9,9 @@
         theme: {
             extend: {
                 colors: {
-                    primary: '#0284c7',
-                    secondary: '#0d9488',
-                    accent: '#f0f9ff',
+                    primary: '#225A5D',
+                    secondary: '#31798A',
+                    accent: '#489D9A',
                     warning: '#fbbf24',
                 }
             }
@@ -25,18 +25,18 @@
     }
     .hover-pop:hover {
         transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 20px 30px -10px rgba(2, 132, 199, 0.22),
-                    0 10px 15px -5px rgba(13, 148, 136, 0.12);
-        border-color: #0284c7;
+        box-shadow: 0 20px 30px -10px rgba(34, 90, 93, 0.22),
+                    0 10px 15px -5px rgba(49, 121, 138, 0.12);
+        border-color: #225A5D;
     }
     .img-zoom { transition: transform 0.3s ease-in-out; }
     .group:hover .img-zoom { transform: scale(1.06); }
     .title-hover {
         transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
-        color: #0B2A4A;
+        color: #13271E;
     }
     .group:hover .title-hover {
-        color: #0d9488 !important;
+        color: #31798A !important;
         transform: translateY(-2px);
     }
 </style>
@@ -44,14 +44,14 @@
 
 {% block public_content %}
 
-<div id="aiModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div id="aiModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[90] hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-100 flex flex-col h-[600px]">
         <div class="bg-gradient-to-r from-primary to-secondary p-6 text-white flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-lg">AI</div>
                 <div>
                     <h3 class="font-bold text-lg">SHMS Clinical & Support AI</h3>
-                    <p class="text-xs text-sky-100">Powered by Gemini 3 Flash</p>
+                    <p class="text-xs text-teal-50">Powered by Gemini 3 Flash</p>
                 </div>
             </div>
             <button onclick="toggleAiModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition text-white font-bold">×</button>
@@ -66,51 +66,110 @@
         </div>
         <div class="p-4 bg-white border-t border-slate-100 flex items-center gap-3">
             <input type="text" id="chatInput" placeholder="Ask about hospital services, triage, appointments..." class="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary text-sm" onkeypress="handleKeyPress(event)">
-            <button onclick="sendChatMessage()" class="px-6 py-3 bg-primary text-white font-semibold text-sm rounded-xl hover:bg-blue-700 transition shadow-md shadow-primary/20">Send</button>
+            <button onclick="sendChatMessage()" class="px-6 py-3 bg-primary text-white font-semibold text-sm rounded-xl hover:bg-secondary transition shadow-md shadow-primary/20">Send</button>
         </div>
     </div>
 </div>
 
-<section class="max-w-7xl mx-auto px-6 py-20 md:py-28 grid md:grid-cols-2 gap-16 items-center">
-    <div class="space-y-8" data-aos="fade-right" data-aos-duration="1000">
-        <span class="inline-block bg-accent text-secondary px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border border-teal-100">
+<section class="relative overflow-hidden" style="background:linear-gradient(180deg,#E8F7F6 0%,#F1F8F8 38%,#F8F9FA 70%,#ffffff 100%);">
+<div aria-hidden="true" class="pointer-events-none absolute inset-0">
+    <div class="absolute -top-24 -right-24 w-72 h-72 sm:w-96 sm:h-96 rounded-full opacity-20 blur-3xl" style="background:#489D9A;"></div>
+    <div class="absolute top-40 -left-24 w-72 h-72 sm:w-96 sm:h-96 rounded-full opacity-15 blur-3xl" style="background:#225A5D;"></div>
+</div>
+<div class="relative max-w-7xl mx-auto px-5 sm:px-6 py-12 sm:py-16 lg:py-20 xl:py-24 grid lg:grid-cols-2 gap-10 lg:gap-12 xl:gap-16 items-center">
+    <div class="space-y-6 sm:space-y-8 text-center lg:text-left" data-aos="fade-right" data-aos-duration="1000">
+        <span class="inline-block bg-white text-primary px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border border-primary/15 shadow-sm">
             Modern Healthcare Management, Simplified.
         </span>
-        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-[1.15]">
-            Experience the Future of <span class="text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Connected Care</span>
+        <h1 class="text-[32px] sm:text-5xl lg:text-[44px] xl:text-6xl font-extrabold text-slate-900 leading-[1.2] sm:leading-[1.15]">
+            Experience the Future of <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Connected Care</span>
         </h1>
-        <p class="text-lg text-slate-600 leading-relaxed max-w-xl">
+        <p class="text-[15px] sm:text-lg text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
             SHMS brings together appointments, medical records, billing, pharmacy, and laboratory management into one secure, intelligent, role-based platform.
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 pt-2">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 justify-center lg:justify-start">
             {% if user.is_authenticated %}
-                <a href="{% url 'accounts:role_redirect' %}" class="px-8 py-4 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-blue-700 transition shadow-lg shadow-primary/25 hover-pop">
+                <a href="{% url 'accounts:role_redirect' %}" class="w-full sm:w-auto px-8 py-4 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-secondary transition shadow-lg shadow-primary/25 hover-pop flex items-center justify-center">
                     Go to Dashboard
                 </a>
             {% else %}
-                <a href="{% url 'accounts:register' %}" class="px-8 py-4 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-blue-700 transition shadow-lg shadow-primary/25 hover-pop">
+                <a href="{% url 'accounts:register' %}" class="w-full sm:w-auto px-8 py-4 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-secondary transition shadow-lg shadow-primary/25 hover-pop flex items-center justify-center">
                     Register Patient
                 </a>
-                <a href="{% url 'accounts:login' %}" class="px-8 py-4 bg-slate-900 text-white rounded-2xl text-center font-semibold hover:bg-slate-800 transition hover-pop">
+                <a href="{% url 'accounts:login' %}" class="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-2xl text-center font-semibold hover:bg-slate-800 transition hover-pop flex items-center justify-center">
                     Staff Login
                 </a>
             {% endif %}
         </div>
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 pt-2 text-[13px] sm:text-sm text-slate-600">
+            <span class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">✓</span> Role-based & secure</span>
+            <span class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">✓</span> 9 modules in one place</span>
+            <span class="flex items-center gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">✓</span> 24/7 hospital-ready</span>
+        </div>
     </div>
-    <div class="relative group" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
-        <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1000&q=80" alt="Doctors using digital tablet in modern hospital" class="w-full h-[420px] object-cover img-zoom">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-6">
+    <div class="relative group mx-1 sm:mx-0" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 bg-white">
+            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1000&q=80" alt="Doctors using digital tablet in modern hospital" class="w-full h-[260px] sm:h-[340px] lg:h-[400px] xl:h-[440px] object-cover img-zoom">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-5 sm:p-6">
                 <div class="text-white space-y-1">
-                    <p class="text-xs font-bold uppercase tracking-widest text-secondary bg-white/20 backdrop-blur-md px-3 py-1 rounded-full inline-block">Real-Time Sync</p>
-                    <p class="text-lg font-bold">Secure EHR & Patient Workflows</p>
+                    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-white bg-white/20 backdrop-blur-md px-3 py-1 rounded-full inline-block">Real-Time Sync</p>
+                    <p class="text-base sm:text-lg font-bold">Secure EHR & Patient Workflows</p>
                 </div>
             </div>
+        </div>
+        <div class="absolute -top-3 right-3 sm:-top-4 sm:-right-5 bg-white rounded-2xl shadow-xl border border-slate-100 px-3 py-2.5 sm:px-4 sm:py-3 flex items-center gap-3 max-w-[calc(100%-24px)]">
+            <span class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold flex-shrink-0">✓</span>
+            <div class="min-w-0"><p class="text-sm font-extrabold text-slate-900 leading-none">100%</p><p class="text-xs text-slate-500 mt-1 whitespace-nowrap">Role-based access</p></div>
+        </div>
+        <div class="absolute -bottom-3 left-3 sm:-bottom-4 sm:-left-5 bg-white rounded-2xl shadow-xl border border-slate-100 px-3 py-2.5 sm:px-4 sm:py-3 flex items-center gap-3 max-w-[calc(100%-24px)]">
+            <span class="w-9 h-9 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold flex-shrink-0">+</span>
+            <div class="min-w-0"><p class="text-sm font-extrabold text-slate-900 leading-none whitespace-nowrap">4 roles • 9 modules</p><p class="text-xs text-slate-500 mt-1 whitespace-nowrap">One connected platform</p></div>
+        </div>
+    </div>
+</div>
+</section>
+
+{# Trust strip — demo-safe platform stats only, no hospital claims. #}
+<section class="bg-white border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div>
+            <p class="text-3xl font-extrabold text-slate-900">4</p>
+            <p class="text-sm text-slate-500 font-medium mt-1">User roles</p>
+        </div>
+        <div>
+            <p class="text-3xl font-extrabold text-slate-900">9</p>
+            <p class="text-sm text-slate-500 font-medium mt-1">Modules, one platform</p>
+        </div>
+        <div>
+            <p class="text-3xl font-extrabold text-slate-900">{{ homepage_doctor_count|default:5 }}</p>
+            <p class="text-sm text-slate-500 font-medium mt-1">Doctors on board</p>
+        </div>
+        <div>
+            <p class="text-3xl font-extrabold text-slate-900">100%</p>
+            <p class="text-sm text-slate-500 font-medium mt-1">Role-based access</p>
         </div>
     </div>
 </section>
 
-<section id="features" class="bg-accent py-24 border-y border-slate-200/60">
+{# About — Healthcare Management Simplified. #}
+<section class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+    <div class="relative rounded-3xl overflow-hidden shadow-xl border border-slate-100">
+        <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1000&q=80" alt="Modern hospital interior" class="w-full h-80 object-cover" loading="lazy">
+    </div>
+    <div class="space-y-5">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-primary/10 rounded-full">About SHMS</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Healthcare Management, Simplified</h2>
+        <p class="text-slate-600 leading-relaxed">SHMS connects patients, doctors, receptionists and admins in one secure workspace — appointments, records, pharmacy, laboratory and billing stay in sync, so care teams spend less time on paperwork and more time with patients.</p>
+        <ul class="space-y-3 text-sm text-slate-700">
+            <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span> One login, role-based workspaces for every team member.</li>
+            <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span> Appointments, EMR, billing, pharmacy and lab in one place.</li>
+            <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span> Audit logging and access control built in from day one.</li>
+        </ul>
+        <a href="{% url 'demo' %}" class="inline-block px-7 py-3.5 bg-primary text-white rounded-2xl font-semibold hover:bg-secondary transition">Explore the Live Demo</a>
+    </div>
+</section>
+
+<section id="features" class="bg-slate-50 py-24 border-y border-slate-200/60 scroll-mt-[76px] sm:scroll-mt-[82px]">
     <div class="max-w-7xl mx-auto px-6 space-y-16">
         <div class="text-center max-w-3xl mx-auto space-y-4" data-aos="fade-up" data-aos-duration="800">
             <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-white rounded-full shadow-sm">Comprehensive Modules</span>
@@ -133,7 +192,7 @@
             <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl border border-slate-100 hover-pop transition-all flex flex-col group" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
                 <div class="h-48 overflow-hidden relative">
                     <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80" alt="Electronic Medical Records" class="w-full h-full object-cover img-zoom">
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-secondary shadow-sm">EHR Records</div>
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">EHR Records</div>
                 </div>
                 <div class="p-8 space-y-3 flex-1 flex flex-col justify-between">
                     <div>
@@ -145,7 +204,7 @@
             <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl border border-slate-100 hover-pop transition-all flex flex-col group" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
                 <div class="h-48 overflow-hidden relative">
                     <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80" alt="Billing & Payments" class="w-full h-full object-cover img-zoom">
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-amber-600 shadow-sm">Financials</div>
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">Financials</div>
                 </div>
                 <div class="p-8 space-y-3 flex-1 flex flex-col justify-between">
                     <div>
@@ -157,7 +216,7 @@
             <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl border border-slate-100 hover-pop transition-all flex flex-col group" data-aos="fade-up" data-aos-duration="800" data-aos-delay="150">
                 <div class="h-48 overflow-hidden relative">
                     <img src="https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=600&q=80" alt="Pharmacy Management" class="w-full h-full object-cover img-zoom">
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-rose-600 shadow-sm">Pharmacy</div>
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">Pharmacy</div>
                 </div>
                 <div class="p-8 space-y-3 flex-1 flex flex-col justify-between">
                     <div>
@@ -169,7 +228,7 @@
             <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl border border-slate-100 hover-pop transition-all flex flex-col group" data-aos="fade-up" data-aos-duration="800" data-aos-delay="250">
                 <div class="h-48 overflow-hidden relative">
                     <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=600&q=80" alt="Laboratory System" class="w-full h-full object-cover img-zoom">
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-indigo-600 shadow-sm">Diagnostics</div>
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">Diagnostics</div>
                 </div>
                 <div class="p-8 space-y-3 flex-1 flex flex-col justify-between">
                     <div>
@@ -181,12 +240,36 @@
             <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl border border-slate-100 hover-pop transition-all flex flex-col group" data-aos="fade-up" data-aos-duration="800" data-aos-delay="350">
                 <div class="h-48 overflow-hidden relative">
                     <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" alt="Analytics Dashboard" class="w-full h-full object-cover img-zoom">
-                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-emerald-600 shadow-sm">Insights</div>
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">Insights</div>
                 </div>
                 <div class="p-8 space-y-3 flex-1 flex flex-col justify-between">
                     <div>
                         <h3 class="text-2xl font-black mb-2 title-hover">Analytics Dashboard</h3>
                         <p class="text-slate-600 text-sm leading-relaxed">Admins get real-time charts showing appointments, revenue, and hospital statistics.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl border border-slate-100 hover-pop transition-all flex flex-col group" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=600&q=80" alt="Emergency Care" class="w-full h-full object-cover img-zoom" loading="lazy">
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">Urgent</div>
+                </div>
+                <div class="p-8 space-y-3 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-2xl font-black mb-2 title-hover">Emergency & Triage</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Priority queues and 24/7 emergency intake keep urgent cases moving without losing track.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl border border-slate-100 hover-pop transition-all flex flex-col group" data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80" alt="Ward and Inpatient Care" class="w-full h-full object-cover img-zoom" loading="lazy">
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm">Inpatient</div>
+                </div>
+                <div class="p-8 space-y-3 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-2xl font-black mb-2 title-hover">Wards & Admissions</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Admit, transfer and discharge inpatients with bed allocation and stay history in one view.</p>
                     </div>
                 </div>
             </div>
@@ -205,9 +288,9 @@
     </div>
 </section>
 
-<section id="roles" class="py-24 max-w-7xl mx-auto px-6">
+<section id="roles" class="py-24 max-w-7xl mx-auto px-6 scroll-mt-[76px] sm:scroll-mt-[82px]">
     <div class="text-center max-w-3xl mx-auto space-y-4 mb-16" data-aos="fade-up" data-aos-duration="800">
-        <span class="text-xs font-bold uppercase tracking-widest text-secondary px-3 py-1 bg-secondary/10 rounded-full">Role-Based Ecosystem</span>
+        <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-primary/10 rounded-full">Role-Based Ecosystem</span>
         <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Built for Every Role</h2>
         <p class="text-slate-600 text-base">Customized workspaces tailored to the exact duties of administrative staff, clinicians, and patients.</p>
     </div>
@@ -216,7 +299,7 @@
             <div class="h-44 overflow-hidden relative">
                 <img src="https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hospital Administrator" class="w-full h-full object-cover img-zoom">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-4">
-                    <span class="text-xs font-bold uppercase tracking-wider text-white bg-primary/80 backdrop-blur-md px-2.5 py-1 rounded-full">Admin Portal</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-white bg-primary/85 backdrop-blur-md px-2.5 py-1 rounded-full">Admin Portal</span>
                 </div>
             </div>
             <div class="p-6 space-y-2 flex-1 flex flex-col justify-between text-center">
@@ -230,7 +313,7 @@
             <div class="h-44 overflow-hidden relative">
                 <img src="https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Medical Doctor" class="w-full h-full object-cover img-zoom">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-4">
-                    <span class="text-xs font-bold uppercase tracking-wider text-white bg-secondary/80 backdrop-blur-md px-2.5 py-1 rounded-full">Doctor Portal</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-white bg-primary/85 backdrop-blur-md px-2.5 py-1 rounded-full">Doctor Portal</span>
                 </div>
             </div>
             <div class="p-6 space-y-2 flex-1 flex flex-col justify-between text-center">
@@ -244,7 +327,7 @@
             <div class="h-44 overflow-hidden relative">
                 <img src="https://images.pexels.com/photos/7089401/pexels-photo-7089401.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hospital Receptionist" class="w-full h-full object-cover img-zoom">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-4">
-                    <span class="text-xs font-bold uppercase tracking-wider text-white bg-amber-600/80 backdrop-blur-md px-2.5 py-1 rounded-full">Front Desk</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-white bg-primary/85 backdrop-blur-md px-2.5 py-1 rounded-full">Front Desk</span>
                 </div>
             </div>
             <div class="p-6 space-y-2 flex-1 flex flex-col justify-between text-center">
@@ -258,7 +341,7 @@
             <div class="h-44 overflow-hidden relative">
                 <img src="https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Patient Portal" class="w-full h-full object-cover img-zoom">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-4">
-                    <span class="text-xs font-bold uppercase tracking-wider text-white bg-purple-600/80 backdrop-blur-md px-2.5 py-1 rounded-full">Patient Portal</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-white bg-primary/85 backdrop-blur-md px-2.5 py-1 rounded-full">Patient Portal</span>
                 </div>
             </div>
             <div class="p-6 space-y-2 flex-1 flex flex-col justify-between text-center">
@@ -271,50 +354,330 @@
     </div>
 </section>
 
-<section id="stats" class="bg-primary text-white py-16" data-aos="fade" data-aos-duration="1000">
-    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-        <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
-            <div class="text-4xl md:text-5xl font-extrabold mb-1">4</div>
-            <div class="text-sky-100 text-sm font-medium">User Roles</div>
+{# Why SHMS — Everything Your Healthcare Team Needs. #}
+<section class="bg-slate-50 border-y border-slate-200/60">
+    <div class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-5">
+            <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-white rounded-full shadow-sm">Why SHMS</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Everything Your Healthcare Team Needs</h2>
+            <p class="text-slate-600 leading-relaxed">One calm workspace instead of five disconnected tools. Admins see the whole hospital, doctors see their day, receptionists keep the queue moving, patients stay informed.</p>
+            <ul class="space-y-3 text-sm text-slate-700">
+                <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span> Role-based dashboards with real-time schedules and notifications.</li>
+                <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span> Audited actions and scoped records — doctors see only their own patients.</li>
+                <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">✓</span> REST API ready for mobile apps and integrations.</li>
+            </ul>
+            <div class="flex flex-col sm:flex-row gap-3 pt-1">
+                <a href="{% url 'demo' %}" class="px-7 py-3.5 bg-primary text-white rounded-2xl text-center font-semibold hover:bg-secondary transition">See It in Action</a>
+                <a href="{% url 'accounts:register' %}" class="px-7 py-3.5 bg-white text-slate-900 border border-slate-200 rounded-2xl text-center font-semibold hover:border-primary hover:text-primary transition">Create Free Account</a>
+            </div>
         </div>
-        <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
-            <div class="text-4xl md:text-5xl font-extrabold mb-1">9</div>
-            <div class="text-sky-100 text-sm font-medium">System Modules</div>
-        </div>
-        <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
-            <div class="text-4xl md:text-5xl font-extrabold mb-1">REST</div>
-            <div class="text-sky-100 text-sm font-medium">API Ready</div>
-        </div>
-        <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
-            <div class="text-4xl md:text-5xl font-extrabold mb-1">100%</div>
-            <div class="text-sky-100 text-sm font-medium">Role-Based Access</div>
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+                <p class="font-bold text-slate-900">Today at a glance</p>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">Live demo data</span>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="bg-slate-50 rounded-2xl p-4"><p class="text-2xl font-extrabold text-slate-900">4</p><p class="text-xs text-slate-500 mt-1">Roles</p></div>
+                <div class="bg-slate-50 rounded-2xl p-4"><p class="text-2xl font-extrabold text-slate-900">9</p><p class="text-xs text-slate-500 mt-1">Modules</p></div>
+                <div class="bg-slate-50 rounded-2xl p-4"><p class="text-2xl font-extrabold text-slate-900">{{ homepage_doctor_count|default:5 }}</p><p class="text-xs text-slate-500 mt-1">Doctors</p></div>
+            </div>
+            <div class="space-y-2.5">
+                <div class="flex items-center gap-3 bg-slate-50 rounded-2xl px-4 py-3"><span class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">✓</span><div><p class="text-sm font-bold text-slate-900">Morning clinic synced</p><p class="text-xs text-slate-500">Appointments, rooms and reminders aligned.</p></div></div>
+                <div class="flex items-center gap-3 bg-slate-50 rounded-2xl px-4 py-3"><span class="w-8 h-8 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center font-bold text-sm">+</span><div><p class="text-sm font-bold text-slate-900">Records up to date</p><p class="text-xs text-slate-500">EMR, prescriptions and lab in one timeline.</p></div></div>
+            </div>
         </div>
     </div>
 </section>
 
-<footer id="footer-section" class="bg-slate-900 text-slate-400 py-16 border-t border-slate-800" data-aos="fade-up" data-aos-duration="800">
-    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
-        <div class="space-y-3">
-            <div class="text-2xl font-extrabold text-white flex items-center gap-2">
-                <span class="bg-primary text-white rounded-lg w-8 h-8 flex items-center justify-center text-sm font-bold">S</span>
-                <span>SHMS</span>
+{# Doctors — real DB data only, never invented. #}
+<section id="doctors" class="max-w-7xl mx-auto px-6 py-20">
+    <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-primary/10 rounded-full">Meet the Team</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Our Doctors</h2>
+        <p class="text-slate-600">Real clinicians on the platform — book an appointment to be seen.</p>
+    </div>
+    {% if homepage_doctors %}
+    {# Specialty filter tabs — JS-only, no backend change. Empty tabs auto-hide. #}
+    <div class="flex flex-wrap justify-center gap-2 mb-10" role="tablist" aria-label="Filter doctors by specialty">
+        <button type="button" data-spec-tab="all" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition" role="tab" aria-selected="true">All</button>
+        {% for slug, name in specialty_tabs %}
+        <button type="button" data-spec-tab="{{ slug }}" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">{{ name }}</button>
+        {% endfor %}
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="doctorGrid">
+        {% for doctor in homepage_doctors %}
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition overflow-hidden flex flex-col doctor-card" data-specialization="{{ doctor.specialization.slug }}">
+            {# 06-style: name top-right + availability, photo, role, contact icons + Book. Real data only. #}
+            <div class="flex items-center justify-between gap-2 px-5 pt-4">
+                {% if doctor.available %}
+                <span class="flex-shrink-0 inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>Available</span>
+                {% else %}
+                <span class="flex-shrink-0 inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 border border-slate-200"><span class="w-1.5 h-1.5 rounded-full bg-slate-400" aria-hidden="true"></span>Unavailable</span>
+                {% endif %}
+                <h3 class="min-w-0 truncate text-right text-[15px] font-extrabold text-slate-900 leading-tight">Dr. {{ doctor.user.get_full_name }}</h3>
             </div>
-            <p class="text-sm text-slate-400 max-w-md">Smart Hospital Management System (SHMS) — Bringing modern enterprise software and calm clinical design together.</p>
+            <div class="px-5 pt-3">
+                <div class="bg-slate-50 rounded-2xl p-3">
+                    {% if doctor.user.profile_picture %}
+                    <img src="{{ doctor.user.profile_picture.url }}" alt="Dr. {{ doctor.user.get_full_name }}" class="block w-40 h-48 sm:w-44 sm:h-52 mx-auto object-cover object-top rounded-xl" loading="lazy">
+                    {% else %}
+                    <div class="w-40 h-48 sm:w-44 sm:h-52 mx-auto rounded-xl bg-white border border-slate-100 flex items-center justify-center text-4xl font-extrabold text-primary" aria-hidden="true">{{ doctor.user.first_name|slice:":1" }}{{ doctor.user.last_name|slice:":1" }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="p-5 flex-1 flex flex-col">
+                <p class="text-sm text-primary font-semibold text-center">{{ doctor.specialization.name }}</p>
+                <p class="text-xs text-slate-500 text-center mt-0.5">{{ doctor.qualification }} · {{ doctor.experience_years }} yrs experience</p>
+                <div class="mt-auto pt-4 flex flex-wrap items-center gap-2">
+                    {% if doctor.user.phone %}
+                    {% with raw=doctor.user.phone|cut:"+"|cut:" "|cut:"-" %}
+                    <button type="button" data-contact-toggle="contact-num-{{ doctor.id }}" title="Show WhatsApp number" aria-label="Show WhatsApp number for Dr. {{ doctor.user.get_full_name }}" aria-controls="contact-num-{{ doctor.id }}"
+                       class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    </button>
+                    <button type="button" data-contact-toggle="contact-num-{{ doctor.id }}" title="Show phone number" aria-label="Show phone number for Dr. {{ doctor.user.get_full_name }}" aria-controls="contact-num-{{ doctor.id }}"
+                       class="w-9 h-9 rounded-xl bg-slate-50 text-slate-600 border border-slate-200 flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                    </button>
+                    {% endwith %}
+                    {% endif %}
+                    <a href="{% url 'patients:book_appointment' %}" class="ml-auto px-4 py-2.5 bg-primary text-white rounded-xl text-[13px] font-semibold hover:bg-secondary transition whitespace-nowrap">Book Appointment</a>
+                </div>
+                {% if doctor.user.phone %}
+                {% with raw=doctor.user.phone|cut:"+"|cut:" "|cut:"-" %}
+                <div id="contact-num-{{ doctor.id }}" class="hidden mt-2 rounded-xl bg-slate-50 border border-slate-200 px-3 py-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                    <a href="tel:{{ doctor.user.phone }}" class="text-[13px] font-bold text-slate-800 hover:text-primary break-all">{{ doctor.user.phone }}</a>
+                    <a href="https://wa.me/{% if raw|slice:':1' == '0' %}234{{ raw|slice:'1:' }}{% else %}{{ raw }}{% endif %}" target="_blank" rel="noopener" class="text-[12.5px] font-semibold text-emerald-700 hover:underline whitespace-nowrap">Open WhatsApp →</a>
+                </div>
+                {% endwith %}
+                {% endif %}
+            </div>
         </div>
-        <div class="flex flex-col md:items-end space-y-4">
-            <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Developer & Repository Access</p>
-            <div class="flex items-center gap-4">
-                <a href="https://github.com/ZACCH0/smart-hospital-management-system" target="_blank" class="px-5 py-2.5 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition flex items-center gap-2 shadow-sm">
-                    GitHub Repository
-                </a>
-                <a href="https://linkedin.com" target="_blank" class="px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition flex items-center gap-2 shadow-sm">
-                    LinkedIn Profile
-                </a>
+        {% endfor %}
+    </div>
+    <p id="doctorFilterEmpty" class="hidden text-center text-sm text-slate-500 mt-8">No doctors in this specialty yet — please try another tab.</p>
+    <script>
+    (function () {
+        var tabs = document.querySelectorAll('[data-spec-tab]');
+        var cards = document.querySelectorAll('#doctorGrid .doctor-card');
+        var emptyMsg = document.getElementById('doctorFilterEmpty');
+        if (!tabs.length || !cards.length) return;
+        // Hide tabs with zero matching cards (keeps row honest with real data).
+        tabs.forEach(function (tab) {
+            var spec = tab.getAttribute('data-spec-tab');
+            if (spec === 'all') return;
+            var count = 0;
+            cards.forEach(function (card) {
+                if (card.getAttribute('data-specialization') === spec) count++;
+            });
+            if (count === 0) tab.style.display = 'none';
+        });
+        var activeCls = ['bg-primary', 'text-white'];
+        var idleCls = ['bg-white', 'text-slate-600', 'border', 'border-slate-200'];
+        tabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                var spec = tab.getAttribute('data-spec-tab');
+                tabs.forEach(function (t) {
+                    t.classList.remove.apply(t.classList, activeCls);
+                    t.classList.add.apply(t.classList, idleCls);
+                    t.setAttribute('aria-selected', 'false');
+                });
+                tab.classList.remove.apply(tab.classList, idleCls);
+                tab.classList.add.apply(tab.classList, activeCls);
+                tab.setAttribute('aria-selected', 'true');
+                var shown = 0;
+                cards.forEach(function (card) {
+                    var match = (spec === 'all') || (card.getAttribute('data-specialization') === spec);
+                    card.style.display = match ? '' : 'none';
+                    if (match) shown++;
+                });
+                if (emptyMsg) emptyMsg.classList.toggle('hidden', shown > 0);
+            });
+        });
+    })();
+    </script>
+    <script>
+    // Contact icons: click reveals the doctor's number chip (tap the number to call).
+    document.querySelectorAll('[data-contact-toggle]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var chip = document.getElementById(btn.getAttribute('data-contact-toggle'));
+            if (chip) chip.classList.toggle('hidden');
+        });
+    });
+    </script>
+    {% else %}
+    {% include "partials/empty_state.html" with title="No doctors listed yet" text="Please check back soon or contact the hospital desk." icon="users" %}
+    {% endif %}
+</section>
+
+<section id="stats" class="py-20 max-w-7xl mx-auto px-6 scroll-mt-[76px] sm:scroll-mt-[82px]">
+    <div class="text-center max-w-2xl mx-auto space-y-4 mb-12">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-primary/10 rounded-full">How It Works</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Care in Four Simple Steps</h2>
+        <p class="text-slate-600">From account to appointment to recovery — all inside SHMS.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-7 space-y-3">
+            <span class="w-11 h-11 rounded-2xl bg-primary text-white flex items-center justify-center font-extrabold text-lg">1</span>
+            <h3 class="font-extrabold text-slate-900">Create your account</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">Register in a minute with email verification. Your records stay private and secure.</p>
+        </div>
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-7 space-y-3">
+            <span class="w-11 h-11 rounded-2xl bg-primary text-white flex items-center justify-center font-extrabold text-lg">2</span>
+            <h3 class="font-extrabold text-slate-900">Book an appointment</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">Pick a doctor and time that suits you. Reception confirms your slot.</p>
+        </div>
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-7 space-y-3">
+            <span class="w-11 h-11 rounded-2xl bg-primary text-white flex items-center justify-center font-extrabold text-lg">3</span>
+            <h3 class="font-extrabold text-slate-900">Get treated</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">Doctors record diagnoses, prescriptions and lab requests digitally during your visit.</p>
+        </div>
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-7 space-y-3">
+            <span class="w-11 h-11 rounded-2xl bg-primary text-white flex items-center justify-center font-extrabold text-lg">4</span>
+            <h3 class="font-extrabold text-slate-900">Follow up & pay</h3>
+            <p class="text-sm text-slate-600 leading-relaxed">View records and prescriptions online, settle bills, and book follow-ups anytime.</p>
+        </div>
+    </div>
+</section>
+
+{# Appointment CTA band. #}
+<section class="max-w-7xl mx-auto px-6 pb-20">
+    <div class="bg-primary rounded-3xl px-8 py-12 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+        <div class="space-y-3 text-center md:text-left">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-white">Ready to see a doctor?</h2>
+            <p class="text-teal-50 max-w-lg">Book in under two minutes. Join the patients managing their care on SHMS.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+            <a href="{% url 'patients:book_appointment' %}" class="px-8 py-4 bg-white text-primary rounded-2xl text-center font-bold hover:bg-slate-100 transition">Book Appointment</a>
+            <a href="{% url 'demo' %}" class="px-8 py-4 bg-slate-900 text-white rounded-2xl text-center font-semibold hover:bg-slate-800 transition">Try Live Demo</a>
+        </div>
+    </div>
+</section>
+
+{# FAQ accordion. #}
+<section class="max-w-4xl mx-auto px-6 pb-20">
+    <div class="text-center space-y-4 mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary px-3 py-1 bg-primary/10 rounded-full">FAQ</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Frequently Asked Questions</h2>
+    </div>
+    <div class="space-y-3">
+        <details class="bg-white border border-slate-200 rounded-2xl px-6 py-4 group">
+            <summary class="font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between">How do I book an appointment?<span class="text-primary font-extrabold group-open:rotate-45 transition-transform">+</span></summary>
+            <p class="text-sm text-slate-600 mt-3 leading-relaxed">Create an account, log in, choose your doctor and a time slot. Reception confirms your booking and you get notified.</p>
+        </details>
+        <details class="bg-white border border-slate-200 rounded-2xl px-6 py-4 group">
+            <summary class="font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between">Can I see my medical records online?<span class="text-primary font-extrabold group-open:rotate-45 transition-transform">+</span></summary>
+            <p class="text-sm text-slate-600 mt-3 leading-relaxed">Yes. Patients can view visit history, prescriptions and lab results from their dashboard at any time.</p>
+        </details>
+        <details class="bg-white border border-slate-200 rounded-2xl px-6 py-4 group">
+            <summary class="font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between">Is my health data safe?<span class="text-primary font-extrabold group-open:rotate-45 transition-transform">+</span></summary>
+            <p class="text-sm text-slate-600 mt-3 leading-relaxed">SHMS uses role-based access, scoped records and audit logging. Doctors see only their own patients, and every key action is logged.</p>
+        </details>
+        <details class="bg-white border border-slate-200 rounded-2xl px-6 py-4 group">
+            <summary class="font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between">How do I pay my bills?<span class="text-primary font-extrabold group-open:rotate-45 transition-transform">+</span></summary>
+            <p class="text-sm text-slate-600 mt-3 leading-relaxed">Invoices are generated automatically per visit. You can review itemised bills and track payment status from the billing section.</p>
+        </details>
+        <details class="bg-white border border-slate-200 rounded-2xl px-6 py-4 group">
+            <summary class="font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between">Can I try it before registering?<span class="text-primary font-extrabold group-open:rotate-45 transition-transform">+</span></summary>
+            <p class="text-sm text-slate-600 mt-3 leading-relaxed">Yes — the live demo lets you explore every role with one click and sample data. No real patient records involved.</p>
+        </details>
+    </div>
+</section>
+
+{# Final CTA. #}
+<section class="max-w-7xl mx-auto px-6 pb-20">
+    <div class="bg-slate-900 rounded-3xl px-8 py-14 text-center space-y-5 shadow-xl">
+        <h2 class="text-2xl md:text-4xl font-extrabold text-white">One platform for your whole hospital journey</h2>
+        <p class="text-slate-400 max-w-xl mx-auto">Appointments, records, pharmacy, lab and billing — secure, role-based, always online.</p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <a href="{% url 'accounts:register' %}" class="px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-secondary transition">Get Started Free</a>
+            <a href="{% url 'accounts:login' %}" class="px-8 py-4 bg-white/10 text-white border border-white/20 rounded-2xl font-semibold hover:bg-white/20 transition">Staff Login</a>
+        </div>
+    </div>
+</section>
+
+<footer id="footer-section" class="bg-slate-900 text-slate-400 border-t border-slate-800 scroll-mt-[76px] sm:scroll-mt-[82px]" data-aos="fade-up" data-aos-duration="800">
+    <!-- Emergency strip -->
+    <div class="bg-primary">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p class="text-white text-sm font-semibold flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-base">+</span>
+                24/7 Emergency & Support — SHMS is always online for your hospital
+            </p>
+            <div class="flex items-center gap-3 text-sm">
+                <a href="tel:[HOSPITAL_PHONE_TO_BE_PROVIDED]" class="px-4 py-2 bg-white text-primary font-bold rounded-xl hover:bg-slate-100 transition">Call: [HOSPITAL_PHONE_TO_BE_PROVIDED]</a>
+                <a href="{% url 'demo' %}" class="px-4 py-2 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition">Try Live Demo</a>
             </div>
         </div>
     </div>
-    <div class="max-w-7xl mx-auto px-6 pt-10 mt-10 border-t border-slate-800 text-center text-xs text-slate-500">
-        <p>&copy; 2026 Smart Hospital Management System (SHMS). Built by Alade Zaccheous Kehinde. All rights reserved.</p>
+
+    <div class="max-w-7xl mx-auto px-6 py-14 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <!-- Brand -->
+        <div class="space-y-4">
+            <div class="text-2xl font-extrabold text-white flex items-center gap-2">
+                <span class="bg-primary text-white rounded-lg w-9 h-9 flex items-center justify-center text-sm font-bold">S</span>
+                <span>SHMS <span class="text-sm font-medium text-slate-400">Smart Hospital</span></span>
+            </div>
+            <p class="text-sm leading-relaxed max-w-xs">Smart Hospital Management System — appointments, EMR, pharmacy, laboratory, billing and analytics in one secure, role-based platform.</p>
+            <div class="flex items-center gap-2 pt-1">
+                <a href="https://github.com/ZACCH0/smart-hospital-management-system" target="_blank" aria-label="GitHub" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-white text-sm font-bold hover:bg-primary transition">Gh</a>
+                <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-white text-sm font-bold hover:bg-primary transition">in</a>
+                <a href="#footer-section" aria-label="X" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-white text-sm font-bold hover:bg-primary transition">X</a>
+                <a href="#footer-section" aria-label="YouTube" class="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center text-white text-sm font-bold hover:bg-primary transition">Yt</a>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+            <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Quick Links</h4>
+            <ul class="space-y-2.5 text-sm">
+                <li><a href="{% url 'home' %}" class="hover:text-white transition">Home</a></li>
+                <li><a href="{% url 'home' %}#features" class="hover:text-white transition">Features</a></li>
+                <li><a href="{% url 'home' %}#roles" class="hover:text-white transition">Solutions by Role</a></li>
+                <li><a href="{% url 'home' %}#stats" class="hover:text-white transition">How It Works</a></li>
+                <li><a href="{% url 'accounts:login' %}" class="hover:text-white transition">Staff Login</a></li>
+                <li><a href="{% url 'accounts:register' %}" class="hover:text-white transition">Register Patient</a></li>
+            </ul>
+        </div>
+
+        <!-- Services -->
+        <div>
+            <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Our Departments & Services</h4>
+            <ul class="space-y-2.5 text-sm">
+                <li><a href="{% url 'home' %}#features" class="hover:text-white transition">Appointment Booking</a></li>
+                <li><a href="{% url 'home' %}#features" class="hover:text-white transition">Electronic Medical Records</a></li>
+                <li><a href="{% url 'home' %}#features" class="hover:text-white transition">Pharmacy Management</a></li>
+                <li><a href="{% url 'home' %}#features" class="hover:text-white transition">Laboratory System</a></li>
+                <li><a href="{% url 'home' %}#features" class="hover:text-white transition">Billing & Payments</a></li>
+                <li><a href="{% url 'home' %}#features" class="hover:text-white transition">Analytics Dashboard</a></li>
+            </ul>
+        </div>
+
+        <!-- Contact + Hours -->
+        <div>
+            <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Contact & Opening Hours</h4>
+            <ul class="space-y-2.5 text-sm">
+                <li>[HOSPITAL_ADDRESS_TO_BE_PROVIDED]</li>
+                <li><a href="tel:[HOSPITAL_PHONE_TO_BE_PROVIDED]" class="hover:text-white transition">[HOSPITAL_PHONE_TO_BE_PROVIDED]</a></li>
+                <li><a href="mailto:[HOSPITAL_EMAIL_TO_BE_PROVIDED]" class="hover:text-white transition">[HOSPITAL_EMAIL_TO_BE_PROVIDED]</a></li>
+            </ul>
+            <div class="mt-4 bg-slate-800/60 rounded-2xl p-4 text-sm space-y-1.5 border border-slate-800">
+                <p class="flex justify-between"><span>Mon – Fri</span><span class="text-white font-semibold">8:00 – 20:00</span></p>
+                <p class="flex justify-between"><span>Saturday</span><span class="text-white font-semibold">9:00 – 17:00</span></p>
+                <p class="flex justify-between"><span>Emergency</span><span class="text-emerald-400 font-bold">24 / 7</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <p>&copy; 2026 SHMS — Built by Alade Zaccheous Kehinde. All rights reserved.</p>
+            <div class="flex items-center gap-5">
+                <a href="#footer-section" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#footer-section" class="hover:text-white transition">Terms & Conditions</a>
+                <a href="#footer-section" class="hover:text-white transition">Contact</a>
+            </div>
+        </div>
     </div>
 </footer>
 

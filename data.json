@@ -196,7 +196,7 @@
     "last_login": null,
     "is_superuser": false,
     "email": "aladezaccheous74@gmail.com",
-    "first_name": "Dr Hilda",
+    "first_name": "Hilda",
     "last_name": "Ashio Titiloye",
     "phone": "08123128502",
     "profile_picture": "",
@@ -956,7 +956,7 @@
     "user": [
       "davismarry@gmail.com"
     ],
-    "message": "Your appointment with Dr. Dr Hilda Ashio Titiloye on 2026-07-02 has been approved.",
+    "message": "Your appointment with Dr. Hilda Ashio Titiloye on 2026-07-02 has been approved.",
     "is_read": false,
     "created_at": "2026-07-01T16:22:00.529Z"
   }
@@ -1244,7 +1244,7 @@
       "customuser"
     ],
     "object_id": "3",
-    "object_repr": "Dr Hilda Ashio Titiloye (doctor)",
+    "object_repr": "Hilda Ashio Titiloye (doctor)",
     "action_flag": 1,
     "change_message": "[{\"added\": {}}]"
   }
@@ -1262,7 +1262,7 @@
       "customuser"
     ],
     "object_id": "3",
-    "object_repr": "Dr Hilda Ashio Titiloye (doctor)",
+    "object_repr": "Hilda Ashio Titiloye (doctor)",
     "action_flag": 2,
     "change_message": "[{\"changed\": {\"fields\": [\"Phone\"]}}]"
   }
@@ -1280,7 +1280,7 @@
       "doctorprofile"
     ],
     "object_id": "2",
-    "object_repr": "Dr. Dr Hilda Ashio Titiloye - Dermatology",
+    "object_repr": "Dr. Hilda Ashio Titiloye - Dermatology",
     "action_flag": 1,
     "change_message": "[{\"added\": {}}]"
   }
@@ -1424,7 +1424,7 @@
       "appointment"
     ],
     "object_id": "1",
-    "object_repr": "Davis Marry with Dr. Dr Hilda Ashio Titiloye on 2026-06-20",
+    "object_repr": "Davis Marry with Dr. Hilda Ashio Titiloye on 2026-06-20",
     "action_flag": 1,
     "change_message": "[{\"added\": {}}]"
   }
@@ -1442,7 +1442,7 @@
       "appointment"
     ],
     "object_id": "1",
-    "object_repr": "Davis Marry with Dr. Dr Hilda Ashio Titiloye on 2026-06-20",
+    "object_repr": "Davis Marry with Dr. Hilda Ashio Titiloye on 2026-06-20",
     "action_flag": 2,
     "change_message": "[]"
   }
@@ -1478,7 +1478,7 @@
       "appointment"
     ],
     "object_id": "1",
-    "object_repr": "Davis Marry with Dr. Dr Hilda Ashio Titiloye on 2026-06-20",
+    "object_repr": "Davis Marry with Dr. Hilda Ashio Titiloye on 2026-06-20",
     "action_flag": 2,
     "change_message": "[]"
   }
@@ -1496,7 +1496,7 @@
       "appointment"
     ],
     "object_id": "1",
-    "object_repr": "Davis Marry with Dr. Dr Hilda Ashio Titiloye on 2026-06-20",
+    "object_repr": "Davis Marry with Dr. Hilda Ashio Titiloye on 2026-06-20",
     "action_flag": 2,
     "change_message": "[]"
   }
@@ -1784,7 +1784,7 @@
       "notification"
     ],
     "object_id": "2",
-    "object_repr": "Dr Hilda Ashio Titiloye: u have appointments tomorrow",
+    "object_repr": "Hilda Ashio Titiloye: u have appointments tomorrow",
     "action_flag": 1,
     "change_message": "[{\"added\": {}}]"
   }
@@ -1820,7 +1820,7 @@
       "notification"
     ],
     "object_id": "2",
-    "object_repr": "Dr Hilda Ashio Titiloye: u have appointments tomorrow",
+    "object_repr": "Hilda Ashio Titiloye: u have appointments tomorrow",
     "action_flag": 3,
     "change_message": ""
   }
@@ -2000,7 +2000,7 @@
       "appointment"
     ],
     "object_id": "3",
-    "object_repr": "Ruth Okoro with Dr. Dr Hilda Ashio Titiloye on 2026-07-23",
+    "object_repr": "Ruth Okoro with Dr. Hilda Ashio Titiloye on 2026-07-23",
     "action_flag": 1,
     "change_message": "[{\"added\": {}}]"
   }

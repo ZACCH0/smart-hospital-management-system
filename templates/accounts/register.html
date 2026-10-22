@@ -1,85 +1,186 @@
 {% extends 'base.html' %}
 
 {% block title %}Create Patient Account - SHMS{% endblock %}
-{% block public_content %}
-<div class="max-w-lg mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
 
-    <div class="text-center mb-6">
-        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-            <span class="text-2xl">🧑‍🤝‍🧑</span>
+{# Minimal auth layout: hide the public site header on this page. #}
+{% block pub_header %}{% endblock %}
+
+{% block public_content %}
+{# Register — Figma 15 (desktop split) + 42 (mobile stacked). Backend untouched: same fields, same POST, same validation. #}
+<section class="bg-white flex flex-col lg:flex-row lg:min-h-screen">
+
+    {# ============ LEFT: mint panel (desktop only — hidden on mobile for form-first view) ============ #}
+    <div class="hidden lg:flex bg-[#d9e7e4] lg:rounded-r-[3rem] px-10 pb-10 lg:w-1/2 flex-col items-center text-center justify-center relative overflow-hidden">
+        <a href="{% url 'home' %}" class="inline-flex items-center gap-2 pl-2 pr-5 py-2 rounded-full bg-white shadow-sm hover:shadow transition" aria-label="Back to SHMS home">
+            <span class="w-8 h-8 rounded-full bg-[#225A5D] text-white flex items-center justify-center font-extrabold" aria-hidden="true">S</span>
+            <strong class="text-[#13271E] tracking-tight">SHMS</strong>
+        </a>
+
+        <h1 class="mt-6 text-[26px] sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-[#489D9A]">Your Health, One Secure Account</h1>
+        <p class="mt-3 max-w-md text-sm sm:text-[15px] leading-relaxed text-[#5f6f6d]">
+            Book appointments, access your records, and manage your care — all in one place.
+        </p>
+
+        {# Care visual: real hospital photography (reuses the verified home asset). #}
+        <div class="mt-8 w-full max-w-sm lg:max-w-md relative">
+            <img src="https://images.pexels.com/photos/5452291/pexels-photo-5452291.jpeg?auto=compress&cs=tinysrgb&w=800"
+                 alt="Doctor using a digital tablet" loading="lazy"
+                 class="w-full h-52 sm:h-60 lg:h-64 object-cover rounded-3xl shadow-[0_20px_50px_-20px_rgba(19,39,30,0.35)]">
+            <div class="absolute left-4 bottom-4 flex items-center gap-2 pl-2 pr-4 py-2 bg-white/95 rounded-full shadow-lg">
+                <span class="w-7 h-7 rounded-full bg-[#eef3f2] flex items-center justify-center" aria-hidden="true">
+                    <svg class="w-4 h-4 text-[#225A5D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </span>
+                <p class="text-xs font-semibold text-[#1c2b29]">Verified &amp; secure</p>
+            </div>
         </div>
-        <h1 class="text-2xl font-bold text-blue-700">Create Patient Account</h1>
-        <p class="text-gray-500 text-sm mt-1">Register to book appointments and manage your health records</p>
+
+        <div class="hidden lg:flex w-full max-w-md mt-10 items-center justify-between text-[12.5px] text-[#5f6f6d]">
+            <span>&copy; {% now "Y" %} SHMS</span>
+            <span class="flex gap-5">
+                <a href="{% url 'home' %}#footer-section" class="hover:text-[#225A5D]">Privacy Policy</a>
+                <a href="{% url 'home' %}#footer-section" class="hover:text-[#225A5D]">Terms and conditions</a>
+            </span>
+        </div>
     </div>
 
-    {% if form.errors %}
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
-            Please fix the errors below.
-        </div>
-    {% endif %}
+    {# ============ RIGHT: white form (full view on mobile, split on desktop) ============ #}
+    <div class="bg-white relative z-10 px-6 sm:px-10 py-10 lg:py-12 lg:w-1/2 lg:flex lg:items-center lg:justify-center">
+        <div class="w-full max-w-md mx-auto">
+            <a href="{% url 'home' %}" class="lg:hidden flex justify-center mb-6" aria-label="Back to SHMS home">
+                <span class="inline-flex items-center gap-2 pl-2 pr-5 py-2 rounded-full bg-white shadow-sm border border-[#E2E8F0]">
+                    <span class="w-8 h-8 rounded-full bg-[#225A5D] text-white flex items-center justify-center font-extrabold" aria-hidden="true">S</span>
+                    <strong class="text-[#13271E] tracking-tight">SHMS</strong>
+                </span>
+            </a>
+            <h2 class="text-2xl lg:text-[30px] font-extrabold tracking-tight text-[#1c2b29] text-center">Create Your SHMS Account</h2>
+            <p class="mt-2 text-sm text-[#5f6f6d] text-center">Register to book appointments and manage your care securely.</p>
 
-    <form method="post">
-        {% csrf_token %}
-
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">First Name</label>
-                {{ form.first_name }}
-                {% if form.first_name.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</p>
-                {% endif %}
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1">Last Name</label>
-                {{ form.last_name }}
-                {% if form.last_name.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</p>
-                {% endif %}
-            </div>
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Email Address</label>
-            {{ form.email }}
-            {% if form.email.errors %}
-                <p class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</p>
+            {% if form.errors %}
+                <div class="bg-[#fdf0ef] border border-[#f0c7c2] text-[#8f2b23] px-4 py-3 rounded-2xl mt-6 text-sm" role="alert">
+                    <p class="font-bold">Please correct the errors below:</p>
+                    <ul class="list-disc list-inside text-[13px] mt-1 space-y-0.5">
+                        {% for field, errors in form.errors.items %}
+                            <li><strong>{{ field|capfirst }}:</strong> {{ errors.0 }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endif %}
+
+            <form method="post" class="mt-7 space-y-5">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="id_first_name" class="block text-[13.5px] text-[#5f6f6d] mb-2">First Name</label>
+                        <input type="text" id="id_first_name" name="first_name" value="{{ form.first_name.value|default:'' }}"
+                               required autocomplete="given-name" placeholder="Input your first name"
+                               class="w-full px-5 py-3.5 bg-[#f2f4f5] border border-transparent rounded-2xl text-[#1c2b29] text-sm placeholder:text-[#64756f] focus:outline-none focus:ring-2 focus:ring-[#489D9A] focus:bg-white focus:border-[#489D9A] transition">
+                        {% if form.first_name.errors %}
+                            <p class="text-[#c0392b] text-xs mt-1">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="id_last_name" class="block text-[13.5px] text-[#5f6f6d] mb-2">Last Name</label>
+                        <input type="text" id="id_last_name" name="last_name" value="{{ form.last_name.value|default:'' }}"
+                               required autocomplete="family-name" placeholder="Input your last name"
+                               class="w-full px-5 py-3.5 bg-[#f2f4f5] border border-transparent rounded-2xl text-[#1c2b29] text-sm placeholder:text-[#64756f] focus:outline-none focus:ring-2 focus:ring-[#489D9A] focus:bg-white focus:border-[#489D9A] transition">
+                        {% if form.last_name.errors %}
+                            <p class="text-[#c0392b] text-xs mt-1">{{ form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <label for="id_email" class="block text-[13.5px] text-[#5f6f6d] mb-2">Email Address</label>
+                    <input type="email" id="id_email" name="email" value="{{ form.email.value|default:'' }}"
+                           required autocomplete="email" placeholder="Input your email"
+                           class="w-full px-5 py-3.5 bg-[#f2f4f5] border border-transparent rounded-2xl text-[#1c2b29] text-sm placeholder:text-[#64756f] focus:outline-none focus:ring-2 focus:ring-[#489D9A] focus:bg-white focus:border-[#489D9A] transition">
+                    {% if form.email.errors %}
+                        <p class="text-[#c0392b] text-xs mt-1">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="id_phone" class="block text-[13.5px] text-[#5f6f6d] mb-2">Phone Number</label>
+                    <input type="tel" id="id_phone" name="phone" value="{{ form.phone.value|default:'' }}"
+                           required autocomplete="tel" placeholder="Input your phone number"
+                           class="w-full px-5 py-3.5 bg-[#f2f4f5] border border-transparent rounded-2xl text-[#1c2b29] text-sm placeholder:text-[#64756f] focus:outline-none focus:ring-2 focus:ring-[#489D9A] focus:bg-white focus:border-[#489D9A] transition">
+                    {% if form.phone.errors %}
+                        <p class="text-[#c0392b] text-xs mt-1">{{ form.phone.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="id_password1" class="block text-[13.5px] text-[#5f6f6d] mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password" id="id_password1" name="password1" required autocomplete="new-password" placeholder="Input your password"
+                                   class="w-full px-5 py-3.5 pr-12 bg-[#f2f4f5] border border-transparent rounded-2xl text-[#1c2b29] text-sm placeholder:text-[#64756f] focus:outline-none focus:ring-2 focus:ring-[#489D9A] focus:bg-white focus:border-[#489D9A] transition">
+                            <button type="button" data-toggle="id_password1" aria-label="Show password"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-[#5f6f6d] hover:text-[#225A5D] focus:outline-none focus:ring-2 focus:ring-[#489D9A] rounded">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.05 12.55a11.7 11.7 0 0119.9 0 11.7 11.7 0 01-19.9 0z"/></svg>
+                            </button>
+                        </div>
+                        {% if form.password1.errors %}
+                            <p class="text-[#c0392b] text-xs mt-1">{{ form.password1.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="id_password2" class="block text-[13.5px] text-[#5f6f6d] mb-2">Confirm Password</label>
+                        <div class="relative">
+                            <input type="password" id="id_password2" name="password2" required autocomplete="new-password" placeholder="Confirm your password"
+                                   class="w-full px-5 py-3.5 pr-12 bg-[#f2f4f5] border border-transparent rounded-2xl text-[#1c2b29] text-sm placeholder:text-[#64756f] focus:outline-none focus:ring-2 focus:ring-[#489D9A] focus:bg-white focus:border-[#489D9A] transition">
+                            <button type="button" data-toggle="id_password2" aria-label="Show password"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-[#5f6f6d] hover:text-[#225A5D] focus:outline-none focus:ring-2 focus:ring-[#489D9A] rounded">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.05 12.55a11.7 11.7 0 0119.9 0 11.7 11.7 0 01-19.9 0z"/></svg>
+                            </button>
+                        </div>
+                        {% if form.password2.errors %}
+                            <p class="text-[#c0392b] text-xs mt-1">{{ form.password2.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <input type="checkbox" id="id_terms" name="terms" required
+                           class="mt-0.5 w-4 h-4 rounded border-[#dfe7e5] accent-[#225A5D] focus:ring-2 focus:ring-[#489D9A]">
+                    <label for="id_terms" class="text-[13.5px] text-[#5f6f6d]">I agree to the Terms &amp; Conditions</label>
+                </div>
+
+                <button type="submit" id="registerSubmit"
+                        class="w-full py-4 px-6 bg-[#225A5D] hover:bg-[#1b484b] text-white rounded-full font-bold text-[15px] transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#489D9A] disabled:opacity-60">
+                    Create Account
+                </button>
+            </form>
+
+            <p class="text-center text-sm text-[#5f6f6d] mt-5">
+                Already have an account?
+                <a href="{% url 'accounts:login' %}" class="text-[#31798A] font-semibold hover:underline ml-1">Login</a>
+            </p>
+            <p class="lg:hidden text-center text-xs text-[#64756f] mt-8">&copy; {% now "Y" %} SHMS</p>
         </div>
+    </div>
+</section>
 
-        <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Phone Number</label>
-            {{ form.phone }}
-            {% if form.phone.errors %}
-                <p class="text-red-500 text-xs mt-1">{{ form.phone.errors.0 }}</p>
-            {% endif %}
-        </div>
-
-        <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Password</label>
-            {{ form.password1 }}
-            {% if form.password1.errors %}
-                <p class="text-red-500 text-xs mt-1">{{ form.password1.errors.0 }}</p>
-            {% endif %}
-        </div>
-
-        <div class="mb-6">
-            <label class="block text-sm font-medium mb-1">Confirm Password</label>
-            {{ form.password2 }}
-            {% if form.password2.errors %}
-                <p class="text-red-500 text-xs mt-1">{{ form.password2.errors.0 }}</p>
-            {% endif %}
-        </div>
-
-        <button type="submit"
-                class="btn-shine w-full bg-blue-700 text-white py-3 rounded-lg hover:bg-blue-800 transition font-medium">
-            Create Account →
-        </button>
-    </form>
-
-    <p class="text-center text-sm text-gray-500 mt-4">
-        Already have an account?
-        <a href="{% url 'accounts:login' %}" class="text-blue-600 hover:underline">Login here</a>
-    </p>
-
-</div>
+<script>
+(function () {
+    document.querySelectorAll('[data-toggle]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var input = document.getElementById(btn.getAttribute('data-toggle'));
+            if (!input) return;
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        });
+    });
+    var form = document.querySelector('form[method="post"]');
+    var submit = document.getElementById('registerSubmit');
+    if (form && submit) {
+        form.addEventListener('submit', function () {
+            submit.disabled = true;
+            submit.textContent = 'Creating account…';
+        });
+    }
+})();
+</script>
 {% endblock %}

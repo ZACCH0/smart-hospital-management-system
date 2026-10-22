@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Insurance Providers - SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-6xl mx-auto">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div>
+            <h1 class="text-xl sm:text-2xl lg:text-[28px] font-bold text-primary">Insurance Providers</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">HMOs and TPAs used on invoices and claims.</p>
+        </div>
+        <a href="{% url 'billing:insurance_provider_add' %}"
+           class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
+            + Add Provider
+        </a>
+    </div>
+
+    <div class="app-card overflow-x-auto">
+        <table class="app-table w-full min-w-[720px]">
+            <thead>
+                <tr>
+                    <th>Provider</th>
+                    <th>Contact</th>
+                    <th>Phone</th>
+                    <th>Invoices</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for provider in providers %}
+                    <tr>
+                        <td>
+                            <span class="block font-medium">{{ provider.name }}</span>
+                            <span class="text-xs text-slate-400">{{ provider.email|default:"&mdash;" }}</span>
+                        </td>
+                        <td>{{ provider.contact_person|default:"&mdash;" }}</td>
+                        <td>{{ provider.phone|default:"&mdash;" }}</td>
+                        <td>{{ provider.invoice_count }}</td>
+                        <td>
+                            {% if provider.is_active %}
+                                <span class="badge badge--success">Active</span>
+                            {% else %}
+                                <span class="badge badge--muted">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'billing:insurance_provider_edit' provider.id %}"
+                               class="text-primary hover:underline text-xs">Edit</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-slate-500 py-10">
+                            No providers yet. Add the first HMO to start tracking claims.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,3 +1,6 @@
+import secrets
+
+from django.conf import settings
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -13,6 +16,11 @@ class Appointment(models.Model):
         ('cancelled', 'Cancelled'),
         ('no_show', 'No Show'),
         ('rescheduled', 'Rescheduled'),
+    )
+
+    CONSULTATION_CHOICES = (
+        ('in_person', 'In person'),
+        ('video', 'Video consultation'),
     )
 
     DURATION_CHOICES = (
@@ -44,15 +52,37 @@ class Appointment(models.Model):
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='pending',
-        db_index=True
+        default='pending'
     )
     reason = models.TextField(blank=True)
     cancellation_reason = models.TextField(blank=True)
+    consultation_type = models.CharField(
+        max_length=12,
+        choices=CONSULTATION_CHOICES,
+        default='in_person',
+        db_index=True,
+    )
+    video_room = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text='Auto-generated room token for video consultations.',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-appointment_date', '-appointment_time']
+        indexes = [
+            models.Index(fields=['doctor', 'appointment_date'], name='appt_doctor_date_idx'),
+            models.Index(fields=['patient', 'appointment_date'], name='appt_patient_date_idx'),
+            models.Index(fields=['status', 'appointment_date'], name='appt_status_date_idx'),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['doctor', 'appointment_date', 'appointment_time'],
+                condition=~models.Q(status__in=['cancelled', 'no_show']),
+                name='unique_active_doctor_slot',
+            ),
+        ]
 
     def __str__(self):
         return f'{self.patient.user.get_full_name()} with Dr. {self.doctor.user.get_full_name()} on {self.appointment_date}'
@@ -88,5 +118,28 @@ class Appointment(models.Model):
                 )
 
     def save(self, *args, **kwargs):
+        if self.consultation_type == 'video':
+            if not self.video_room:
+                self.video_room = secrets.token_hex(8)
+        else:
+            self.video_room = ''
         self.full_clean()
         super().save(*args, **kwargs)
+
+    @property
+    def is_video(self):
+        return self.consultation_type == 'video' and bool(self.video_room)
+
+    @property
+    def video_url(self):
+        """Provider-agnostic meeting link, built from settings."""
+        if not self.is_video:
+            return ''
+        base = settings.TELEHEALTH_MEETING_BASE_URL
+        if not base.endswith('/'):
+            base += '/'
+        return f'{base}{settings.TELEHEALTH_ROOM_PREFIX}{self.video_room}'
+
+    @property
+    def can_join_video(self):
+        return self.is_video and self.status == 'approved'

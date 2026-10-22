@@ -1,85 +1,90 @@
 {% extends 'base.html' %}
 
-{% block title %}Pharmacy - SHMS{% endblock %}
+{% block title %}Pharmacy Inventory — SHMS{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto">
+{% include "partials/page_header.html" with eyebrow="Pharmacy" title="Pharmacy Inventory" subtitle="Stock levels, pricing and expiry — real inventory only." action_url="/pharmacy/add/" action_label="Add Medicine" %}
 
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-blue-700">Pharmacy Inventory</h1>
-        <a href="{% url 'pharmacy:add_medicine' %}"
-           class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
-            + Add Medicine
-        </a>
+<div class="w-full max-w-7xl mx-auto">
+    <div class="flex flex-wrap gap-2 mb-5">
+        <a href="{% url 'pharmacy:prescription_queue' %}" class="btn btn-outline btn-sm">Prescription Queue</a>
+        <a href="{% url 'pharmacy:stock_history' %}" class="btn btn-outline btn-sm">Stock History</a>
+        <a href="{% url 'pharmacy:supplier_list' %}" class="btn btn-outline btn-sm">Suppliers</a>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-blue-500">
-            <p class="text-2xl font-bold text-blue-700">{{ medicines.count }}</p>
-            <p class="text-sm text-gray-500">Total Medicines</p>
-        </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-yellow-500">
-            <p class="text-2xl font-bold text-yellow-600">{{ low_stock_count }}</p>
-            <p class="text-sm text-gray-500">Low Stock</p>
-        </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-red-500">
-            <p class="text-2xl font-bold text-red-600">{{ expired_count }}</p>
-            <p class="text-sm text-gray-500">Expired</p>
-        </div>
-    </div>
+    <section class="app-grid app-grid--3 mb-6" aria-label="Inventory summary">
+        <article class="app-stat app-stat--accent">
+            <div class="app-stat__body">
+                <p class="app-stat__label">Total Medicines</p>
+                <p class="app-stat__value">{{ medicines.count }}</p>
+                <p class="app-stat__hint">Across all categories</p>
+            </div>
+        </article>
+        <article class="app-stat">
+            <div class="app-stat__body">
+                <p class="app-stat__label">Low Stock</p>
+                <p class="app-stat__value">{{ low_stock_count }}</p>
+                <p class="app-stat__hint">At or below 10 units</p>
+            </div>
+        </article>
+        <article class="app-stat">
+            <div class="app-stat__body">
+                <p class="app-stat__label">Expired</p>
+                <p class="app-stat__value">{{ expired_count }}</p>
+                <p class="app-stat__hint">Past expiry date</p>
+            </div>
+        </article>
+    </section>
 
-    <!-- Medicine Table -->
-    <div class="bg-white shadow rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-left">
-                <tr>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Medicine</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Category</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Stock</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Price</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Expiry</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
-                    <th class="px-4 py-3 font-semibold text-gray-600">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for medicine in medicines %}
-                    <tr class="border-t hover:bg-gray-50 transition">
-                        <td class="px-4 py-3 font-medium">{{ medicine.name }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ medicine.get_category_display }}</td>
-                        <td class="px-4 py-3">{{ medicine.stock_quantity }}</td>
-                        <td class="px-4 py-3">₦{{ medicine.price }}</td>
-                        <td class="px-4 py-3">{{ medicine.expiry_date }}</td>
-                        <td class="px-4 py-3">
+    {% if medicines %}
+    <section class="app-card app-card--flush">
+        <div class="app-table-wrap">
+            <table class="app-table min-w-[640px]">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Category</th>
+                        <th>Stock</th>
+                        <th>Price</th>
+                        <th>Expiry</th>
+                        <th>Status</th>
+                        <th class="actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for medicine in medicines %}
+                    <tr>
+                        <td class="app-table__primary">{{ medicine.name }}</td>
+                        <td class="app-table__meta">{{ medicine.get_category_display }}</td>
+                        <td class="num">{{ medicine.stock_quantity }}</td>
+                        <td class="whitespace-nowrap">₦{{ medicine.price }}</td>
+                        <td class="whitespace-nowrap">{{ medicine.expiry_date|date:"j M Y" }}</td>
+                        <td>
                             {% if medicine.is_expired %}
-                                <span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full">Expired</span>
+                                <span class="badge badge-rose">Expired</span>
                             {% elif medicine.is_low_stock %}
-                                <span class="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">Low Stock</span>
+                                <span class="badge badge-amber">Low Stock</span>
                             {% else %}
-                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">In Stock</span>
+                                <span class="badge badge-emerald">In Stock</span>
                             {% endif %}
                         </td>
-                        <td class="px-4 py-3 space-x-2">
-                            <a href="{% url 'pharmacy:edit_medicine' medicine.id %}"
-                               class="text-blue-600 hover:underline text-xs">Edit</a>
-                            <a href="{% url 'pharmacy:delete_medicine' medicine.id %}"
-                               class="text-red-600 hover:underline text-xs"
-                               onclick="return confirm('Delete {{ medicine.name }}?')">
-                                Delete
-                            </a>
+                        <td class="actions">
+                            <a href="{% url 'pharmacy:receive_stock' medicine.id %}" class="btn btn-primary btn-sm">Receive</a>
+                            <a href="{% url 'pharmacy:edit_medicine' medicine.id %}" class="btn btn-outline btn-sm">Edit</a>
+                            <form method="post" action="{% url 'pharmacy:delete_medicine' medicine.id %}" class="inline" onsubmit="return confirm('Delete {{ medicine.name }}? This cannot be undone.');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-ghost btn-sm">Delete</button>
+                            </form>
                         </td>
                     </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
-                            No medicines in inventory yet.
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% include "partials/pagination.html" with page_obj=page_obj querystring=querystring %}
+    {% else %}
+        {% include "partials/empty_state.html" with title="No medicines in inventory yet" text="Add your first medicine to start tracking stock, pricing and expiry." icon="pill" action_url="/pharmacy/add/" action_label="Add Medicine" %}
+    {% endif %}
 </div>
 {% endblock %}

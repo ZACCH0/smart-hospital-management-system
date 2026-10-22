@@ -1,7 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404
+
+from .forms import NotificationPreferenceForm
 from .models import Notification
-# Create your views here.
+
+
 @login_required
 def notification_list(request):
     notifications = request.user.notifications.all().order_by('-created_at')
@@ -11,6 +16,7 @@ def notification_list(request):
         'notifications': notifications,
         'unread_count': unread_count,
     })
+
 
 @login_required
 def mark_as_read(request, notification_id):
@@ -22,8 +28,23 @@ def mark_as_read(request, notification_id):
     notification.is_read = True
     notification.save()
     return redirect('notifications:notification_list')
-    
+
+
 @login_required
 def mark_all_read(request):
     request.user.notifications.filter(is_read=False).update(is_read=True)
     return redirect('notifications:notification_list')
+
+
+@login_required
+def preferences(request):
+    if request.method == 'POST':
+        form = NotificationPreferenceForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Notification preferences updated.')
+            return redirect('notifications:preferences')
+    else:
+        form = NotificationPreferenceForm(instance=request.user)
+
+    return render(request, 'notifications/preferences.html', {'form': form})

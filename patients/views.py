@@ -3,7 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserProfileForm, PatientProfileForm, PatientAppointmentForm
 from appointments.models import Appointment
+from doctors.models import DoctorProfile
 from django.core.paginator import Paginator
+from core.ai import suggest_department
+from core.audit import log_action
+from core.decorators import patient_required
 
 @login_required
 def profile_settings(request):
@@ -37,7 +41,7 @@ def profile_settings(request):
     })
 
 
-@login_required
+@patient_required
 def book_appointment(request):
     try:
         patient_profile = request.user.patient_profile
@@ -58,6 +62,37 @@ def book_appointment(request):
         form = PatientAppointmentForm()
 
     return render(request, 'patients/book_appointment.html', {'form': form})
+
+@patient_required
+def health_assistant(request):
+    symptoms = ''
+    result = None
+    doctors = []
+
+    if request.method == 'POST':
+        symptoms = request.POST.get('symptoms', '').strip()
+        if not symptoms:
+            messages.error(request, 'Please describe your symptoms first.')
+        else:
+            result = suggest_department(symptoms)
+            if result and result['department']:
+                doctors = DoctorProfile.objects.filter(
+                    available=True, specialization__slug=result['department']
+                ).select_related('user')[:3]
+            log_action(
+                request,
+                action='access',
+                model_name='HealthAssistant',
+                object_repr='Symptom guidance',
+                details=f"Suggested {result['department_label']} ({result['urgency']}) via {result['source']}",
+            )
+
+    return render(request, 'patients/health_assistant.html', {
+        'symptoms': symptoms,
+        'result': result,
+        'doctors': doctors,
+    })
+
 
 @login_required
 def my_appointments(request):

@@ -3,47 +3,54 @@
 {% block title %}My Patients - SHMS{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
+<div class="w-full max-w-7xl mx-auto">
 
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-blue-700">My Patients</h1>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div>
+            <h1 class="text-xl lg:text-2xl font-bold text-primary">My Patients</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">Patients with at least one booking under you.</p>
+        </div>
         <a href="{% url 'dashboard:doctor_home' %}"
-           class="text-gray-400 hover:text-blue-700 text-sm transition">← Dashboard</a>
+           class="text-gray-400 hover:text-primary text-sm transition">← Dashboard</a>
     </div>
 
     {% if patients %}
-        <div class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
             {% for patient in patients %}
-                <a href="{% url 'doctors:patient_detail' patient.id %}"
-                   class="block bg-white shadow rounded-xl p-5 hover-lift reveal transition">
-                    <div class="flex items-center gap-4">
+                <article class="rounded-2xl overflow-hidden shadow-sm" style="background:#edf1f2;">
+                    <div class="px-4 pt-4 flex items-start justify-between gap-2">
+                        <h2 class="font-bold text-slate-900 text-[15px] lg:text-[16px] truncate">{{ patient.user.get_full_name }}</h2>
+                        {% if patient.blood_group %}
+                            <span class="flex-shrink-0 inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-bold" style="background:#225A5D;color:#ffffff;">{{ patient.blood_group }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="px-4 pt-3">
                         {% if patient.user.profile_picture %}
-                            <img src="{{ patient.user.profile_picture.url }}"
-                                 class="w-12 h-12 rounded-full object-cover">
+                            <img src="{{ patient.user.profile_picture.url }}" alt="{{ patient.user.get_full_name }}"
+                                 class="w-full aspect-square object-cover rounded-xl">
                         {% else %}
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span class="text-blue-700 font-bold">
-                                    {{ patient.user.first_name|slice:":1" }}
-                                </span>
+                            <div class="w-full aspect-square rounded-xl flex items-center justify-center text-5xl lg:text-6xl font-extrabold text-white" style="background:linear-gradient(135deg,#225A5D,#489D9A);">
+                                {{ patient.user.first_name|slice:":1"|upper }}
                             </div>
                         {% endif %}
-                        <div>
-                            <p class="font-semibold text-gray-800">
-                                {{ patient.user.get_full_name }}
-                            </p>
-                            <p class="text-sm text-gray-500">
-                                {{ patient.get_gender_display }} •
-                                Age {{ patient.age }} •
-                                Blood Group: {{ patient.blood_group|default:"N/A" }}
-                            </p>
-                        </div>
-                        <div class="ml-auto text-gray-400">→</div>
                     </div>
-                </a>
+                    <div class="m-3 bg-white rounded-xl p-4 text-center">
+                        <p class="font-bold text-[14px] lg:text-[15px]" style="color:#0f5257;">{{ patient.get_gender_display }} · Age {{ patient.age }}</p>
+                        <p class="text-[12px] lg:text-[12.5px] text-slate-500 mt-1">
+                            {% if patient.last_visit %}Last visit {{ patient.last_visit }}{% else %}No visits yet{% endif %}
+                        </p>
+                        <hr class="my-3 border-slate-100">
+                        <a href="{% url 'doctors:patient_detail' patient.id %}"
+                           class="block w-full rounded-lg py-2.5 text-[13px] lg:text-[13.5px] font-bold hover:brightness-95 transition" style="background:#D9EFED;color:#0f5257;">
+                            Open Chart →
+                        </a>
+                    </div>
+                </article>
             {% endfor %}
         </div>
+        {% include "partials/pagination.html" with page_obj=page_obj %}
     {% else %}
-        <div class="bg-white shadow rounded-xl p-10 text-center">
+        <div class="bg-white shadow rounded-xl lg:rounded-2xl p-10 text-center">
             <div class="text-5xl mb-4">👥</div>
             <h2 class="text-lg font-semibold text-gray-700 mb-2">No patients yet</h2>
             <p class="text-gray-500 text-sm">Patients will appear here once appointments are booked</p>

@@ -1,21 +1,231 @@
 {% extends 'base.html' %}
 
-{% block title %}Receptionist Dashboard{% endblock %}
+{% block title %}Reception Desk — SHMS{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold text-blue-700 mb-6">Welcome, {{ user.get_full_name }}</h1>
+{# Hero — profile band, stacks on mobile #}
+<div class="app-card overflow-hidden mb-5 !border-0 text-white relative" style="background:linear-gradient(120deg,#13271E 0%,#225A5D 60%,#31798A 100%);">
+    {% if user.profile_banner %}
+    <img src="{{ user.profile_banner.url }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover">
+    <div class="absolute inset-0" aria-hidden="true" style="background:linear-gradient(120deg,rgba(19,39,30,.92) 0%,rgba(34,90,93,.85) 60%,rgba(49,121,138,.80) 100%);"></div>
+    {% endif %}
+    <div class="p-5 sm:p-6 lg:p-8 flex flex-col gap-5 lg:gap-6 relative">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-6">
+            <a href="{% url 'dashboard:receptionist_profile' %}" title="Edit my profile" class="flex-shrink-0">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Your profile photo — edit profile" class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl object-cover shadow-lg ring-2 ring-white/40 hover:ring-white transition">
+            {% else %}
+                <span class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-2xl lg:text-3xl font-extrabold ring-2 ring-white/40 hover:bg-white/25 transition">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "R" %}</span>
+            {% endif %}
+            </a>
+            <div class="min-w-0 flex-1">
+                <p class="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-white/70">Reception desk · {{ today|date:"l, j F Y" }}</p>
+                <h1 class="text-[21px] sm:text-[26px] lg:text-[30px] font-extrabold tracking-tight truncate">Hello {{ user.first_name|default:user.get_full_name }}</h1>
+                <p class="mt-1 flex items-center gap-2">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold" style="background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3);">Receptionist</span>
+                    <a href="{% url 'dashboard:receptionist_profile' %}" class="text-[12px] lg:text-[13px] font-semibold text-white/80 underline underline-offset-2 hover:text-white">Edit my profile</a>
+                </p>
+                <p class="text-[13px] sm:text-[13.5px] lg:text-[14.5px] text-white/75 mt-1">Here's today's front desk — schedule, approvals and live doctor availability.</p>
+            </div>
+            <div class="flex sm:flex-col lg:flex-row gap-2 flex-shrink-0">
+                <a href="{% url 'appointments:book_appointment' %}" class="btn btn-sm btn-desk flex-1 sm:flex-none justify-center font-bold" style="background:#ffffff;color:#225A5D;border:1px solid #ffffff;">+ Book Appointment</a>
+                <a href="{% url 'appointments:appointment_list' %}" class="btn btn-sm btn-desk flex-1 sm:flex-none justify-center font-semibold" style="background:rgba(255,255,255,.12);color:#ffffff;border:1px solid rgba(255,255,255,.35);">All Appointments</a>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4 pt-4 border-t border-white/15">
+            <div class="rounded-xl bg-white/10 px-3 py-2.5 lg:px-5 lg:py-3.5 text-center sm:text-left">
+                <p class="text-[20px] sm:text-[24px] lg:text-[28px] font-extrabold leading-none">{{ today_count }}</p>
+                <p class="text-[11px] sm:text-[12px] lg:text-[13px] text-white/70 mt-1">Today's visits</p>
+            </div>
+            <div class="rounded-xl bg-white/10 px-3 py-2.5 lg:px-5 lg:py-3.5 text-center sm:text-left">
+                <p class="text-[20px] sm:text-[24px] lg:text-[28px] font-extrabold leading-none">{{ pending_count }}</p>
+                <p class="text-[11px] sm:text-[12px] lg:text-[13px] text-white/70 mt-1">Need approval</p>
+            </div>
+            <div class="rounded-xl bg-white/10 px-3 py-2.5 lg:px-5 lg:py-3.5 text-center sm:text-left">
+                <p class="text-[20px] sm:text-[24px] lg:text-[28px] font-extrabold leading-none">{{ available_count }}<span class="text-[13px] font-semibold text-white/60">/{{ doctor_count }}</span></p>
+                <p class="text-[11px] sm:text-[12px] lg:text-[13px] text-white/70 mt-1">Doctors free</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div class="grid md:grid-cols-2 gap-6">
-    <a href="{% url 'appointments:appointment_list' %}"
-       class="bg-white shadow rounded-lg p-6 hover:shadow-md transition">
-        <h2 class="text-lg font-semibold">Manage Appointments</h2>
-        <p class="text-gray-500 text-sm mt-1">{{ pending_count }} pending appointment(s)</p>
-    </a>
+{# Stat cards — Figma language: white body + mint footer strip #}
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-5 mb-5">
+    <div class="app-card overflow-hidden">
+        <div class="p-5 flex items-start justify-between gap-3">
+            <div>
+                <p class="text-[13px] font-medium text-slate-500">Today's Appointments</p>
+                <p class="mt-1 text-[30px] leading-none font-extrabold text-slate-900">{{ today_count }}</p>
+            </div>
+            <span class="w-10 h-10 rounded-xl text-white flex items-center justify-center flex-shrink-0" style="background:#13271E;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </span>
+        </div>
+        <div class="px-5 py-2.5 flex items-center gap-2 text-[12.5px] font-medium text-slate-600" style="background:#E8F7F6;">
+            <span class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[11px] font-bold" style="background:#489D9A;">→</span>
+            On today's books, in time order
+        </div>
+    </div>
+    <div class="app-card overflow-hidden">
+        <div class="p-5 flex items-start justify-between gap-3">
+            <div>
+                <p class="text-[13px] font-medium text-slate-500">Pending Approval</p>
+                <p class="mt-1 text-[30px] leading-none font-extrabold text-slate-900">{{ pending_count }}</p>
+            </div>
+            <span class="w-10 h-10 rounded-xl text-white flex items-center justify-center flex-shrink-0" style="background:#13271E;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </span>
+        </div>
+        <div class="px-5 py-2.5 flex items-center gap-2 text-[12.5px] font-medium text-slate-600" style="background:#E8F7F6;">
+            <span class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[11px] font-bold" style="background:#489D9A;">→</span>
+            Waiting on the front desk
+        </div>
+    </div>
+    <div class="app-card overflow-hidden">
+        <div class="p-5 flex items-start justify-between gap-3">
+            <div>
+                <p class="text-[13px] font-medium text-slate-500">Doctors Available</p>
+                <p class="mt-1 text-[30px] leading-none font-extrabold text-slate-900">{{ available_count }}<span class="text-[15px] font-semibold text-slate-400"> / {{ doctor_count }}</span></p>
+            </div>
+            <span class="w-10 h-10 rounded-xl text-white flex items-center justify-center flex-shrink-0" style="background:#13271E;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </span>
+        </div>
+        <div class="px-5 py-2.5 flex items-center gap-2 text-[12.5px] font-medium text-slate-600" style="background:#E8F7F6;">
+            <span class="w-5 h-5 rounded-full text-white flex items-center justify-center text-[11px] font-bold" style="background:#489D9A;">→</span>
+            Ready to take patients
+        </div>
+    </div>
+</div>
 
-    <a href="{% url 'appointments:book_appointment' %}"
-       class="bg-white shadow rounded-lg p-6 hover:shadow-md transition">
-        <h2 class="text-lg font-semibold">Book New Appointment</h2>
-        <p class="text-gray-500 text-sm mt-1">Schedule on behalf of a patient</p>
-    </a>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5 items-start">
+    <div class="lg:col-span-2 grid gap-4 lg:gap-5">
+
+        {# Today's schedule #}
+        <section class="app-card app-card--flush">
+            <div class="app-card__head">
+                <div>
+                    <h2>Today's Schedule</h2>
+                    <p>{{ today|date:"l, j F" }} · {{ today_count }} appointment{{ today_count|pluralize }}</p>
+                </div>
+                <div class="app-card__head-actions">
+                    <a href="{% url 'appointments:appointment_list' %}" class="btn btn-ghost btn-sm">View all</a>
+                </div>
+            </div>
+            {% if todays_appointments %}
+            <div class="overflow-x-auto">
+                <table class="app-table min-w-[560px]">
+                    <thead>
+                        <tr><th>Time</th><th>Patient</th><th>Doctor</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in todays_appointments %}
+                        <tr>
+                            <td class="font-bold whitespace-nowrap">{{ appt.appointment_time|time:"H:i" }}</td>
+                            <td><span class="font-semibold text-slate-900">{{ appt.patient.user.get_full_name }}</span></td>
+                            <td class="whitespace-nowrap">Dr. {{ appt.doctor.user.get_full_name }}<span class="block text-[12px] text-slate-500 font-normal">{{ appt.doctor.specialization.name }}</span></td>
+                            <td>{% include "partials/status_badge.html" with status=appt.status %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="app-empty">
+                <h3>A quiet day</h3>
+                <p>Nothing scheduled for today yet — book the first appointment.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        {# Pending approvals — approve right from the board #}
+        <section class="app-card app-card--flush">
+            <div class="app-card__head">
+                <div>
+                    <h2>Pending Approvals</h2>
+                    <p>Approve here — the patient and doctor are informed automatically.</p>
+                </div>
+                {% if pending_count %}<span class="badge badge-amber">{{ pending_count }} waiting</span>{% endif %}
+            </div>
+            {% if pending_approvals %}
+            <div class="overflow-x-auto">
+                <table class="app-table min-w-[560px]">
+                    <thead>
+                        <tr><th>Patient</th><th>Doctor</th><th>When</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in pending_approvals %}
+                        <tr>
+                            <td>
+                                <span class="font-semibold text-slate-900">{{ appt.patient.user.get_full_name }}</span>
+                                {% if appt.reason %}<span class="block text-[12.5px] text-slate-500 truncate max-w-[220px]">{{ appt.reason }}</span>{% endif %}
+                            </td>
+                            <td class="whitespace-nowrap">Dr. {{ appt.doctor.user.get_full_name }}<span class="block text-[12px] text-slate-500 font-normal">{{ appt.doctor.specialization.name }}</span></td>
+                            <td class="whitespace-nowrap text-[13px]">{{ appt.appointment_date|date:"j M" }} · {{ appt.appointment_time|time:"H:i" }}</td>
+                            <td class="text-right whitespace-nowrap">
+                                <a href="{% url 'appointments:approve_appointment' appt.id %}"
+                                   data-confirm="Approve this appointment for {{ appt.patient.user.get_full_name }} with Dr. {{ appt.doctor.user.get_full_name }}?"
+                                   data-confirm-title="Approve appointment"
+                                   data-confirm-label="Approve"
+                                   class="btn btn-primary btn-sm">Approve</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="app-empty">
+                <h3>All caught up</h3>
+                <p>No pending requests waiting for approval.</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+
+    {# Doctor availability board — Figma Doctors' Schedule #}
+    <aside class="app-card app-card--flush">
+        <div class="app-card__head">
+            <div>
+                <h2>Doctors' Schedule</h2>
+                <p>Live board — who can take a patient right now.</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 text-center rounded-xl mx-5 mt-1 mb-2 py-3" style="background:#F1F8F8;">
+            <div><p class="text-[20px] font-extrabold text-slate-900 leading-none">{{ doctor_count }}</p><p class="text-[11.5px] text-slate-500 mt-1">All Doctors</p></div>
+            <div><p class="text-[20px] font-extrabold text-slate-900 leading-none">{{ available_count }}</p><p class="text-[11.5px] text-slate-500 mt-1">Available</p></div>
+            <div><p class="text-[20px] font-extrabold text-slate-900 leading-none">{{ unavailable_count }}</p><p class="text-[11.5px] text-slate-500 mt-1">Unavailable</p></div>
+        </div>
+        {% if doctors %}
+        <ul class="divide-y divide-slate-100">
+            {% for doc in doctors %}
+            <li class="flex items-center gap-3 px-5 py-3">
+                {% if doc.user.profile_picture %}
+                    <img src="{{ doc.user.profile_picture.url }}" alt="" class="w-10 h-10 rounded-full object-cover flex-shrink-0">
+                {% else %}
+                    <span class="w-10 h-10 rounded-full text-white flex items-center justify-center text-[13px] font-bold flex-shrink-0" style="background:linear-gradient(135deg,#225A5D,#489D9A);">{% firstof doc.user.first_name|slice:":1"|upper doc.user.email|slice:":1"|upper "D" %}</span>
+                {% endif %}
+                <div class="min-w-0 flex-1">
+                    <p class="text-[13.5px] font-bold text-slate-900 truncate">Dr. {{ doc.user.get_full_name }}</p>
+                    <p class="text-[12px] text-slate-500 truncate">{{ doc.specialization.name }}</p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                    {% if doc.available %}
+                        {% include "partials/status_badge.html" with status="available" %}
+                    {% else %}
+                        <span class="badge badge-rose">Unavailable</span>
+                    {% endif %}
+                    <p class="text-[11px] text-slate-400 mt-1">{{ doc.today_load }} booked today</p>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="app-empty">
+            <h3>No doctors yet</h3>
+            <p>Add doctors before the board lights up.</p>
+        </div>
+        {% endif %}
+    </aside>
 </div>
 {% endblock %}

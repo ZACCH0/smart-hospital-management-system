@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Stock History — SHMS{% endblock %}
+
+{% block content %}
+{% include "partials/page_header.html" with eyebrow="Pharmacy" title="Stock History" subtitle="Every stock movement: deliveries, dispenses and adjustments." back_url="/pharmacy/" back_label="Inventory" %}
+
+<div class="w-full max-w-7xl mx-auto">
+    {% if transactions %}
+    <section class="app-card app-card--flush">
+        <div class="app-table-wrap">
+            <table class="app-table min-w-[760px]">
+                <thead>
+                    <tr>
+                        <th>When</th>
+                        <th>Medicine</th>
+                        <th>Type</th>
+                        <th>Qty</th>
+                        <th>Batch</th>
+                        <th>Reference</th>
+                        <th>By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                    <tr>
+                        <td class="app-table__meta whitespace-nowrap">{{ tx.created_at|date:"j M Y, H:i" }}</td>
+                        <td class="app-table__primary">{{ tx.medicine.name }}</td>
+                        <td>
+                            {% if tx.transaction_type == 'in' %}
+                                <span class="badge badge-emerald">Stock in</span>
+                            {% elif tx.transaction_type == 'out' %}
+                                <span class="badge badge-sky">Dispensed</span>
+                            {% elif tx.transaction_type == 'expired' %}
+                                <span class="badge badge-rose">Expired</span>
+                            {% else %}
+                                <span class="badge badge-amber">Adjustment</span>
+                            {% endif %}
+                        </td>
+                        <td class="num">{{ tx.quantity }}</td>
+                        <td class="app-table__meta">{{ tx.batch.batch_number|default:"—" }}</td>
+                        <td class="app-table__meta">{{ tx.reference|default:"—" }}</td>
+                        <td class="app-table__meta">{{ tx.performed_by.get_full_name|default:"System" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% else %}
+        {% include "partials/empty_state.html" with title="No stock movements yet" text="Receiving or dispensing medicine will create history here." icon="file" %}
+    {% endif %}
+</div>
+{% endblock %}

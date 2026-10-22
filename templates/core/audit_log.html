@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Audit Log - SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-7xl mx-auto">
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div>
+            <h1 class="text-xl sm:text-2xl lg:text-[28px] font-bold text-primary">Audit Log</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">
+                Append-only record of logins, clinical changes and payments.
+            </p>
+        </div>
+        <span class="badge badge--info">{{ page_obj.paginator.count }} entr{{ page_obj.paginator.count|pluralize:"y,ies" }}</span>
+    </div>
+
+    <form method="get" class="app-card mb-5 p-4 flex flex-col gap-3 lg:flex-row lg:items-end">
+        <div class="flex-1">
+            <label for="audit-q" class="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Search</label>
+            <input id="audit-q" type="search" name="q" value="{{ q }}"
+                   placeholder="Name, email, object, details or IP"
+                   class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
+        </div>
+        <div class="lg:w-48">
+            <label for="audit-action" class="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Action</label>
+            <select id="audit-action" name="action"
+                    class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+                <option value="">All actions</option>
+                {% for value, label in action_choices %}
+                    <option value="{{ value }}" {% if selected_action == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="lg:w-52">
+            <label for="audit-model" class="block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Model</label>
+            <select id="audit-model" name="model"
+                    class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/40">
+                <option value="">All models</option>
+                {% for name in model_names %}
+                    <option value="{{ name }}" {% if selected_model == name %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">Filter</button>
+            <a href="{% url 'audit_log' %}" class="px-4 py-2 rounded-lg text-sm border border-slate-300 text-slate-600 hover:bg-slate-50 transition">Reset</a>
+        </div>
+    </form>
+
+    <div class="app-card overflow-x-auto">
+        <table class="app-table w-full min-w-[860px]">
+            <thead>
+                <tr>
+                    <th>When</th>
+                    <th>Actor</th>
+                    <th>Action</th>
+                    <th>Object</th>
+                    <th>IP</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in logs %}
+                    <tr>
+                        <td class="whitespace-nowrap">
+                            <span class="block">{{ entry.timestamp|date:"M j, Y" }}</span>
+                            <span class="text-xs text-slate-400">{{ entry.timestamp|date:"H:i:s" }}</span>
+                        </td>
+                        <td>
+                            {% if entry.user %}
+                                <span class="block font-medium">{{ entry.user.get_full_name|default:entry.user.email }}</span>
+                                <span class="text-xs text-slate-400">{{ entry.user.email }}</span>
+                            {% else %}
+                                <span class="text-slate-400">Anonymous</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge badge--info">{{ entry.get_action_display }}</span></td>
+                        <td>
+                            {% if entry.object_repr %}
+                                <span class="block">{{ entry.object_repr }}</span>
+                                <span class="text-xs text-slate-400">{{ entry.model_name }}{% if entry.object_id %} #{{ entry.object_id }}{% endif %}</span>
+                            {% else %}
+                                <span class="text-slate-400">{{ entry.model_name|default:"&mdash;" }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-xs text-slate-500">{{ entry.ip_address|default:"&mdash;" }}</td>
+                        <td class="text-xs text-slate-500 max-w-xs">{{ entry.details|default:"&mdash;"|truncatechars:80 }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-slate-500 py-10">
+                            No audit entries match these filters.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj querystring=querystring %}
+</div>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile — SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-2xl lg:max-w-4xl mx-auto">
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {# Banner + avatar card — pencil on each opens its file chooser #}
+    <div class="app-card overflow-hidden !border-0 !p-0 mb-5">
+        <div class="relative">
+            {% if user.profile_banner %}
+                <img id="bannerPreview" src="{{ user.profile_banner.url }}" alt="Profile banner" class="w-full h-44 sm:h-44 lg:h-56 object-cover">
+            {% else %}
+                <div id="bannerFallback" class="px-5 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-16 sm:pb-14 text-white" style="background:linear-gradient(120deg,#13271E 0%,#225A5D 60%,#31798A 100%);">
+                    <p class="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-white/70">Clinical workspace · My profile</p>
+                    <h1 class="text-[19px] sm:text-[24px] lg:text-[28px] font-extrabold tracking-tight mt-1">Your clinical identity</h1>
+                    <p class="text-[13px] lg:text-[14px] text-white/75 mt-0.5">Tap the pencil to add a banner photo.</p>
+                </div>
+                <img id="bannerPreview" alt="" class="hidden w-full h-44 sm:h-44 lg:h-56 object-cover">
+            {% endif %}
+            <button type="button" id="bannerPen" aria-label="Change banner photo" title="Change banner photo"
+                    class="absolute bottom-3 right-3 w-9 h-9 rounded-full text-white flex items-center justify-center shadow-lg hover:scale-105 transition"
+                    style="background:#225A5D;border:2px solid #ffffff;">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>
+        </div>
+        <div class="px-4 sm:px-6 lg:px-8 pb-5">
+            <div class="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+                <div class="relative flex-shrink-0 self-start -mt-10 sm:-mt-8 lg:-mt-12">
+                    {% if user.profile_picture %}
+                        <img id="photoPreviewImg" src="{{ user.profile_picture.url }}" alt="Profile photo" class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl object-cover shadow-lg ring-4 ring-white" style="--tw-ring-color:#ffffff;">
+                    {% else %}
+                        <img id="photoPreviewImg" alt="" class="hidden w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl object-cover shadow-lg ring-4 ring-white" style="--tw-ring-color:#ffffff;">
+                    {% endif %}
+                    {% if not user.profile_picture %}
+                    <span id="photoFallbackBadge" class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-2xl text-white flex items-center justify-center text-xl sm:text-2xl lg:text-3xl font-extrabold shadow-lg ring-4 ring-white" style="background:linear-gradient(135deg,#225A5D,#489D9A);--tw-ring-color:#ffffff;">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "D" %}</span>
+                    {% endif %}
+                    <button type="button" id="photoPen" aria-label="Change profile photo" title="Change profile photo"
+                            class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full text-white flex items-center justify-center shadow-lg hover:scale-105 transition"
+                            style="background:#225A5D;border:2px solid #ffffff;">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    </button>
+                </div>
+                <div class="min-w-0 flex-1 sm:pb-0.5">
+                    <p class="text-[15px] sm:text-[16px] font-extrabold text-slate-900 truncate">Dr. {{ user.get_full_name|default:user.email }}</p>
+                    <p class="mt-1 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <span class="badge badge-sky">{{ doctor_profile.specialization.name }}</span>
+                        {% if doctor_profile.available %}
+                            <span class="badge badge-green">Available</span>
+                        {% else %}
+                            <span class="badge badge-red">Unavailable</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <p class="text-[12px] sm:text-[12.5px] text-slate-500 truncate mt-2">{{ user.email }}</p>
+        </div>
+    </div>
+
+    <div class="hidden">
+        {{ form.profile_picture }}
+        {{ form.profile_banner }}
+    </div>
+
+    <div class="app-card p-4 sm:p-6 lg:p-8 mb-5">
+        <h2 class="text-[15px] lg:text-[17px] font-bold text-slate-900">Personal information</h2>
+        <p class="text-[12.5px] text-slate-500 mt-0.5 mb-4">Name and photo appear as “Hello Dr. {{ user.first_name|default:"there" }}” on your board. Pencil images preview instantly — press Save to keep them.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.first_name.id_for_label }}">First name</label>
+                {{ form.first_name }}
+            </div>
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.last_name.id_for_label }}">Last name</label>
+                {{ form.last_name }}
+            </div>
+        </div>
+
+        <div class="mb-5">
+            <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.phone.id_for_label }}">Phone number</label>
+            {{ form.phone }}
+        </div>
+
+        {% if form.errors %}
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 mb-4 text-[13px] text-red-700">
+            Please fix the highlighted fields and try again.
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="app-card p-4 sm:p-6 lg:p-8">
+        <h2 class="text-[15px] lg:text-[17px] font-bold text-slate-900">Clinical information</h2>
+        <p class="text-[12.5px] text-slate-500 mt-0.5 mb-4">Specialty is set by admin. Availability is toggled from your dashboard, not here.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1">Specialty</label>
+                <input type="text" value="{{ doctor_profile.specialization.name }}" disabled class="w-full border border-gray-200 bg-gray-50 rounded px-3 py-2 text-slate-500">
+            </div>
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ clinical_form.experience_years.id_for_label }}">Experience (years)</label>
+                {{ clinical_form.experience_years }}
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ clinical_form.qualification.id_for_label }}">Qualification</label>
+            {{ clinical_form.qualification }}
+        </div>
+
+        <div class="mb-5">
+            <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ clinical_form.consultation_fee.id_for_label }}">Consultation fee</label>
+            {{ clinical_form.consultation_fee }}
+        </div>
+
+        {% if clinical_form.errors %}
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 mb-4 text-[13px] text-red-700">
+            Please fix the highlighted clinical fields and try again.
+        </div>
+        {% endif %}
+
+        <div class="flex flex-col sm:flex-row gap-2">
+            <button type="submit" class="btn btn-primary flex-1 justify-center font-bold">Save changes</button>
+            <a href="{% url 'dashboard:doctor_home' %}" class="btn btn-ghost flex-1 justify-center">Back to board</a>
+        </div>
+    </div>
+</form>
+</div>
+
+<script>
+(function () {
+    function wire(penId, inputId, onFile) {
+        var pen = document.getElementById(penId);
+        var input = document.getElementById(inputId);
+        if (!pen || !input) return;
+        pen.addEventListener('click', function () { input.click(); });
+        input.addEventListener('change', function () {
+            if (input.files && input.files[0]) onFile(input.files[0]);
+        });
+    }
+    wire('photoPen', 'id_profile_picture', function (file) {
+        var url = URL.createObjectURL(file);
+        var img = document.getElementById('photoPreviewImg');
+        var badge = document.getElementById('photoFallbackBadge');
+        if (img) { img.src = url; img.classList.remove('hidden'); }
+        if (badge) badge.classList.add('hidden');
+    });
+    wire('bannerPen', 'id_profile_banner', function (file) {
+        var url = URL.createObjectURL(file);
+        var img = document.getElementById('bannerPreview');
+        var fallback = document.getElementById('bannerFallback');
+        if (img) { img.src = url; img.classList.remove('hidden'); }
+        if (fallback) fallback.classList.add('hidden');
+    });
+})();
+</script>
+{% endblock %}

@@ -3,24 +3,24 @@
 {% block title %}{{ patient.user.get_full_name }} - SHMS{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto">
+<div class="w-full max-w-3xl md:max-w-5xl lg:max-w-6xl mx-auto">
 
     <!-- Patient Header -->
-    <div class="bg-white shadow rounded-xl p-6 mb-6 reveal">
-        <div class="flex justify-between items-start">
-            <div class="flex items-center gap-4">
+    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 lg:p-8 mb-6 reveal">
+        <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div class="flex items-center gap-4 min-w-0 flex-1">
                 {% if patient.user.profile_picture %}
                     <img src="{{ patient.user.profile_picture.url }}"
-                         class="w-16 h-16 rounded-full object-cover">
+                         class="w-16 h-16 rounded-full object-cover flex-shrink-0">
                 {% else %}
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span class="text-2xl font-bold text-blue-700">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-2xl font-bold text-primary">
                             {{ patient.user.first_name|slice:":1" }}
                         </span>
                     </div>
                 {% endif %}
-                <div>
-                    <h1 class="text-xl font-bold text-gray-800">
+                <div class="min-w-0 flex-1">
+                    <h1 class="text-xl lg:text-2xl font-bold text-gray-800 truncate">
                         {{ patient.user.get_full_name }}
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">
@@ -35,25 +35,46 @@
                 </div>
             </div>
             <a href="{% url 'doctors:write_medical_record' patient.id %}"
-               class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+               class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition text-center sm:flex-shrink-0">
                 + Write Record
             </a>
         </div>
     </div>
 
+    <!-- Clinical alerts -->
+    {% if patient.allergies or patient.chronic_conditions %}
+    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 mb-6 reveal">
+        <h2 class="text-lg font-semibold mb-3">Clinical Alerts</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% if patient.allergies %}
+            <div class="rounded-xl border border-red-200 bg-red-50 p-3.5">
+                <p class="text-[11px] font-bold uppercase tracking-wide text-red-500">Allergies</p>
+                <p class="text-sm text-red-800 mt-1 whitespace-pre-line">{{ patient.allergies }}</p>
+            </div>
+            {% endif %}
+            {% if patient.chronic_conditions %}
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-3.5">
+                <p class="text-[11px] font-bold uppercase tracking-wide text-amber-600">Chronic Conditions</p>
+                <p class="text-sm text-amber-900 mt-1 whitespace-pre-line">{{ patient.chronic_conditions }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Appointments -->
-    <div class="bg-white shadow rounded-xl p-5 mb-6 reveal">
+    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 mb-6 reveal">
         <h2 class="text-lg font-semibold mb-3">Appointments</h2>
         {% if appointments %}
             <div class="space-y-2">
                 {% for appt in appointments %}
-                    <div class="flex justify-between items-center border-b pb-2 text-sm">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b pb-2 text-sm">
                         <span>{{ appt.appointment_date }} at {{ appt.appointment_time }}</span>
                         <span class="px-2 py-1 rounded-full text-xs
                             {% if appt.status == 'approved' %}bg-green-100 text-green-700
                             {% elif appt.status == 'pending' %}bg-yellow-100 text-yellow-700
                             {% elif appt.status == 'cancelled' %}bg-red-100 text-red-700
-                            {% else %}bg-blue-100 text-blue-700{% endif %}">
+                            {% else %}bg-primary/10 text-primary{% endif %}">
                             {{ appt.get_status_display }}
                         </span>
                     </div>
@@ -68,9 +89,9 @@
     <div class="reveal">
         <h2 class="text-lg font-semibold mb-3">Medical Records</h2>
         {% if records %}
-            <div class="space-y-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {% for record in records %}
-                    <div class="bg-white shadow rounded-xl p-5">
+                    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5">
                         <div class="flex justify-between items-start mb-3">
                             <p class="text-xs text-gray-400">
                                 {{ record.created_at|date:"F j, Y" }}
@@ -82,6 +103,18 @@
                         </div>
 
                         <div class="space-y-2">
+                            {% if record.has_vitals %}
+                            <div class="flex flex-wrap gap-1.5 pb-1">
+                                {% if record.blood_pressure %}<span class="badge badge-sky">BP {{ record.blood_pressure }} mmHg</span>{% endif %}
+                                {% if record.heart_rate %}<span class="badge badge-sky">HR {{ record.heart_rate }} bpm</span>{% endif %}
+                                {% if record.respiratory_rate %}<span class="badge badge-sky">RR {{ record.respiratory_rate }}</span>{% endif %}
+                                {% if record.temperature_c %}<span class="badge badge-sky">Temp {{ record.temperature_c }}&deg;C</span>{% endif %}
+                                {% if record.oxygen_saturation %}<span class="badge badge-sky">SpO&#8322; {{ record.oxygen_saturation }}%</span>{% endif %}
+                                {% if record.weight_kg %}<span class="badge badge-slate">{{ record.weight_kg }} kg</span>{% endif %}
+                                {% if record.height_cm %}<span class="badge badge-slate">{{ record.height_cm }} cm</span>{% endif %}
+                                {% if record.bmi %}<span class="badge badge-emerald">BMI {{ record.bmi }}</span>{% endif %}
+                            </div>
+                            {% endif %}
                             <div class="bg-gray-50 rounded-lg p-3">
                                 <p class="text-xs font-semibold text-gray-500 uppercase mb-1">Diagnosis</p>
                                 <p class="text-sm">{{ record.diagnosis }}</p>
@@ -119,7 +152,7 @@
             <div class="bg-white shadow rounded-xl p-8 text-center">
                 <p class="text-gray-500 text-sm">No medical records yet for this patient.</p>
                 <a href="{% url 'doctors:write_medical_record' patient.id %}"
-                   class="inline-block mt-3 bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+                   class="inline-block mt-3 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
                     Write First Record →
                 </a>
             </div>

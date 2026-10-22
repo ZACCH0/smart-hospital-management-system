@@ -9,4 +9,5 @@ urlpatterns = [
     path('<int:appointment_id>/approve/', views.approve_appointment, name='approve_appointment'),
     path('<int:appointment_id>/cancel/', views.cancel_appointment, name='cancel_appointment'),
     path('<int:appointment_id>/no-show/', views.mark_no_show, name='mark_no_show'),    
+    path('<int:appointment_id>/video/', views.telehealth_join, name='telehealth_join'),
 ]

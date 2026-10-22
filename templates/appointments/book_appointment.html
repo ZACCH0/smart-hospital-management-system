@@ -3,8 +3,10 @@
 {% block title %}Book Appointment{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto bg-white shadow rounded-lg p-6">
-    <h1 class="text-xl font-bold text-blue-700 mb-4">Book Appointment</h1>
+{# Fluid card: narrow on phone, 2-col form from tablet, wide on laptop/desktop #}
+<div class="w-full max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 lg:p-8">
+    <h1 class="text-xl lg:text-2xl font-bold text-primary">Book Appointment</h1>
+    <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1 mb-5">Pick a patient, doctor and time — works on phone, tablet and desktop.</p>
 
     {% if form.errors %}
         <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
@@ -12,22 +14,25 @@
         </div>
     {% endif %}
 
-    <form method="post">
+    <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {% csrf_token %}
 
         {% for field in form %}
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-1">{{ field.label }}</label>
+            <div class="{% if field.name == 'reason' %}md:col-span-2{% endif %}">
+                <label class="block text-sm font-medium mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
+                {% if field.errors %}
+                    <p class="text-red-600 text-xs mt-1">{{ field.errors|striptags }}</p>
+                {% endif %}
             </div>
         {% endfor %}
 
-        <button type="submit" class="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800">
-            Book Appointment
-        </button>
+        <div class="md:col-span-2 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-1">
+            <a href="{% url 'appointments:appointment_list' %}" class="btn btn-ghost justify-center sm:w-auto">Cancel</a>
+            <button type="submit" class="btn btn-primary justify-center w-full sm:w-auto sm:px-8">
+                Book Appointment
+            </button>
+        </div>
     </form>
 </div>
 {% endblock %}
-
-
-

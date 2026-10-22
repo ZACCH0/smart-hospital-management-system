@@ -1,66 +1,44 @@
 {% extends 'base.html' %}
 
-{% block title %}Notifications - SHMS{% endblock %}
+{% block title %}Notifications — SHMS{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto">
+{% include "partials/page_header.html" with eyebrow="Account" title="Notifications" subtitle="Appointments and updates — newest first." %}
 
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-blue-700">Notifications</h1>
-            {% if unread_count %}
-                <p class="text-sm text-gray-500 mt-1">
-                    {{ unread_count }} unread notification{{ unread_count|pluralize }}
-                </p>
-            {% endif %}
-        </div>
-        {% if unread_count %}
-            <a href="{% url 'notifications:mark_all_read' %}"
-               class="text-sm bg-blue-50 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-100 transition">
-                ✓ Mark all as read
-            </a>
-        {% endif %}
+<div class="w-full max-w-3xl mx-auto">
+    <div class="flex justify-end mb-3">
+        <a href="{% url 'notifications:preferences' %}" class="text-xs text-primary hover:underline">Notification preferences →</a>
     </div>
-
-    {% if notifications %}
-        <div class="space-y-3">
-            {% for note in notifications %}
-                <div class="bg-white shadow rounded-xl p-4 reveal
-                    {% if not note.is_read %}border-l-4 border-blue-500{% endif %}">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center mt-0.5
-                                {% if not note.is_read %}bg-blue-100{% else %}bg-gray-100{% endif %}">
-                                <span class="text-sm">🔔</span>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-800 {% if not note.is_read %}font-medium{% endif %}">
-                                    {{ note.message }}
-                                </p>
-                                <p class="text-xs text-gray-400 mt-1">
-                                    {{ note.created_at|date:"M j, Y" }} at {{ note.created_at|time:"g:i A" }}
-                                </p>
-                            </div>
-                        </div>
-                        {% if not note.is_read %}
-                            <a href="{% url 'notifications:mark_as_read' note.id %}"
-                               class="text-xs text-blue-600 hover:underline ml-4 whitespace-nowrap">
-                                Mark read
-                            </a>
-                        {% else %}
-                            <span class="text-xs text-gray-400 ml-4">Read</span>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="bg-white shadow rounded-xl p-10 text-center">
-            <div class="text-5xl mb-4">🔔</div>
-            <h2 class="text-lg font-semibold text-gray-700 mb-2">No notifications yet</h2>
-            <p class="text-gray-500 text-sm">You'll be notified about appointments and updates here</p>
-        </div>
+    {% if unread_count %}
+    <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+        <p class="text-[13px] text-slate-500">{{ unread_count }} unread notification{{ unread_count|pluralize }}</p>
+        <a href="{% url 'notifications:mark_all_read' %}" class="btn btn-outline btn-sm justify-center">Mark all as read</a>
+    </div>
     {% endif %}
 
+    {% if notifications %}
+    <section class="app-card p-2 sm:p-3" aria-label="Notification list">
+        <ul class="divide-y divide-slate-100">
+            {% for note in notifications %}
+            <li class="flex items-start gap-3 px-3 py-3.5 rounded-xl {% if not note.is_read %}bg-teal-50/60{% endif %}">
+                <span class="app-icontile flex-shrink-0" aria-hidden="true">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                </span>
+                <div class="min-w-0 flex-1">
+                    <p class="text-[13.5px] leading-relaxed text-slate-800 {% if not note.is_read %}font-semibold{% endif %}">{{ note.message }}</p>
+                    <p class="text-[12px] text-slate-400 mt-1">{{ note.created_at|date:"M j, Y" }} at {{ note.created_at|time:"g:i A" }}</p>
+                </div>
+                {% if not note.is_read %}
+                    <a href="{% url 'notifications:mark_as_read' note.id %}" class="btn btn-ghost btn-sm flex-shrink-0">Mark read</a>
+                {% else %}
+                    <span class="badge badge-slate flex-shrink-0">Read</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% else %}
+        {% include "partials/empty_state.html" with title="No notifications yet" text="You will be notified about appointments and updates here." icon="bell" %}
+    {% endif %}
 </div>
 {% endblock %}

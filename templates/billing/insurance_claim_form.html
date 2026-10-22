@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Insurance Claim - Invoice #{{ invoice.id }} - SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-xl mx-auto">
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'billing:invoice_list' %}" class="text-slate-400 hover:text-primary transition">&larr; Back</a>
+        <h1 class="text-xl lg:text-2xl font-bold text-primary">Insurance Claim</h1>
+    </div>
+
+    <div class="app-card p-5 mb-5">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+            <div>
+                <p class="text-xs uppercase tracking-wide text-slate-400">Invoice</p>
+                <p class="font-semibold">#{{ invoice.id }}</p>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wide text-slate-400">Patient</p>
+                <p class="font-semibold">{{ invoice.patient.user.get_full_name }}</p>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wide text-slate-400">Total</p>
+                <p class="font-semibold">₦{{ invoice.amount }}</p>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wide text-slate-400">Patient share</p>
+                <p class="font-semibold">₦{{ invoice.patient_responsibility }}</p>
+            </div>
+        </div>
+        {% if invoice.insurance_amount %}
+            <p class="text-xs text-slate-500 mt-3">
+                Current insurer share: <strong>₦{{ invoice.insurance_amount }}</strong>
+                ({{ invoice.insurance_coverage_percent }}% of ₦{{ invoice.amount }}).
+            </p>
+        {% endif %}
+    </div>
+
+    <div class="app-card p-5 sm:p-6 lg:p-8">
+        <form method="post" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% csrf_token %}
+
+            <div class="sm:col-span-2">
+                <label for="{{ form.insurance_provider.id_for_label }}" class="block text-sm font-medium mb-1">Provider</label>
+                {{ form.insurance_provider }}
+                {% if form.insurance_provider.errors %}<p class="text-red-500 text-xs mt-1">{{ form.insurance_provider.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.insurance_coverage_percent.id_for_label }}" class="block text-sm font-medium mb-1">Coverage (%)</label>
+                {{ form.insurance_coverage_percent }}
+                {% if form.insurance_coverage_percent.errors %}<p class="text-red-500 text-xs mt-1">{{ form.insurance_coverage_percent.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.insurance_claim_status.id_for_label }}" class="block text-sm font-medium mb-1">Claim status</label>
+                {{ form.insurance_claim_status }}
+            </div>
+
+            <div class="sm:col-span-2">
+                <label for="{{ form.insurance_claim_reference.id_for_label }}" class="block text-sm font-medium mb-1">Claim reference</label>
+                {{ form.insurance_claim_reference }}
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="sm:col-span-2 bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-700">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <button type="submit"
+                    class="sm:col-span-2 btn-shine w-full bg-primary text-white py-2.5 rounded-lg hover:bg-secondary transition font-medium">
+                Save Claim
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

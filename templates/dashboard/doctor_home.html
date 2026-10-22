@@ -1,69 +1,306 @@
 {% extends 'base.html' %}
-
-{% block title %}Doctor Dashboard{% endblock %}
+{% block title %}Doctor Dashboard · SHMS{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold text-blue-700 mb-6">Welcome, Dr. {{ user.get_full_name }}</h1>
-<!-- Quick Actions -->
-<div class="grid grid-cols-2 gap-4 mb-6">
-    <a href="{% url 'doctors:patient_list' %}"
-       class="bg-blue-700 text-white rounded-xl p-4 text-center hover:bg-blue-800 transition hover-lift">
-        <div class="text-2xl mb-1">👥</div>
-        <p class="text-sm font-medium">My Patients</p>
-    </a>
-    <a href="{% url 'appointments:appointment_list' %}"
-       class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
-        <div class="text-2xl mb-1">📅</div>
-        <p class="text-sm font-medium text-gray-700">My Appointments</p>
-    </a>
-    
-
-    <a href="{% url 'laboratory:request_lab_test' %}"
-   class="bg-white border border-gray-200 rounded-xl p-4 text-center hover:shadow-md transition hover-lift">
-    <div class="text-2xl mb-1">🧪</div>
-    <p class="text-sm font-medium text-gray-700">Request Lab Test</p>
-</a>
-
-</div>
-
 
 {% if error %}
-    <p class="text-red-600">{{ error }}</p>
+    <div class="app-card app-empty">
+        <div class="app-empty__art" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        </div>
+        <h3>Profile incomplete</h3>
+        <p>{{ error }} An administrator needs to attach a clinical profile to your account before you can use the clinical tools.</p>
+        <div class="app-empty__actions">
+            <a href="{% url 'home' %}" class="btn btn-outline">Back to home</a>
+        </div>
+    </div>
 {% else %}
 
-    <div class="grid md:grid-cols-2 gap-6">
-
-        <div class="bg-white shadow rounded-lg p-5">
-            <h2 class="text-lg font-semibold mb-3">Today's Appointments</h2>
-            {% if todays_appointments %}
-                <ul class="space-y-2">
-                    {% for appt in todays_appointments %}
-                        <li class="border-b pb-2">
-                            <span class="font-medium">{{ appt.patient.user.get_full_name }}</span>
-                            — {{ appt.appointment_time }}
-                            <span class="text-sm text-gray-500">({{ appt.get_status_display }})</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-gray-500 text-sm">No appointments scheduled for today.</p>
-            {% endif %}
+    {# Hero — profile band with availability toggle, stacks on mobile #}
+    <div class="app-card overflow-hidden mb-5 !border-0 text-white relative" style="background:linear-gradient(120deg,#13271E 0%,#225A5D 60%,#31798A 100%);">
+        <div class="p-5 sm:p-6 lg:p-8 flex flex-col gap-5 lg:gap-6 relative">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-6">
+                <div class="flex-shrink-0">
+                <a href="{% url 'dashboard:doctor_profile' %}" title="Edit my profile">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Your profile photo — edit profile" class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl object-cover shadow-lg ring-2 ring-white/40 hover:ring-white transition">
+                {% else %}
+                    <span class="w-16 h-16 sm:w-[72px] sm:h-[72px] lg:w-24 lg:h-24 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-2xl lg:text-3xl font-extrabold ring-2 ring-white/40 hover:bg-white/25 transition">{% firstof user.first_name|slice:":1"|upper user.email|slice:":1"|upper "D" %}</span>
+                {% endif %}
+                </a>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-white/70">Clinical workspace · {% if doctor_profile %}{{ doctor_profile.specialization.name }}{% else %}Doctor{% endif %}</p>
+                    <h1 class="text-[21px] sm:text-[26px] lg:text-[30px] font-extrabold tracking-tight truncate">Hello Dr. {{ user.first_name|default:user.get_full_name }}</h1>
+                    <p class="mt-1 flex flex-wrap items-center gap-2">
+                        {% if doctor_profile and doctor_profile.available %}
+                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold" style="background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3);">● Available</span>
+                        {% else %}
+                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold" style="background:rgba(0,0,0,.25);color:#ffd9d9;border:1px solid rgba(255,255,255,.3);">● Unavailable</span>
+                        {% endif %}
+                        <span class="text-[12px] lg:text-[13px] text-white/80">{{ todays_appointments|length }} today · {{ patient_list|length }} in caseload</span>
+                        <a href="{% url 'dashboard:doctor_profile' %}" class="text-[12px] lg:text-[13px] font-semibold text-white/80 underline underline-offset-2 hover:text-white">Edit my profile</a>
+                    </p>
+                    <p class="text-[13px] sm:text-[13.5px] lg:text-[14.5px] text-white/75 mt-1">Today's list, caseload and the next clinical action.</p>
+                </div>
+                <div class="flex sm:flex-col lg:flex-row gap-2 flex-shrink-0">
+                    <form method="post" action="{% url 'doctors:toggle_availability' %}" class="flex-1 sm:flex-none">
+                        {% csrf_token %}
+                        {% if doctor_profile and doctor_profile.available %}
+                            <button type="submit" class="btn btn-sm btn-desk w-full sm:w-auto justify-center font-bold" style="background:#ffffff;color:#225A5D;border:1px solid #ffffff;">Go Unavailable</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-sm btn-desk w-full sm:w-auto justify-center font-bold" style="background:#ffffff;color:#225A5D;border:1px solid #ffffff;">Go Available</button>
+                        {% endif %}
+                    </form>
+                    <a href="{% url 'doctors:patient_list' %}" class="btn btn-sm btn-desk flex-1 sm:flex-none justify-center font-semibold" style="background:rgba(255,255,255,.12);color:#ffffff;border:1px solid rgba(255,255,255,.35);">My Patients</a>
+                </div>
+            </div>
         </div>
-
-        <div class="bg-white shadow rounded-lg p-5">
-            <h2 class="text-lg font-semibold mb-3">My Patients</h2>
-            {% if patient_list %}
-                <ul class="space-y-2">
-                    {% for patient in patient_list %}
-                        <li class="border-b pb-2 text-sm">{{ patient.user.get_full_name }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-gray-500 text-sm">No patients yet.</p>
-            {% endif %}
-        </div>
-
     </div>
 
+    {# ================= ABOUT + TOTALS (07-lite, real data only) ================= #}
+    <section class="app-grid app-grid--aside mb-5" aria-label="About and totals">
+        <article class="app-card">
+            <header class="app-card__head">
+                <div>
+                    <h2>About</h2>
+                    <p>Your clinical footprint at a glance.</p>
+                </div>
+            </header>
+            <div class="app-card__body grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                <div>
+                    <p class="text-[12px] font-semibold uppercase tracking-wide text-slate-400">Specialty</p>
+                    <p class="text-[14px] font-semibold text-slate-800 mt-0.5">{{ doctor_profile.specialization.name }}</p>
+                </div>
+                <div>
+                    <p class="text-[12px] font-semibold uppercase tracking-wide text-slate-400">Experience</p>
+                    <p class="text-[14px] font-semibold text-slate-800 mt-0.5">{{ doctor_profile.experience_years }} year{{ doctor_profile.experience_years|pluralize }}</p>
+                </div>
+                <div>
+                    <p class="text-[12px] font-semibold uppercase tracking-wide text-slate-400">Qualification</p>
+                    <p class="text-[14px] font-semibold text-slate-800 mt-0.5">{{ doctor_profile.qualification }}</p>
+                </div>
+                <div>
+                    <p class="text-[12px] font-semibold uppercase tracking-wide text-slate-400">Consultation fee</p>
+                    <p class="text-[14px] font-semibold text-slate-800 mt-0.5">₦{{ doctor_profile.consultation_fee }}</p>
+                </div>
+            </div>
+        </article>
+        <div class="app-stack">
+            <article class="app-card" style="padding:16px 18px;">
+                <p class="text-[12.5px] font-medium text-slate-500">Today's Appointments</p>
+                <p class="mt-1 text-[30px] leading-none font-extrabold text-slate-900">{{ todays_appointments|length }}</p>
+                <p class="text-[12px] text-slate-400 mt-1">On today's books</p>
+            </article>
+            <article class="app-card" style="padding:16px 18px;">
+                <p class="text-[12.5px] font-medium text-slate-500">My Patients</p>
+                <p class="mt-1 text-[30px] leading-none font-extrabold text-slate-900">{{ patient_list|length }}</p>
+                <p class="text-[12px] text-slate-400 mt-1">In your caseload</p>
+            </article>
+            <article class="app-card" style="padding:16px 18px;">
+                <p class="text-[12.5px] font-medium text-slate-500">Total Appointments</p>
+                <p class="mt-1 text-[30px] leading-none font-extrabold text-slate-900">{{ total_appointments }}</p>
+                <p class="text-[12px] text-slate-400 mt-1">All time under you</p>
+            </article>
+        </div>
+    </section>
+
+    {# ================= QUICK ACTIONS ================= #}
+    <section class="app-grid app-grid--4 mb-6" aria-label="Clinical quick actions">
+        <a href="{% url 'doctors:patient_list' %}" class="app-tile">
+            <span class="app-tile__icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></span>
+            <strong>My Patients</strong>
+            <p>Open a chart and write records or prescriptions.</p>
+            <span class="app-tile__go">Open caseload
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+            </span>
+        </a>
+
+        <a href="{% url 'appointments:appointment_list' %}" class="app-tile app-tile--emerald">
+            <span class="app-tile__icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></span>
+            <strong>Schedule</strong>
+            <p>Review and act on your appointment list.</p>
+            <span class="app-tile__go">View schedule
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+            </span>
+        </a>
+
+        <a href="{% url 'laboratory:request_lab_test' %}" class="app-tile app-tile--violet">
+            <span class="app-tile__icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3"/></svg></span>
+            <strong>Request Lab Test</strong>
+            <p>Order investigations for any of your patients.</p>
+            <span class="app-tile__go">New request
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+            </span>
+        </a>
+
+        <a href="{% url 'laboratory:lab_test_list' %}" class="app-tile app-tile--teal">
+            <span class="app-tile__icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></span>
+            <strong>Lab Results</strong>
+            <p>Track investigations you have requested.</p>
+            <span class="app-tile__go">Track results
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+            </span>
+        </a>
+    </section>
+
+    {# ================= TODAY + PATIENTS ================= #}
+    <section class="app-grid app-grid--split">
+
+        <article class="app-card">
+            <header class="app-card__head">
+                <div>
+                    <h2>Today’s Appointments</h2>
+                    <p>{{ todays_appointments|length }} consultation{{ todays_appointments|length|pluralize }} booked</p>
+                </div>
+                <div class="app-card__head-actions">
+                    <a href="{% url 'appointments:appointment_list' %}" class="btn btn-outline btn-sm">Full schedule</a>
+                </div>
+            </header>
+
+            {% if todays_appointments %}
+            <div class="app-table-wrap">
+                <table class="app-table min-w-[560px]">
+                    <thead>
+                        <tr>
+                            <th style="width:92px;">Time</th>
+                            <th>Patient</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th class="actions">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in todays_appointments %}
+                        <tr>
+                            <td><span class="chip chip--sky">{{ appt.appointment_time|time:"H:i" }}</span></td>
+                            <td>
+                                {% include "partials/avatar.html" with person=appt.patient.user size="xs" meta=appt.patient.gender %}
+                            </td>
+                            <td class="app-table__meta">{{ appt.reason|truncatechars:46|default:"—" }}</td>
+                            <td>{% include "partials/status_badge.html" with status=appt.status %}</td>
+                            <td class="actions">
+                                <a href="{% url 'doctors:patient_detail' appt.patient.id %}" class="btn btn-soft btn-sm">Open chart</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                {% include "partials/empty_state.html" with title="No consultations today" text="Your list is clear. Appointments booked for today will appear here automatically." icon="calendar" %}
+            {% endif %}
+        </article>
+
+        <div class="app-stack">
+            <article class="app-card">
+                <header class="app-card__head">
+                    <div>
+                        <h2>My Patients</h2>
+                        <p>{{ patient_list|length }} in your caseload</p>
+                    </div>
+                </header>
+                {% if patient_list %}
+                <div class="app-card__body" style="padding:12px;">
+                    <div class="app-stack" style="gap:4px;">
+                        {% for p in patient_list|slice:":7" %}
+                        <a href="{% url 'doctors:patient_detail' p.id %}"
+                           class="side-link" style="color:var(--ink-700);padding:9px 10px;">
+                            {% if p.user.profile_picture %}
+                                <img src="{{ p.user.profile_picture.url }}" alt="" class="app-avatar app-avatar--sm">
+                            {% else %}
+                                <span class="app-avatar app-avatar--sm">{{ p.user.first_name|slice:":1" }}</span>
+                            {% endif %}
+                            <span class="app-person__info">
+                                <strong>{{ p.user.get_full_name }}</strong>
+                                <span>{{ p.gender }}{% if p.blood_group %} · {{ p.blood_group }}{% endif %}</span>
+                            </span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if patient_list|length > 7 %}
+                <div class="app-card__foot text-center">
+                    <a href="{% url 'doctors:patient_list' %}" class="btn btn-ghost btn-sm">+{{ patient_list|length|add:"-7" }} more patients</a>
+                </div>
+                {% endif %}
+                {% else %}
+                {% include "partials/empty_state.html" with title="No patients yet" text="Patients appear here once they book an appointment with you." icon="users" action_url="/appointments/list/" action_label="View appointments" %}
+                {% endif %}
+            </article>
+
+            <article class="app-card">
+                <header class="app-card__head">
+                    <div><h2>Latest Alerts</h2></div>
+                    <div class="app-card__head-actions">
+                        <a href="{% url 'notifications:notification_list' %}" class="btn btn-ghost btn-sm">All</a>
+                    </div>
+                </header>
+                {% if notifications %}
+                <div class="app-card__body" style="padding:12px;">
+                    <div class="app-stack" style="gap:10px;">
+                        {% for n in notifications %}
+                        <div class="app-note" style="padding:11px 13px;">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <div>{{ n.message|truncatechars:90 }}
+                                <div class="text-[11px] text-slate-400 mt-1">{{ n.created_at|timesince }} ago</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="app-empty" style="padding:30px 16px;">
+                    <h3 style="font-size:14.5px;">All caught up</h3>
+                    <p style="font-size:13px;">No unread notifications.</p>
+                </div>
+                {% endif %}
+            </article>
+        </div>
+    </section>
+
+    {# ================= PATIENTS TABLE (07-lite, real visits) ================= #}
+    <section class="app-card mt-5" aria-label="Patients">
+        <header class="app-card__head">
+            <div>
+                <h2>Patients</h2>
+                <p>Latest visit per patient.</p>
+            </div>
+            <div class="app-card__head-actions">
+                <a href="{% url 'doctors:patient_list' %}" class="btn btn-outline btn-sm">View all</a>
+            </div>
+        </header>
+        {% if recent_patients %}
+        <div class="app-table-wrap">
+            <table class="app-table min-w-[620px]">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Last visit</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th class="actions">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in recent_patients %}
+                    <tr>
+                        <td>{% include "partials/avatar.html" with person=p.user size="xs" meta=p.gender %}</td>
+                        <td class="app-table__meta">{{ p.last_appt.appointment_date }}</td>
+                        <td class="app-table__meta">{{ p.last_appt.reason|truncatechars:40|default:"—" }}</td>
+                        <td>{% include "partials/status_badge.html" with status=p.last_appt.status %}</td>
+                        <td class="actions">
+                            <a href="{% url 'doctors:patient_detail' p.id %}" class="btn btn-soft btn-sm">Open chart</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            {% include "partials/empty_state.html" with title="No patients yet" text="Patients appear here once they book an appointment with you." icon="users" %}
+        {% endif %}
+    </section>
 {% endif %}
+
 {% endblock %}

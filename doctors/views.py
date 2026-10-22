@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from doctors.models import DoctorProfile
+from doctors.models import DoctorProfile, Specialty
 from patients.models import PatientProfile
 from medical_records.models import MedicalRecord
 from prescriptions.models import Prescription
@@ -11,15 +11,98 @@ from core.decorators import doctor_required
 from core.audit import log_action
 
 
+def directory(request):
+    """Public doctors directory — read-only, no auth required."""
+    from django.core.cache import cache
+
+    doctors = cache.get('directory_doctors')
+    if doctors is None:
+        doctors = list(
+            DoctorProfile.objects.select_related("user", "specialization").order_by(
+                "-available", "specialization__order", "user__first_name"
+            )
+        )
+        cache.set('directory_doctors', doctors, 300)
+
+    specialties = cache.get('directory_specialties')
+    if specialties is None:
+        present_ids = {doctor.specialization_id for doctor in doctors}
+        specialties = [
+            (specialty.slug, specialty.name)
+            for specialty in Specialty.objects.filter(
+                id__in=present_ids
+            ).order_by("order", "name")
+        ]
+        cache.set('directory_specialties', specialties, 300)
+
+    return render(
+        request,
+        "doctors/directory.html",
+        {
+            "directory_doctors": doctors,
+            "directory_count": len(doctors),
+            "directory_specialties": specialties,
+        },
+    )
+
+
+@login_required
+@doctor_required
+def toggle_availability(request):
+    if request.method != 'POST':
+        return redirect('dashboard:doctor_home')
+    doctor_profile = request.user.doctor_profile
+    doctor_profile.available = not doctor_profile.available
+    doctor_profile.save(update_fields=['available'])
+    log_action(
+        request,
+        action='update',
+        model_name='DoctorProfile',
+        object_id=doctor_profile.id,
+        object_repr=str(doctor_profile),
+        details='Toggled availability to {}'.format(
+            'available' if doctor_profile.available else 'unavailable'
+        ),
+    )
+    messages.success(
+        request,
+        'You are now marked as {}.'.format(
+            'Available' if doctor_profile.available else 'Unavailable'
+        ),
+    )
+    return redirect('dashboard:doctor_home')
+
+
 @login_required
 @doctor_required
 def patient_list(request):
+    from django.core.paginator import Paginator
+    from django.db.models import Max
+
     doctor_profile = request.user.doctor_profile
     patient_ids = Appointment.objects.filter(
         doctor=doctor_profile
     ).values_list('patient', flat=True).distinct()
-    patients = PatientProfile.objects.filter(id__in=patient_ids)
-    return render(request, 'doctors/patient_list.html', {'patients': patients})
+    patients = PatientProfile.objects.filter(
+        id__in=patient_ids
+    ).select_related('user').order_by('user__last_name', 'user__first_name')
+
+    last_visits = dict(
+        Appointment.objects.filter(
+            doctor=doctor_profile, patient_id__in=patient_ids
+        ).values('patient').annotate(last=Max('appointment_date')).values_list(
+            'patient', 'last'
+        )
+    )
+    for patient in patients:
+        patient.last_visit = last_visits.get(patient.id)
+
+    page_obj = Paginator(patients, 12).get_page(request.GET.get('page'))
+
+    return render(request, 'doctors/patient_list.html', {
+        'patients': page_obj,
+        'page_obj': page_obj,
+    })
 
 
 @login_required

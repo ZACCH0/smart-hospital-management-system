@@ -3,36 +3,46 @@
 {% block title %}Billing - SHMS{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto">
+<div class="w-full max-w-7xl mx-auto">
 
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-blue-700">Invoices</h1>
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div>
+            <h1 class="text-xl sm:text-2xl lg:text-[28px] font-bold text-primary">Invoices</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">Billing across all patients.</p>
+        </div>
         <a href="{% url 'billing:create_invoice' %}"
-           class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+           class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
             + Create Invoice
         </a>
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-2 gap-4 mb-6">
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-green-500">
-            <p class="text-2xl font-bold text-green-600">₦{{ total_paid }}</p>
-            <p class="text-sm text-gray-500">Total Paid</p>
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-5 mb-6">
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-slate-400">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-700">₦{{ total_billed }}</p>
+            <p class="text-sm text-gray-500">Total Billed</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-yellow-500">
-            <p class="text-2xl font-bold text-yellow-600">₦{{ total_pending }}</p>
-            <p class="text-sm text-gray-500">Total Pending</p>
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-green-500">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">₦{{ total_paid }}</p>
+            <p class="text-sm text-gray-500">Total Collected</p>
+        </div>
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-yellow-500 col-span-2 lg:col-span-1">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-600">₦{{ total_pending }}</p>
+            <p class="text-sm text-gray-500">Outstanding</p>
         </div>
     </div>
 
     <!-- Invoice Table -->
-    <div class="bg-white shadow rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="bg-white shadow rounded-xl overflow-x-auto">
+        <table class="w-full text-sm lg:text-[15px] min-w-[820px]">
             <thead class="bg-gray-50 text-left">
                 <tr>
                     <th class="px-4 py-3 font-semibold text-gray-600">#</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Patient</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Amount</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Paid</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Balance</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Insurance</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Date</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Actions</th>
@@ -46,9 +56,22 @@
                             {{ invoice.patient.user.get_full_name }}
                         </td>
                         <td class="px-4 py-3">₦{{ invoice.amount }}</td>
+                        <td class="px-4 py-3 text-green-700">₦{{ invoice.amount_paid }}</td>
+                        <td class="px-4 py-3 font-semibold {% if invoice.balance_due > 0 %}text-yellow-700{% else %}text-slate-400{% endif %}">
+                            ₦{{ invoice.balance_due }}
+                        </td>
+                        <td class="px-4 py-3">
+                            {% if invoice.insurance_provider %}
+                                <span class="block text-xs font-medium text-slate-700">{{ invoice.insurance_provider.name }}</span>
+                                <span class="text-[11px] text-slate-400">₦{{ invoice.insurance_amount }} · {{ invoice.get_insurance_claim_status_display }}</span>
+                            {% else %}
+                                <span class="text-slate-400 text-xs">Self-pay</span>
+                            {% endif %}
+                        </td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 rounded-full text-xs font-medium
                                 {% if invoice.status == 'paid' %}bg-green-100 text-green-700
+                                {% elif invoice.status == 'partially_paid' %}bg-blue-100 text-blue-700
                                 {% elif invoice.status == 'pending' %}bg-yellow-100 text-yellow-700
                                 {% else %}bg-red-100 text-red-700{% endif %}">
                                 {{ invoice.get_status_display }}
@@ -58,23 +81,23 @@
                             {{ invoice.issued_date|date:"M j, Y" }}
                         </td>
                         <td class="px-4 py-3">
-                            {% if invoice.status == 'pending' %}
-                                {% if not invoice.payment %}
-                                    <a href="{% url 'billing:record_payment' invoice.id %}"
-                                       class="text-green-600 hover:underline text-xs">
-                                        Record Payment
-                                    </a>
-                                {% endif %}
+                            <a href="{% url 'billing:insurance_claim' invoice.id %}"
+                               class="text-primary hover:underline text-xs whitespace-nowrap">
+                                {% if invoice.insurance_provider %}Claim{% else %}Add insurance{% endif %}
+                            </a>
+                            {% if invoice.balance_due > 0 %}
+                                <a href="{% url 'billing:record_payment' invoice.id %}"
+                                   class="text-green-600 hover:underline text-xs whitespace-nowrap ml-2">
+                                    Record Payment
+                                </a>
                             {% else %}
-                                <span class="text-gray-400 text-xs">
-                                    {% if invoice.status == 'paid' %}Paid ✓{% else %}Overdue{% endif %}
-                                </span>
+                                <span class="text-gray-400 text-xs">Settled</span>
                             {% endif %}
                         </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">
                             No invoices yet.
                         </td>
                     </tr>
@@ -82,6 +105,8 @@
             </tbody>
         </table>
     </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj %}
 
 </div>
 {% endblock %}

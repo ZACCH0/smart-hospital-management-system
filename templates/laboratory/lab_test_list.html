@@ -1,42 +1,46 @@
 {% extends 'base.html' %}
 {% block title %}Laboratory - SHMS{% endblock %}
 {% block content %}
-<div class="max-w-5xl mx-auto">
-        <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-blue-700">Laboratory Tests</h1>
+<div class="w-full max-w-7xl mx-auto">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+        <div>
+            <h1 class="text-xl sm:text-2xl lg:text-[28px] font-bold text-primary">Laboratory Tests</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">Requests, processing and results.</p>
+        </div>
         {% if is_doctor %}
             <a href="{% url 'laboratory:request_lab_test' %}"
-            class="btn-shine bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+            class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
                 + Request Test
             </a>
         {% endif %}
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-yellow-500">
-            <p class="text-2xl font-bold text-yellow-600">{{ pending }}</p>
+    <div class="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-5 mb-6">
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-yellow-500">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-yellow-600">{{ pending }}</p>
             <p class="text-sm text-gray-500">Pending</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-blue-500">
-            <p class="text-2xl font-bold text-blue-600">{{ in_progress }}</p>
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-primary">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-secondary">{{ in_progress }}</p>
             <p class="text-sm text-gray-500">In Progress</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-4 text-center border-l-4 border-green-500">
-            <p class="text-2xl font-bold text-green-600">{{ completed }}</p>
+        <div class="bg-white shadow rounded-xl p-4 lg:p-5 text-center border-l-4 border-green-500">
+            <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">{{ completed }}</p>
             <p class="text-sm text-gray-500">Completed</p>
         </div>
     </div>
 
     <!-- Tests Table -->
-    <div class="bg-white shadow rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
+    <div class="bg-white shadow rounded-xl overflow-x-auto">
+        <table class="w-full text-sm lg:text-[15px] min-w-[620px]">
             <thead class="bg-gray-50 text-left">
                 <tr>
                     <th class="px-4 py-3 font-semibold text-gray-600">Test Name</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Patient</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Doctor</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Date</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Sample</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
@@ -49,20 +53,36 @@
                         <td class="px-4 py-3">Dr. {{ test.doctor.user.get_full_name }}</td>
                         <td class="px-4 py-3">{{ test.requested_date }}</td>
                         <td class="px-4 py-3">
+                            {% if test.sample_status == 'collected' %}
+                                <span class="badge badge-emerald">Collected</span>
+                            {% elif test.sample_status == 'rejected' %}
+                                <span class="badge badge-rose">Rejected</span>
+                            {% else %}
+                                <span class="badge badge-amber">Awaiting</span>
+                            {% endif %}
+                            {% if test.technician %}
+                                <p class="text-[11px] text-gray-400 mt-1">{{ test.technician.get_full_name }}</p>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
                             <span class="px-2 py-1 rounded-full text-xs font-medium
                                 {% if test.status == 'completed' %}bg-green-100 text-green-700
-                                {% elif test.status == 'in_progress' %}bg-blue-100 text-blue-700
+                                {% elif test.status == 'in_progress' %}bg-primary/10 text-primary
                                 {% else %}bg-yellow-100 text-yellow-700{% endif %}">
                                 {{ test.get_status_display }}
                             </span>
                         </td>
                        <td class="px-4 py-3 space-x-2">
                         {% if not is_doctor and not is_patient %}
-                            {% if test.status == 'pending' %}
-                                <a href="{% url 'laboratory:update_test_status' test.id %}"
-                                class="text-blue-600 hover:underline text-xs">
-                                    Mark In Progress
-                                </a>
+                            {% if test.sample_status == 'awaiting' %}
+                                <form method="post" action="{% url 'laboratory:collect_sample' test.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-secondary hover:underline text-xs">Collect Sample</button>
+                                </form>
+                                <form method="post" action="{% url 'laboratory:reject_sample' test.id %}" class="inline" onsubmit="return confirm('Reject this sample?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-500 hover:underline text-xs">Reject</button>
+                                </form>
                             {% endif %}
                             {% if test.status == 'in_progress' %}
                                 {% if not test.result %}
@@ -75,22 +95,24 @@
                                 {% endif %}
                             {% endif %}
                             {% if test.status == 'completed' %}
-                                <span class="text-gray-400 text-xs">Completed ✓</span>
+                                <span class="text-gray-400 text-xs">Completed</span>
                             {% endif %}
                         {% else %}
                             {% if test.status == 'completed' and test.result %}
-                                <span class="text-green-600 text-xs">Result Available ✓</span>
+                                <span class="text-green-600 text-xs">Result Available</span>
+                            {% elif test.sample_status == 'rejected' %}
+                                <span class="text-red-500 text-xs">Sample rejected — recollect needed</span>
                             {% elif test.status == 'pending' %}
-                                <span class="text-yellow-600 text-xs">Awaiting processing</span>
+                                <span class="text-yellow-600 text-xs">Awaiting collection</span>
                             {% elif test.status == 'in_progress' %}
-                                <span class="text-blue-600 text-xs">Processing...</span>
+                                <span class="text-secondary text-xs">Processing...</span>
                             {% endif %}
                         {% endif %}
                     </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
                             No lab tests requested yet.
                         </td>
                     </tr>
@@ -98,6 +120,8 @@
             </tbody>
         </table>
     </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj %}
 
 </div>
 {% endblock %}
