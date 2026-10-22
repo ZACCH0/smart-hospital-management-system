@@ -8,6 +8,7 @@ from core.ai import suggest_department
 from core.testing import make_doctor, make_patient
 
 
+@override_settings(AI_API_KEY='')
 class TriageRuleTests(TestCase):
     def test_chest_pain_is_urgent_cardiology(self):
         result = suggest_department('I have chest pain and it spreads to my arm')
@@ -41,6 +42,7 @@ class TriageRuleTests(TestCase):
         self.assertEqual(result['department'], 'cardiology')
 
 
+@override_settings(AI_API_KEY='')
 class HealthAssistantViewTests(TestCase):
     def setUp(self):
         self.client = Client(SERVER_NAME='localhost')
