@@ -13,21 +13,33 @@ from core.audit import log_action
 
 def directory(request):
     """Public doctors directory — read-only, no auth required."""
-    doctors = DoctorProfile.objects.select_related("user").order_by(
-        "-available", "specialization", "user__first_name"
-    )
-    present = set(doctors.values_list("specialization", flat=True))
-    specialties = [
-        (value, label)
-        for value, label in DoctorProfile.SPECIALIZATION_CHOICES
-        if value in present
-    ]
+    from django.core.cache import cache
+
+    doctors = cache.get('directory_doctors')
+    if doctors is None:
+        doctors = list(
+            DoctorProfile.objects.select_related("user").order_by(
+                "-available", "specialization", "user__first_name"
+            )
+        )
+        cache.set('directory_doctors', doctors, 300)
+
+    specialties = cache.get('directory_specialties')
+    if specialties is None:
+        present = {doctor.specialization for doctor in doctors}
+        specialties = [
+            (value, label)
+            for value, label in DoctorProfile.SPECIALIZATION_CHOICES
+            if value in present
+        ]
+        cache.set('directory_specialties', specialties, 300)
+
     return render(
         request,
         "doctors/directory.html",
         {
             "directory_doctors": doctors,
-            "directory_count": doctors.count(),
+            "directory_count": len(doctors),
             "directory_specialties": specialties,
         },
     )
@@ -63,6 +75,7 @@ def toggle_availability(request):
 @login_required
 @doctor_required
 def patient_list(request):
+    from django.core.paginator import Paginator
     from django.db.models import Max
 
     doctor_profile = request.user.doctor_profile
@@ -71,7 +84,7 @@ def patient_list(request):
     ).values_list('patient', flat=True).distinct()
     patients = PatientProfile.objects.filter(
         id__in=patient_ids
-    ).select_related('user')
+    ).select_related('user').order_by('user__last_name', 'user__first_name')
 
     last_visits = dict(
         Appointment.objects.filter(
@@ -83,7 +96,12 @@ def patient_list(request):
     for patient in patients:
         patient.last_visit = last_visits.get(patient.id)
 
-    return render(request, 'doctors/patient_list.html', {'patients': patients})
+    page_obj = Paginator(patients, 12).get_page(request.GET.get('page'))
+
+    return render(request, 'doctors/patient_list.html', {
+        'patients': page_obj,
+        'page_obj': page_obj,
+    })
 
 
 @login_required

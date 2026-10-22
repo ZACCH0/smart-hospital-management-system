@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Discharge {{ admission.patient.user.get_full_name }} – SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'ipd:admission_list' %}" class="text-gray-400 hover:text-primary transition">← Back</a>
+        <h1 class="text-xl lg:text-2xl font-bold text-primary">Discharge Patient</h1>
+    </div>
+
+    <div class="bg-primary/10 border border-primary/15 rounded-xl p-4 lg:p-5 mb-6 text-sm">
+        <p class="font-semibold text-primary">{{ admission.patient.user.get_full_name }}</p>
+        <p class="text-gray-600 mt-1">{{ admission.bed.ward.name }} — Bed {{ admission.bed.bed_number }}</p>
+        <p class="text-gray-600">Doctor: Dr. {{ admission.doctor.user.get_full_name }}</p>
+        <p class="text-gray-600">Admitted: {{ admission.admitted_at|date:"M j, Y H:i" }}</p>
+        <p class="text-gray-600">Length of stay: {{ admission.length_of_stay }} day(s)</p>
+        <p class="text-gray-600">Diagnosis: {{ admission.diagnosis }}</p>
+    </div>
+
+    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 lg:p-8">
+        <form method="post">
+            {% csrf_token %}
+            <label class="block text-sm font-medium mb-1">Discharge Summary</label>
+            {{ form.discharge_summary }}
+            {% if form.discharge_summary.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.discharge_summary.errors.0 }}</p>
+            {% endif %}
+
+            <button type="submit"
+                    class="mt-4 btn-shine w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-medium">
+                Confirm Discharge
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

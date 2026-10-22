@@ -45,9 +45,53 @@
                 {{ form.symptoms }}
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">Treatment Plan</label>
                 {{ form.treatment }}
+            </div>
+
+            <div class="mb-6">
+                <div class="flex items-baseline justify-between gap-3 mb-2">
+                    <p class="text-sm font-semibold text-slate-700">Vital Signs</p>
+                    <p class="text-[11.5px] text-slate-400">All optional</p>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-[11.5px] font-semibold text-slate-500 mb-1" for="{{ form.blood_pressure_systolic.id_for_label }}">BP systolic</label>
+                        {{ form.blood_pressure_systolic }}
+                    </div>
+                    <div>
+                        <label class="block text-[11.5px] font-semibold text-slate-500 mb-1" for="{{ form.blood_pressure_diastolic.id_for_label }}">BP diastolic</label>
+                        {{ form.blood_pressure_diastolic }}
+                    </div>
+                    <div>
+                        <label class="block text-[11.5px] font-semibold text-slate-500 mb-1" for="{{ form.heart_rate.id_for_label }}">Heart rate</label>
+                        {{ form.heart_rate }}
+                    </div>
+                    <div>
+                        <label class="block text-[11.5px] font-semibold text-slate-500 mb-1" for="{{ form.respiratory_rate.id_for_label }}">Resp. rate</label>
+                        {{ form.respiratory_rate }}
+                    </div>
+                    <div>
+                        <label class="block text-[11.5px] font-semibold text-slate-500 mb-1" for="{{ form.temperature_c.id_for_label }}">Temp (&deg;C)</label>
+                        {{ form.temperature_c }}
+                    </div>
+                    <div>
+                        <label class="block text-[11.5px] font-semibold text-slate-500 mb-1" for="{{ form.oxygen_saturation.id_for_label }}">SpO&#8322; (%)</label>
+                        {{ form.oxygen_saturation }}
+                    </div>
+                    <div>
+                        <label class="block text-[11.5px] font-semibold text-slate-500 mb-1" for="{{ form.weight_kg.id_for_label }}">Weight (kg)</label>
+                        {{ form.weight_kg }}
+                    </div>
+                    <div>
+                        <label class="block text-[11.5px] font-semibold text-slate-500 mb-1" for="{{ form.height_cm.id_for_label }}">Height (cm)</label>
+                        {{ form.height_cm }}
+                    </div>
+                </div>
+                {% if form.errors %}
+                    <p class="text-red-500 text-xs mt-2">Check the ranges: BP 50-300 / 30-200, heart rate 20-300, temperature 30-45, SpO&#8322; 50-100.</p>
+                {% endif %}
             </div>
 
             <button type="submit"

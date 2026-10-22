@@ -8,11 +8,14 @@ class AppointmentForm(forms.ModelForm):
         model = Appointment
         fields = [
             'patient', 'doctor', 'appointment_date',
-            'appointment_time', 'duration', 'reason'
+            'appointment_time', 'duration', 'reason', 'consultation_type'
         ]
         widgets = {
             'appointment_date': forms.DateInput(attrs={
                 'type': 'date',
+                'class': 'w-full border rounded px-3 py-2'
+            }),
+            'consultation_type': forms.Select(attrs={
                 'class': 'w-full border rounded px-3 py-2'
             }),
             'appointment_time': forms.TimeInput(attrs={

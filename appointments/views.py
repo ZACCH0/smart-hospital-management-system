@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from .models import Appointment
 from .forms import AppointmentForm, CancelAppointmentForm, MarkNoShowForm
 from core.decorators import receptionist_required, staff_required
@@ -160,3 +161,54 @@ def mark_no_show(request, appointment_id):
         'form': form,
         'appointment': appointment,
     })
+
+
+@login_required
+def telehealth_join(request, appointment_id):
+    """Send the right person into the video room, audited.
+
+    Allowed: the assigned doctor, the patient who owns the booking, and
+    admin/receptionist. Everyone else gets 403 — the room token never leaks
+    through an unmetered public URL.
+    """
+    appointment = get_object_or_404(
+        Appointment.objects.select_related('patient__user', 'doctor__user'),
+        id=appointment_id,
+    )
+
+    user = request.user
+    role = getattr(user, 'role', None)
+    is_owner_doctor = getattr(user, 'doctor_profile', None) == appointment.doctor
+    is_owner_patient = getattr(user, 'patient_profile', None) == appointment.patient
+    is_staff = role in ('admin', 'receptionist') or user.is_superuser
+
+    if not (is_owner_doctor or is_owner_patient or is_staff):
+        raise PermissionDenied
+
+    home = 'patients:my_appointments' if role == 'patient' else 'appointments:appointment_list'
+
+    if not appointment.is_video:
+        messages.error(request, 'This appointment is not a video consultation.')
+        return redirect(home)
+
+    if appointment.status == 'cancelled':
+        messages.error(request, 'This appointment was cancelled.')
+        return redirect(home)
+
+    if appointment.status == 'no_show':
+        messages.error(request, 'This appointment was marked as no show.')
+        return redirect(home)
+
+    if appointment.status != 'approved':
+        messages.warning(request, 'The video room opens once the appointment is approved.')
+        return redirect(home)
+
+    log_action(
+        request,
+        action='access',
+        model_name='Appointment',
+        object_id=appointment.id,
+        object_repr=str(appointment),
+        details='Joined video consultation',
+    )
+    return redirect(appointment.video_url)

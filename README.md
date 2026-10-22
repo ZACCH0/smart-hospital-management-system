@@ -14,7 +14,12 @@ A full-stack Django web application for managing hospital operations including p
 - Billing and invoice management
 - Pharmacy inventory tracking
 - Laboratory test and result management
-- Automated notifications via Django Signals
+- Automated notifications via Django Signals (email/SMS/WhatsApp-ready)
+- IPD ward & bed management with admissions/discharge
+- Insurance/TPA billing (coverage, claim status)
+- Telehealth video consultations (provider-agnostic room links)
+- Health Assistant symptom triage (rule-based, optional AI key)
+- Admin audit log, backups, and an 80-test suite
 - Profile picture upload support
 
 ## Tech Stack
@@ -33,6 +38,8 @@ A full-stack Django web application for managing hospital operations including p
 5. Run migrations: `python manage.py migrate`
 6. Create superuser: `python manage.py createsuperuser`
 7. Run server: `python manage.py runserver`
+
+For production (Render + Neon), follow `docs/deployment-checklist.md`.
 
 ## Project Structure
 
@@ -57,6 +64,17 @@ smart/                   # Django project root (manage.py lives here)
 ├── staticfiles/         # Collected static files (production)
 └── media/               # Uploaded files (local dev)
 ```
+
+## Backups
+
+Create a portable archive (database JSON + uploaded media) and keep the last 7:
+
+```bash
+python manage.py backup_data
+```
+
+Archives land in `backups/` as `shms-backup-<timestamp>.zip`. Restore the database
+with `python manage.py loaddata database.json` after unzipping.
 
 ## Live Demo
 

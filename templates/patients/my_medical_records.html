@@ -18,6 +18,18 @@
                 <span class="badge badge-sky flex-shrink-0">{{ record.doctor.get_specialization_display }}</span>
             </header>
             <div class="app-card__body grid gap-3">
+                {% if record.has_vitals %}
+                <div class="flex flex-wrap gap-1.5">
+                    {% if record.blood_pressure %}<span class="badge badge-sky">BP {{ record.blood_pressure }} mmHg</span>{% endif %}
+                    {% if record.heart_rate %}<span class="badge badge-sky">HR {{ record.heart_rate }} bpm</span>{% endif %}
+                    {% if record.respiratory_rate %}<span class="badge badge-sky">RR {{ record.respiratory_rate }}</span>{% endif %}
+                    {% if record.temperature_c %}<span class="badge badge-sky">Temp {{ record.temperature_c }}&deg;C</span>{% endif %}
+                    {% if record.oxygen_saturation %}<span class="badge badge-sky">SpO&#8322; {{ record.oxygen_saturation }}%</span>{% endif %}
+                    {% if record.weight_kg %}<span class="badge badge-slate">{{ record.weight_kg }} kg</span>{% endif %}
+                    {% if record.height_cm %}<span class="badge badge-slate">{{ record.height_cm }} cm</span>{% endif %}
+                    {% if record.bmi %}<span class="badge badge-emerald">BMI {{ record.bmi }}</span>{% endif %}
+                </div>
+                {% endif %}
                 <div class="rounded-xl bg-slate-50 border border-slate-100 p-3.5">
                     <p class="text-[11.5px] font-bold uppercase tracking-wide text-slate-400">Diagnosis</p>
                     <p class="text-[14px] text-slate-800 mt-1">{{ record.diagnosis }}</p>

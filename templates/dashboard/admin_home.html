@@ -76,7 +76,7 @@
             <p class="app-stat__value"><small>₦</small><span data-countup="{{ total_revenue|floatformat:0 }}">{{ total_revenue|floatformat:0 }}</span></p>
             <p class="app-stat__hint up">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M5 13l4 4L19 7"/></svg>
-                Paid invoices only
+                Payments received
             </p>
         </div>
     </article>
@@ -193,6 +193,133 @@
         </div>
     </article>
 </section>
+
+{# ================= OPERATIONAL PULSE ================= #}
+<section class="app-grid app-grid--4 mb-6" aria-label="Operational pulse">
+    <a href="{% url 'laboratory:lab_test_list' %}" class="app-stat" style="text-decoration:none;">
+        <span class="app-icontile app-icontile--amber" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </span>
+        <div class="app-stat__body">
+            <p class="app-stat__label">Open Lab Tests</p>
+            <p class="app-stat__value"><span data-countup="{{ pending_labs }}">{{ pending_labs }}</span></p>
+            <p class="app-stat__hint">Awaiting result</p>
+        </div>
+    </a>
+    <a href="{% url 'pharmacy:medicine_list' %}" class="app-stat" style="text-decoration:none;">
+        <span class="app-icontile app-icontile--violet" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        </span>
+        <div class="app-stat__body">
+            <p class="app-stat__label">Low Stock Items</p>
+            <p class="app-stat__value"><span data-countup="{{ low_stock_count }}">{{ low_stock_count }}</span></p>
+            <p class="app-stat__hint down">At or below threshold</p>
+        </div>
+    </a>
+    <a href="{% url 'ipd:admission_list' %}" class="app-stat" style="text-decoration:none;">
+        <span class="app-icontile app-icontile--emerald" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+        </span>
+        <div class="app-stat__body">
+            <p class="app-stat__label">Inpatients</p>
+            <p class="app-stat__value"><span data-countup="{{ admitted_count }}">{{ admitted_count }}</span></p>
+            <p class="app-stat__hint">Currently admitted</p>
+        </div>
+    </a>
+    <a href="{% url 'ipd:ward_board' %}" class="app-stat" style="text-decoration:none;">
+        <span class="app-icontile" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 12h16M12 4v16"/></svg>
+        </span>
+        <div class="app-stat__body">
+            <p class="app-stat__label">Bed Occupancy</p>
+            <p class="app-stat__value"><span data-countup="{{ occupied_beds }}">{{ occupied_beds }}</span><small> / {{ total_beds }}</small></p>
+            <p class="app-stat__hint">Beds in use</p>
+        </div>
+    </a>
+</section>
+
+<section class="app-card mb-6">
+    <header class="app-card__head">
+        <div>
+            <h2>This Month</h2>
+            <p>Activity since {{ month_start|default:"the start of the month" }}</p>
+        </div>
+    </header>
+    <div class="app-card__body">
+        <div class="app-grid app-grid--3" style="gap:14px;">
+            <div class="rev-block">
+                <p class="rev-block__label">Revenue Collected</p>
+                <p class="rev-block__amount">₦<span data-countup="{{ month_revenue|floatformat:0 }}">{{ month_revenue|floatformat:0 }}</span></p>
+                <p class="rev-block__meta">Payments this month</p>
+            </div>
+            <div class="rev-block">
+                <p class="rev-block__label">Appointments</p>
+                <p class="rev-block__amount"><span data-countup="{{ month_appointments }}">{{ month_appointments }}</span></p>
+                <p class="rev-block__meta">Scheduled this month</p>
+            </div>
+            <div class="rev-block">
+                <p class="rev-block__label">New Patients</p>
+                <p class="rev-block__amount"><span data-countup="{{ month_new_patients }}">{{ month_new_patients }}</span></p>
+                <p class="rev-block__meta">Registrations this month</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="app-grid app-grid--2 mb-6">
+    <article class="app-card">
+        <header class="app-card__head">
+            <div>
+                <h2>Specialty Load</h2>
+                <p>Appointments by specialty</p>
+            </div>
+        </header>
+        <div class="app-card__body" style="padding-top:0;">
+            <table class="app-table">
+                <tbody>
+                    {% for row in specialty_load %}
+                    <tr>
+                        <td class="font-medium">{{ row.specialization|default:"General" }}</td>
+                        <td class="text-right font-bold">{{ row.total }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td class="app-table__meta">No appointments yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="app-card">
+        <header class="app-card__head">
+            <div>
+                <h2>Recent Activity</h2>
+                <p>Latest audit events</p>
+            </div>
+            <div class="app-card__head-actions">
+                <a href="/admin/core/auditlog/" class="btn btn-outline btn-sm">Audit log</a>
+            </div>
+        </header>
+        <div class="app-card__body" style="padding-top:0;">
+            <ul class="divide-y divide-slate-100">
+                {% for entry in recent_activity %}
+                <li class="py-2.5 text-[13px]">
+                    <p class="text-slate-800">
+                        <strong>{{ entry.get_action_display }}</strong>
+                        {% if entry.model_name %} · {{ entry.model_name }}{% endif %}
+                        {% if entry.object_repr %}<span class="text-slate-500"> — {{ entry.object_repr|truncatechars:48 }}</span>{% endif %}
+                    </p>
+                    <p class="text-[11.5px] text-slate-400 mt-0.5">
+                        {{ entry.user.get_full_name|default:"System" }} · {{ entry.timestamp|date:"M j, Y H:i" }}
+                    </p>
+                </li>
+                {% empty %}
+                <li class="py-3 text-[13px] text-slate-500">No activity recorded yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </article>
+</div>
 
 {# ================= QUICK ACTIONS ================= #}
 <section class="app-card">

@@ -6,6 +6,12 @@
 {% include "partials/page_header.html" with eyebrow="Pharmacy" title="Pharmacy Inventory" subtitle="Stock levels, pricing and expiry — real inventory only." action_url="/pharmacy/add/" action_label="Add Medicine" %}
 
 <div class="w-full max-w-7xl mx-auto">
+    <div class="flex flex-wrap gap-2 mb-5">
+        <a href="{% url 'pharmacy:prescription_queue' %}" class="btn btn-outline btn-sm">Prescription Queue</a>
+        <a href="{% url 'pharmacy:stock_history' %}" class="btn btn-outline btn-sm">Stock History</a>
+        <a href="{% url 'pharmacy:supplier_list' %}" class="btn btn-outline btn-sm">Suppliers</a>
+    </div>
+
     <section class="app-grid app-grid--3 mb-6" aria-label="Inventory summary">
         <article class="app-stat app-stat--accent">
             <div class="app-stat__body">
@@ -63,8 +69,12 @@
                             {% endif %}
                         </td>
                         <td class="actions">
+                            <a href="{% url 'pharmacy:receive_stock' medicine.id %}" class="btn btn-primary btn-sm">Receive</a>
                             <a href="{% url 'pharmacy:edit_medicine' medicine.id %}" class="btn btn-outline btn-sm">Edit</a>
-                            <a href="{% url 'pharmacy:delete_medicine' medicine.id %}" class="btn btn-ghost btn-sm" data-confirm="Delete {{ medicine.name }}? This cannot be undone.">Delete</a>
+                            <form method="post" action="{% url 'pharmacy:delete_medicine' medicine.id %}" class="inline" onsubmit="return confirm('Delete {{ medicine.name }}? This cannot be undone.');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-ghost btn-sm">Delete</button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -72,6 +82,7 @@
             </table>
         </div>
     </section>
+    {% include "partials/pagination.html" with page_obj=page_obj querystring=querystring %}
     {% else %}
         {% include "partials/empty_state.html" with title="No medicines in inventory yet" text="Add your first medicine to start tracking stock, pricing and expiry." icon="pill" action_url="/pharmacy/add/" action_label="Add Medicine" %}
     {% endif %}

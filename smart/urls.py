@@ -38,7 +38,9 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('pharmacy/', include('pharmacy.urls')),
     path('laboratory/', include('laboratory.urls')),
+    path('ipd/', include('ipd.urls')),
     path('billing/', include('billing.urls')),
     path('demo/', core_views.demo_page, name='demo'),
+    path('audit-log/', core_views.audit_log_list, name='audit_log'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

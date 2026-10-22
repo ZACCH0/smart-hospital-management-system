@@ -6,6 +6,9 @@
 {% include "partials/page_header.html" with eyebrow="Account" title="Notifications" subtitle="Appointments and updates — newest first." %}
 
 <div class="w-full max-w-3xl mx-auto">
+    <div class="flex justify-end mb-3">
+        <a href="{% url 'notifications:preferences' %}" class="text-xs text-primary hover:underline">Notification preferences →</a>
+    </div>
     {% if unread_count %}
     <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
         <p class="text-[13px] text-slate-500">{{ unread_count }} unread notification{{ unread_count|pluralize }}</p>

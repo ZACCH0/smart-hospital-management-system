@@ -15,6 +15,7 @@
                         <th>Doctor</th>
                         <th>When</th>
                         <th>Reason</th>
+                        <th>Mode</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -29,6 +30,16 @@
                             <span class="block text-[12.5px] text-slate-500">{{ appt.appointment_time|time:"H:i" }}</span>
                         </td>
                         <td class="app-table__meta">{{ appt.reason|truncatechars:60|default:"—" }}</td>
+                        <td>
+                            {% if appt.is_video %}
+                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11.5px] font-semibold" style="background:#E8F7F6;color:#225A5D;">Video</span>
+                                {% if appt.can_join_video %}
+                                    <a href="{% url 'appointments:telehealth_join' appt.id %}" class="btn btn-outline btn-sm mt-1 block w-max">Join Video</a>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-slate-500 text-[12.5px]">In person</span>
+                            {% endif %}
+                        </td>
                         <td>{% include "partials/status_badge.html" with status=appt.status %}</td>
                     </tr>
                     {% endfor %}

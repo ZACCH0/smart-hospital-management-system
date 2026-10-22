@@ -15,7 +15,11 @@
     <div class="bg-primary/10 border border-primary/15 rounded-xl p-4 lg:p-5 mb-6 text-sm lg:text-[15px]">
         <p class="font-medium text-primary">Invoice #{{ invoice.id }}</p>
         <p class="text-gray-600 mt-1">Patient: {{ invoice.patient.user.get_full_name }}</p>
-        <p class="text-gray-600">Amount Due: ₦{{ invoice.amount }}</p>
+        <p class="text-gray-600">Total: ₦{{ invoice.amount }}
+            {% if invoice.tax_amount %}<span class="text-gray-400">(incl. ₦{{ invoice.tax_amount }} tax)</span>{% endif %}
+        </p>
+        <p class="text-gray-600">Already Paid: ₦{{ invoice.amount_paid }}</p>
+        <p class="text-gray-600 font-semibold text-primary">Balance Due: ₦{{ invoice.balance_due }}</p>
         <p class="text-gray-600">Issued: {{ invoice.issued_date|date:"M j, Y" }}</p>
     </div>
 
@@ -36,12 +40,47 @@
                 {{ form.payment_method }}
             </div>
 
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium mb-1">
+                    Reference <span class="text-gray-400">(optional)</span>
+                </label>
+                {{ form.reference }}
+            </div>
+
             <button type="submit"
                     class="md:col-span-2 btn-shine w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-medium">
                 Confirm Payment
             </button>
         </form>
     </div>
+
+    {% if invoice.payments.all %}
+    <div class="bg-white shadow rounded-xl mt-6 overflow-hidden">
+        <div class="px-4 py-3 border-b bg-gray-50">
+            <h2 class="text-sm font-semibold text-slate-700">Payment History</h2>
+        </div>
+        <table class="w-full text-sm">
+            <thead class="text-left text-gray-500">
+                <tr>
+                    <th class="px-4 py-2 font-medium">Date</th>
+                    <th class="px-4 py-2 font-medium">Amount</th>
+                    <th class="px-4 py-2 font-medium">Method</th>
+                    <th class="px-4 py-2 font-medium">Reference</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in invoice.payments.all %}
+                <tr class="border-t">
+                    <td class="px-4 py-2 text-gray-500">{{ payment.payment_date|date:"M j, Y H:i" }}</td>
+                    <td class="px-4 py-2 font-medium">₦{{ payment.amount }}</td>
+                    <td class="px-4 py-2">{{ payment.get_payment_method_display }}</td>
+                    <td class="px-4 py-2 text-gray-500">{{ payment.reference|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 
 </div>
 {% endblock %}

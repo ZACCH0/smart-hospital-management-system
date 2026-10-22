@@ -30,11 +30,36 @@
                 {% endif %}
             </div>
 
+            <div>
+                <label class="block text-sm font-medium mb-1">Measured Value <span class="text-gray-400">(optional)</span></label>
+                {{ form.result_value }}
+                {% if form.result_value.errors %}<p class="text-red-500 text-xs mt-1">{{ form.result_value.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Unit</label>
+                {{ form.unit }}
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Reference Low</label>
+                {{ form.reference_low }}
+                {% if form.reference_low.errors %}<p class="text-red-500 text-xs mt-1">{{ form.reference_low.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Reference High</label>
+                {{ form.reference_high }}
+                {% if form.reference_high.errors %}<p class="text-red-500 text-xs mt-1">{{ form.reference_high.errors.0 }}</p>{% endif %}
+            </div>
+
             <div class="md:col-span-2">
+                {% if form.non_field_errors %}
+                <p class="text-red-500 text-xs mb-2">{{ form.non_field_errors.0 }}</p>
+                {% endif %}
                 <label class="block text-sm font-medium mb-1">
                     Report File <span class="text-gray-400">(optional)</span>
                 </label>
                 {{ form.report_file }}
+                {% if form.report_file.errors %}<p class="text-red-500 text-xs mt-1">{{ form.report_file.errors.0 }}</p>{% endif %}
+                <p class="text-[11.5px] text-gray-400 mt-1">PDF or image, up to 10 MB.</p>
             </div>
 
             <button type="submit"

@@ -28,6 +28,14 @@ class PatientProfile(models.Model):
     blood_group = models.CharField(max_length=3, choices=BLOOD_GROUP_CHOICES, blank=True)
     address = models.TextField(blank=True)
     emergency_contact = models.CharField(max_length=15, blank=True)
+    allergies = models.TextField(
+        blank=True,
+        help_text='Known allergies (one per line)'
+    )
+    chronic_conditions = models.TextField(
+        blank=True,
+        help_text='Ongoing conditions (one per line)'
+    )
 
     def __str__(self):
         return f'{self.user.get_full_name()} ({self.blood_group or "N/A"})'

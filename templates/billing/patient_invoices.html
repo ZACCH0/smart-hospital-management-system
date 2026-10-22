@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}My Invoices — SHMS{% endblock %}
+{% block title %}My Invoices – SHMS{% endblock %}
 
 {% block content %}
 {% include "partials/page_header.html" with eyebrow="Patient workspace" title="My Invoices" subtitle="Your bills and payment status." back_url="/dashboard/patient/" back_label="Dashboard" %}
@@ -10,7 +10,7 @@
         <div class="app-card overflow-hidden">
             <div class="p-4 lg:p-5 text-center sm:text-left">
                 <p class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-green-700">₦{{ total_pending }}</p>
-                <p class="text-[12.5px] lg:text-[13.5px] text-slate-500 mt-1">Total Pending</p>
+                <p class="text-[12.5px] lg:text-[13.5px] text-slate-500 mt-1">Balance Outstanding</p>
             </div>
             <div class="px-4 lg:px-5 py-2.5 text-[12.5px] font-medium text-slate-600" style="background:#E8F7F6;">Awaiting payment at reception</div>
         </div>
@@ -19,34 +19,51 @@
                 <p class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900">₦{{ total_paid }}</p>
                 <p class="text-[12.5px] lg:text-[13.5px] text-slate-500 mt-1">Total Paid</p>
             </div>
-            <div class="px-4 lg:px-5 py-2.5 text-[12.5px] font-medium text-slate-600" style="background:#E8F7F6;">Settled bills</div>
+            <div class="px-4 lg:px-5 py-2.5 text-[12.5px] font-medium text-slate-600" style="background:#E8F7F6;">Settled to date</div>
         </div>
     </div>
 
     {% if invoices %}
     <section class="app-card app-card--flush">
         <div class="app-table-wrap">
-            <table class="app-table min-w-[620px]">
+            <table class="app-table min-w-[720px]">
                 <thead>
                     <tr>
                         <th>Invoice</th>
                         <th>Amount</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
                         <th>Issued</th>
                         <th>Status</th>
-                        <th>Payment</th>
+                        <th>Payments</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for invoice in invoices %}
                     <tr>
-                        <td><span class="font-bold whitespace-nowrap">#{{ invoice.id }}</span></td>
+                        <td>
+                            <span class="font-bold whitespace-nowrap">#{{ invoice.id }}</span>
+                            {% if invoice.insurance_provider %}
+                                <span class="block text-[11px] text-slate-500 whitespace-nowrap">
+                                    {{ invoice.insurance_provider.name }} · ₦{{ invoice.insurance_amount }}
+                                    ({{ invoice.get_insurance_claim_status_display }})
+                                </span>
+                            {% endif %}
+                        </td>
                         <td class="font-extrabold whitespace-nowrap">₦{{ invoice.amount }}</td>
+                        <td class="text-green-700 whitespace-nowrap">₦{{ invoice.amount_paid }}</td>
+                        <td class="font-semibold whitespace-nowrap {% if invoice.balance_due > 0 %}text-yellow-700{% else %}text-slate-400{% endif %}">₦{{ invoice.balance_due }}</td>
                         <td class="app-table__meta whitespace-nowrap">{{ invoice.issued_date|date:"M j, Y" }}</td>
                         <td>{% include "partials/status_badge.html" with status=invoice.status %}</td>
                         <td class="app-table__meta">
-                            {% if invoice.payment %}
-                                Paid via {{ invoice.payment.get_payment_method_display }} on {{ invoice.payment.payment_date|date:"M j, Y" }}
-                            {% else %}—{% endif %}
+                            {% for payment in invoice.payments.all %}
+                                <div class="whitespace-nowrap">
+                                    ₦{{ payment.amount }} via {{ payment.get_payment_method_display }}
+                                    <span class="text-slate-400">on {{ payment.payment_date|date:"M j, Y" }}</span>
+                                </div>
+                            {% empty %}
+                                —
+                            {% endfor %}
                         </td>
                     </tr>
                     {% endfor %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Health Assistant — SHMS{% endblock %}
+
+{% block content %}
+{% include "partials/page_header.html" with eyebrow="Patient workspace" title="Health Assistant" subtitle="Describe how you feel and get a suggested department before you book." back_url="/dashboard/patient/" back_label="Dashboard" %}
+
+<div class="w-full max-w-3xl mx-auto space-y-5">
+    <section class="app-card p-5 sm:p-6">
+        <form method="post" class="space-y-3">
+            {% csrf_token %}
+            <label for="symptoms" class="block text-[12.5px] font-semibold text-slate-700">What are you experiencing?</label>
+            <textarea id="symptoms" name="symptoms" rows="4" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="e.g. chest pain and shortness of breath since this morning">{{ symptoms }}</textarea>
+            <div class="flex justify-end">
+                <button type="submit" class="btn btn-primary justify-center w-full sm:w-auto sm:px-8">Get Guidance</button>
+            </div>
+        </form>
+    </section>
+
+    {% if result %}
+    <section class="app-card p-5 sm:p-6">
+        <div class="flex flex-wrap items-center gap-1.5">
+            <h2 class="text-lg font-bold text-slate-900 mr-2">{{ result.department_label }}</h2>
+            {% if result.urgency == 'urgent' %}
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold" style="background:#FEE2E2;color:#B91C1C;">Urgent</span>
+            {% else %}
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold" style="background:#E8F7F6;color:#225A5D;">Routine</span>
+            {% endif %}
+        </div>
+        <p class="mt-3 text-[14px] text-slate-700 leading-relaxed">{{ result.advice }}</p>
+        <p class="mt-3 text-[12.5px] text-slate-500">{{ result.disclaimer }}</p>
+        <p class="mt-1 text-[11.5px] text-slate-400">Answered by {% if result.source == 'ai' %}AI assistant{% else %}built-in triage rules{% endif %}.</p>
+
+        {% if doctors %}
+        <div class="mt-5 border-t border-slate-100 pt-4">
+            <p class="text-[12.5px] font-semibold text-slate-700 mb-2">Available doctors in this department</p>
+            <div class="flex flex-wrap gap-2">
+                {% for doctor in doctors %}
+                    {% include "partials/avatar.html" with person=doctor.user size="xs" meta=doctor.get_specialization_display %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <a href="{% url 'patients:my_appointments' %}" class="btn btn-ghost justify-center sm:w-auto">My Appointments</a>
+            <a href="{% url 'patients:book_appointment' %}" class="btn btn-primary justify-center w-full sm:w-auto sm:px-8">Book Appointment</a>
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Too Many Requests — SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-lg mx-auto app-card p-6 sm:p-8 text-center">
+    <div class="app-empty">
+        <div class="app-empty__art" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <p class="text-5xl font-extrabold text-slate-900">429</p>
+        <h1 class="text-lg font-bold text-slate-900 mt-1">Too Many Requests</h1>
+        <p>You have made too many attempts. Please wait about {{ retry_after|default:300 }} seconds and try again.</p>
+        <div class="app-empty__actions">
+            <a href="javascript:history.back()" class="btn btn-outline">Go Back</a>
+            <a href="{% url 'accounts:role_redirect' %}" class="btn btn-primary">Go to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block public_content %}
+<div class="max-w-7xl mx-auto px-5 sm:px-6 py-10">
+    <div class="w-full max-w-lg mx-auto app-card p-6 sm:p-8 text-center">
+        <div class="app-empty">
+            <div class="app-empty__art" aria-hidden="true">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <p class="text-5xl font-extrabold text-slate-900">429</p>
+            <h1 class="text-lg font-bold text-slate-900 mt-1">Too Many Requests</h1>
+            <p>You have made too many attempts. Please wait about {{ retry_after|default:300 }} seconds and try again.</p>
+            <div class="app-empty__actions">
+                <a href="javascript:history.back()" class="btn btn-outline">Go Back</a>
+                <a href="{% url 'home' %}" class="btn btn-primary">Go to Homepage</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

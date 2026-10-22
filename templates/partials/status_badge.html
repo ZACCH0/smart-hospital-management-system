@@ -5,11 +5,11 @@ Labels are explicit (no custom filters) so this never crashes on underscore stat
 {% endcomment %}
 <span class="badge
     {% if status == 'pending' %}badge-amber
-    {% elif status == 'approved' %}badge-sky
+    {% elif status == 'approved' or status == 'partially_paid' %}badge-sky
     {% elif status == 'completed' or status == 'paid' %}badge-emerald
     {% elif status == 'cancelled' or status == 'overdue' %}badge-rose
     {% elif status == 'no_show' %}badge-slate
     {% elif status == 'rescheduled' %}badge-violet
     {% elif status == 'in_progress' %}badge-indigo
     {% elif status == 'available' or status == 'active' %}badge-teal
-    {% else %}badge-slate{% endif %}">{% if status == 'no_show' %}No Show{% elif status == 'in_progress' %}In Progress{% else %}{{ status|capfirst }}{% endif %}</span>
+    {% else %}badge-slate{% endif %}">{% if status == 'no_show' %}No Show{% elif status == 'in_progress' %}In Progress{% elif status == 'partially_paid' %}Partially Paid{% else %}{{ status|capfirst }}{% endif %}</span>

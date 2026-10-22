@@ -15,7 +15,7 @@
                     <h2 class="truncate">{{ rx.medicine_name }}</h2>
                     <p>{{ rx.created_at|date:"M j, Y" }} · Dr. {{ rx.medical_record.doctor.user.get_full_name }}</p>
                 </div>
-                <span class="badge badge-teal flex-shrink-0">Rx</span>
+                <span class="badge {% if rx.status == 'dispensed' %}badge-emerald{% elif rx.status == 'cancelled' %}badge-slate{% else %}badge-amber{% endif %} flex-shrink-0">{{ rx.get_status_display }}</span>
             </header>
             <div class="app-card__body grid grid-cols-2 gap-3">
                 <div class="rounded-xl p-3 border" style="background:#E8F7F6;border-color:#B1CBCD;">
@@ -31,6 +31,11 @@
             <div class="app-card__foot">
                 <p class="text-[11.5px] font-semibold text-slate-500">Instructions</p>
                 <p class="text-[13.5px] text-slate-700 mt-1">{{ rx.instructions }}</p>
+            </div>
+            {% endif %}
+            {% if rx.status == 'dispensed' and rx.dispensed_at %}
+            <div class="app-card__foot">
+                <p class="text-[11.5px] text-slate-400">Dispensed {{ rx.dispensed_at|date:"j M Y, H:i" }}{% if rx.dispensed_by %} by {{ rx.dispensed_by.get_full_name }}{% endif %}</p>
             </div>
             {% endif %}
         </article>

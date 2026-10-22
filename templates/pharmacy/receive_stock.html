@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Receive Stock — SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-lg md:max-w-2xl mx-auto">
+    <div class="app-card p-5 sm:p-6 lg:p-8">
+        <p class="text-[11.5px] font-bold uppercase tracking-widest text-slate-400">Pharmacy · Stock in</p>
+        <h1 class="text-xl lg:text-2xl font-bold text-slate-900 mt-1">Receive Stock</h1>
+        <p class="text-[13px] text-slate-500 mt-1 mb-5">
+            {{ medicine.name }} — currently {{ medicine.stock_quantity }} unit(s) at ₦{{ medicine.price }}.
+        </p>
+
+        {% if form.errors %}
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 mb-4 text-[13px] text-red-700">
+            Please fix the highlighted fields and try again.
+        </div>
+        {% endif %}
+
+        <form method="post" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.batch_number.id_for_label }}">Batch Number</label>
+                {{ form.batch_number }}
+                {% if form.batch_number.errors %}<p class="text-red-600 text-xs mt-1">{{ form.batch_number.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.quantity_received.id_for_label }}">Quantity Received</label>
+                {{ form.quantity_received }}
+                {% if form.quantity_received.errors %}<p class="text-red-600 text-xs mt-1">{{ form.quantity_received.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.expiry_date.id_for_label }}">Batch Expiry</label>
+                {{ form.expiry_date }}
+                {% if form.expiry_date.errors %}<p class="text-red-600 text-xs mt-1">{{ form.expiry_date.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.unit_cost.id_for_label }}">Unit Cost (₦)</label>
+                {{ form.unit_cost }}
+                {% if form.unit_cost.errors %}<p class="text-red-600 text-xs mt-1">{{ form.unit_cost.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.supplier.id_for_label }}">Supplier</label>
+                {{ form.supplier }}
+                {% if form.supplier.errors %}<p class="text-red-600 text-xs mt-1">{{ form.supplier.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="sm:col-span-2 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-1">
+                <a href="{% url 'pharmacy:medicine_list' %}" class="btn btn-ghost justify-center sm:w-auto">Cancel</a>
+                <button type="submit" class="btn btn-primary justify-center w-full sm:w-auto sm:px-8">Receive Stock</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

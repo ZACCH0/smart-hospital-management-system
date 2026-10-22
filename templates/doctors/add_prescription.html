@@ -23,6 +23,14 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">
+                    Pharmacy Stock Item <span class="text-gray-400">(optional)</span>
+                </label>
+                {{ form.medicine }}
+                <p class="text-[11.5px] text-gray-400 mt-1">{{ form.medicine.help_text }}</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">
                     Medicine Name <span class="text-red-500">*</span>
                 </label>
                 {{ form.medicine_name }}
@@ -31,7 +39,7 @@
                 {% endif %}
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                 <div>
                     <label class="block text-sm font-medium mb-1">Dosage</label>
                     {{ form.dosage }}
@@ -39,6 +47,13 @@
                 <div>
                     <label class="block text-sm font-medium mb-1">Duration</label>
                     {{ form.duration }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Quantity</label>
+                    {{ form.quantity }}
+                    {% if form.quantity.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.quantity.errors.0 }}</p>
+                    {% endif %}
                 </div>
             </div>
 

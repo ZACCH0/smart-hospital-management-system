@@ -103,9 +103,19 @@
             <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ profile_form.address.id_for_label }}">Home Address</label>
             {{ profile_form.address }}
         </div>
-        <div>
+        <div class="mb-4">
             <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ profile_form.emergency_contact.id_for_label }}">Emergency Contact</label>
             {{ profile_form.emergency_contact }}
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ profile_form.allergies.id_for_label }}">Allergies</label>
+                {{ profile_form.allergies }}
+            </div>
+            <div>
+                <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ profile_form.chronic_conditions.id_for_label }}">Chronic Conditions</label>
+                {{ profile_form.chronic_conditions }}
+            </div>
         </div>
 
         {% if user_form.errors or profile_form.errors %}

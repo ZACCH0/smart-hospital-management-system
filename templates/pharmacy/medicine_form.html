@@ -41,6 +41,11 @@
             {{ form.expiry_date }}
             {% if form.expiry_date.errors %}<p class="text-red-600 text-xs mt-1">{{ form.expiry_date.errors.0 }}</p>{% endif %}
         </div>
+        <div class="md:col-span-2">
+            <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.supplier.id_for_label }}">Supplier <span class="text-slate-400 font-normal">(optional)</span></label>
+            {{ form.supplier }}
+            {% if form.supplier.errors %}<p class="text-red-600 text-xs mt-1">{{ form.supplier.errors.0 }}</p>{% endif %}
+        </div>
 
         <div class="md:col-span-2 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-1">
             <a href="{% url 'pharmacy:medicine_list' %}" class="btn btn-ghost justify-center sm:w-auto">Cancel</a>

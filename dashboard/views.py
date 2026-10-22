@@ -14,7 +14,16 @@ from core.decorators import (
 def admin_home(request):
     from accounts.models import CustomUser
     from appointments.models import Appointment
-    from billing.models import Invoice
+    from billing.models import Invoice, Payment
+    from core.models import AuditLog
+    from doctors.models import DoctorProfile
+    from ipd.models import Admission, Bed
+    from laboratory.models import LabTest
+    from patients.models import PatientProfile
+    from pharmacy.models import Medicine
+
+    today = timezone.now().date()
+    month_start = today.replace(day=1)
 
     total_doctors = CustomUser.objects.filter(role='doctor').count()
     total_patients = CustomUser.objects.filter(role='patient').count()
@@ -24,20 +33,31 @@ def admin_home(request):
     completed_appointments = Appointment.objects.filter(status='completed').count()
     cancelled_appointments = Appointment.objects.filter(status='cancelled').count()
 
-    total_revenue = Invoice.objects.filter(
-        status='paid'
-    ).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_billed = Invoice.objects.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_revenue = Payment.objects.aggregate(Sum('amount'))['amount__sum'] or 0
+    pending_revenue = total_billed - total_revenue
+    if pending_revenue < 0:
+        pending_revenue = 0
 
-    pending_revenue = Invoice.objects.filter(
-        status='pending'
-    ).aggregate(Sum('amount'))['amount__sum'] or 0
-
-    revenue_total = (total_revenue or 0) + (pending_revenue or 0)
+    revenue_total = total_billed
     if revenue_total:
         collected_share = round(float(total_revenue or 0) / float(revenue_total) * 100)
     else:
         collected_share = 0
     outstanding_share = 100 - collected_share if revenue_total else 0
+
+    month_revenue = Payment.objects.filter(
+        payment_date__date__gte=month_start
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+    month_appointments = Appointment.objects.filter(
+        appointment_date__gte=month_start
+    ).count()
+    month_new_patients = PatientProfile.objects.filter(
+        user__date_joined__date__gte=month_start
+    ).count()
+
+    total_beds = Bed.objects.filter(is_active=True, ward__is_active=True).count()
+    occupied_beds = Admission.objects.filter(status='admitted').count()
 
     context = {
         'total_doctors': total_doctors,
@@ -49,8 +69,27 @@ def admin_home(request):
         'cancelled_appointments': cancelled_appointments,
         'total_revenue': total_revenue,
         'pending_revenue': pending_revenue,
+        'total_billed': total_billed,
         'collected_share': collected_share,
         'outstanding_share': outstanding_share,
+        'month_revenue': month_revenue,
+        'month_start': month_start,
+        'month_appointments': month_appointments,
+        'month_new_patients': month_new_patients,
+        'pending_labs': LabTest.objects.exclude(status='completed').count(),
+        'low_stock_count': Medicine.objects.filter(
+            stock_quantity__lte=Medicine.LOW_STOCK_THRESHOLD
+        ).count(),
+        'admitted_count': occupied_beds,
+        'total_beds': total_beds,
+        'occupied_beds': occupied_beds,
+        'specialty_load': (
+            DoctorProfile.objects
+            .values('specialization')
+            .annotate(total=Count('appointments'))
+            .order_by('-total')[:6]
+        ),
+        'recent_activity': AuditLog.objects.select_related('user')[:8],
     }
     return render(request, 'dashboard/admin_home.html', context)
 

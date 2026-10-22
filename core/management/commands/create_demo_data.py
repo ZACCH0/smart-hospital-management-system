@@ -178,6 +178,7 @@ class Command(BaseCommand):
         invoice = Invoice.objects.create(
             patient=patient_profile,
             appointment=appt1,
+            subtotal=7500.00,
             amount=7500.00,
             status='paid',
         )

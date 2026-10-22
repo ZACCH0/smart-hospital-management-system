@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Suppliers — SHMS{% endblock %}
+
+{% block content %}
+{% include "partials/page_header.html" with eyebrow="Pharmacy" title="Suppliers" subtitle="Who supplies your stock — contacts and active status." action_url="/pharmacy/suppliers/add/" action_label="Add Supplier" back_url="/pharmacy/" back_label="Inventory" %}
+
+<div class="w-full max-w-7xl mx-auto">
+    {% if suppliers %}
+    <section class="app-card app-card--flush">
+        <div class="app-table-wrap">
+            <table class="app-table min-w-[700px]">
+                <thead>
+                    <tr>
+                        <th>Supplier</th>
+                        <th>Contact</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Medicines</th>
+                        <th>Status</th>
+                        <th class="actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for supplier in suppliers %}
+                    <tr>
+                        <td class="app-table__primary">{{ supplier.name }}</td>
+                        <td class="app-table__meta">{{ supplier.contact_person|default:"—" }}</td>
+                        <td class="app-table__meta whitespace-nowrap">{{ supplier.phone|default:"—" }}</td>
+                        <td class="app-table__meta">{{ supplier.email|default:"—" }}</td>
+                        <td class="num">{{ supplier.medicine_count }}</td>
+                        <td>
+                            {% if supplier.is_active %}
+                                <span class="badge badge-emerald">Active</span>
+                            {% else %}
+                                <span class="badge badge-slate">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="{% url 'pharmacy:supplier_edit' supplier.id %}" class="btn btn-outline btn-sm">Edit</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% else %}
+        {% include "partials/empty_state.html" with title="No suppliers yet" text="Add the companies you buy stock from to track deliveries." icon="user" action_url="/pharmacy/suppliers/add/" action_label="Add Supplier" %}
+    {% endif %}
+</div>
+{% endblock %}

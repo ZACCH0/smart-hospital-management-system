@@ -40,6 +40,7 @@
                     <th class="px-4 py-3 font-semibold text-gray-600">Patient</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Doctor</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Date</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Sample</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
                     <th class="px-4 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
@@ -52,6 +53,18 @@
                         <td class="px-4 py-3">Dr. {{ test.doctor.user.get_full_name }}</td>
                         <td class="px-4 py-3">{{ test.requested_date }}</td>
                         <td class="px-4 py-3">
+                            {% if test.sample_status == 'collected' %}
+                                <span class="badge badge-emerald">Collected</span>
+                            {% elif test.sample_status == 'rejected' %}
+                                <span class="badge badge-rose">Rejected</span>
+                            {% else %}
+                                <span class="badge badge-amber">Awaiting</span>
+                            {% endif %}
+                            {% if test.technician %}
+                                <p class="text-[11px] text-gray-400 mt-1">{{ test.technician.get_full_name }}</p>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
                             <span class="px-2 py-1 rounded-full text-xs font-medium
                                 {% if test.status == 'completed' %}bg-green-100 text-green-700
                                 {% elif test.status == 'in_progress' %}bg-primary/10 text-primary
@@ -61,11 +74,15 @@
                         </td>
                        <td class="px-4 py-3 space-x-2">
                         {% if not is_doctor and not is_patient %}
-                            {% if test.status == 'pending' %}
-                                <a href="{% url 'laboratory:update_test_status' test.id %}"
-                                class="text-secondary hover:underline text-xs">
-                                    Mark In Progress
-                                </a>
+                            {% if test.sample_status == 'awaiting' %}
+                                <form method="post" action="{% url 'laboratory:collect_sample' test.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-secondary hover:underline text-xs">Collect Sample</button>
+                                </form>
+                                <form method="post" action="{% url 'laboratory:reject_sample' test.id %}" class="inline" onsubmit="return confirm('Reject this sample?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-500 hover:underline text-xs">Reject</button>
+                                </form>
                             {% endif %}
                             {% if test.status == 'in_progress' %}
                                 {% if not test.result %}
@@ -78,13 +95,15 @@
                                 {% endif %}
                             {% endif %}
                             {% if test.status == 'completed' %}
-                                <span class="text-gray-400 text-xs">Completed ✓</span>
+                                <span class="text-gray-400 text-xs">Completed</span>
                             {% endif %}
                         {% else %}
                             {% if test.status == 'completed' and test.result %}
-                                <span class="text-green-600 text-xs">Result Available ✓</span>
+                                <span class="text-green-600 text-xs">Result Available</span>
+                            {% elif test.sample_status == 'rejected' %}
+                                <span class="text-red-500 text-xs">Sample rejected — recollect needed</span>
                             {% elif test.status == 'pending' %}
-                                <span class="text-yellow-600 text-xs">Awaiting processing</span>
+                                <span class="text-yellow-600 text-xs">Awaiting collection</span>
                             {% elif test.status == 'in_progress' %}
                                 <span class="text-secondary text-xs">Processing...</span>
                             {% endif %}
@@ -93,7 +112,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
                             No lab tests requested yet.
                         </td>
                     </tr>
@@ -101,6 +120,8 @@
             </tbody>
         </table>
     </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj %}
 
 </div>
 {% endblock %}

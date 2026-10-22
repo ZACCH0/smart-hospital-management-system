@@ -37,6 +37,11 @@
             {% if form.appointment_time.errors %}<p class="text-red-600 text-xs mt-1">{{ form.appointment_time.errors.0 }}</p>{% endif %}
         </div>
         <div class="md:col-span-2">
+            <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.consultation_type.id_for_label }}">Consultation Type</label>
+            {{ form.consultation_type }}
+            {% if form.consultation_type.errors %}<p class="text-red-600 text-xs mt-1">{{ form.consultation_type.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="md:col-span-2">
             <label class="block text-[12.5px] font-semibold text-slate-700 mb-1" for="{{ form.reason.id_for_label }}">Reason for Visit</label>
             {{ form.reason }}
             {% if form.reason.errors %}<p class="text-red-600 text-xs mt-1">{{ form.reason.errors.0 }}</p>{% endif %}

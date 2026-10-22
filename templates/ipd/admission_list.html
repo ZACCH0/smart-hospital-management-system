@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Admissions – SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-7xl mx-auto">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary/70">Inpatient</p>
+            <h1 class="text-xl sm:text-2xl lg:text-[28px] font-bold text-primary mt-1">Admissions</h1>
+            <p class="text-[13px] lg:text-[14px] text-slate-500 mt-1">Current and past inpatient stays.</p>
+        </div>
+        <a href="{% url 'ipd:admit_patient' %}"
+           class="btn-shine bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-secondary transition">
+            + Admit Patient
+        </a>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-4">
+        <a href="?status=admitted" class="px-3 py-1.5 rounded-lg text-xs font-medium {% if status == 'admitted' %}bg-primary text-white{% else %}bg-white text-slate-600 border{% endif %}">
+            Admitted ({{ admitted_count }})
+        </a>
+        <a href="?status=discharged" class="px-3 py-1.5 rounded-lg text-xs font-medium {% if status == 'discharged' %}bg-primary text-white{% else %}bg-white text-slate-600 border{% endif %}">
+            Discharged ({{ discharged_count }})
+        </a>
+        <a href="?status=all" class="px-3 py-1.5 rounded-lg text-xs font-medium {% if status == 'all' %}bg-primary text-white{% else %}bg-white text-slate-600 border{% endif %}">
+            All
+        </a>
+        <a href="{% url 'ipd:ward_board' %}" class="ml-auto text-xs text-primary hover:underline py-1.5">Ward board →</a>
+    </div>
+
+    <div class="bg-white shadow rounded-xl overflow-x-auto">
+        <table class="w-full text-sm min-w-[780px]">
+            <thead class="bg-gray-50 text-left">
+                <tr>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Patient</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Ward / Bed</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Doctor</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Admitted</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">LOS</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Status</th>
+                    <th class="px-4 py-3 font-semibold text-gray-600">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admission in admissions %}
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium">{{ admission.patient.user.get_full_name }}</td>
+                    <td class="px-4 py-3">{{ admission.bed.ward.name }} / {{ admission.bed.bed_number }}</td>
+                    <td class="px-4 py-3">Dr. {{ admission.doctor.user.get_full_name }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ admission.admitted_at|date:"M j, Y H:i" }}</td>
+                    <td class="px-4 py-3">{{ admission.length_of_stay }} d</td>
+                    <td class="px-4 py-3">{% include "partials/status_badge.html" with status=admission.status %}</td>
+                    <td class="px-4 py-3">
+                        {% if admission.status == 'admitted' %}
+                            <a href="{% url 'ipd:discharge_patient' admission.id %}" class="text-primary hover:underline text-xs">Discharge</a>
+                        {% else %}
+                            <span class="text-xs text-gray-400">{{ admission.discharged_at|date:"M j, Y" }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">No admissions in this view.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj querystring=querystring %}
+</div>
+{% endblock %}

@@ -26,5 +26,13 @@ class DoctorProfile(models.Model):
     consultation_fee = models.DecimalField(max_digits=8, decimal_places=2)
     available = models.BooleanField(default=True)
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(consultation_fee__gte=0),
+                name='doctor_fee_non_negative',
+            ),
+        ]
+
     def __str__(self):
         return f'Dr. {self.user.get_full_name()} - {self.get_specialization_display()}'

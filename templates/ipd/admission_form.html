@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} – SHMS{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-lg md:max-w-xl lg:max-w-2xl mx-auto">
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'ipd:admission_list' %}" class="text-gray-400 hover:text-primary transition">← Back</a>
+        <h1 class="text-xl lg:text-2xl font-bold text-primary">{{ title }}</h1>
+    </div>
+
+    <div class="bg-white shadow rounded-xl lg:rounded-2xl p-5 sm:p-6 lg:p-8">
+        <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="md:col-span-2 bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-700">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Patient</label>
+                {{ form.patient }}
+                {% if form.patient.errors %}<p class="text-red-500 text-xs mt-1">{{ form.patient.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Attending Doctor</label>
+                {{ form.doctor }}
+                {% if form.doctor.errors %}<p class="text-red-500 text-xs mt-1">{{ form.doctor.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium mb-1">Bed</label>
+                {{ form.bed }}
+                {% if form.bed.errors %}<p class="text-red-500 text-xs mt-1">{{ form.bed.errors.0 }}</p>{% endif %}
+                <p class="text-[11px] text-gray-400 mt-1">Only free beds in active wards are listed.</p>
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium mb-1">Admitting Diagnosis</label>
+                {{ form.diagnosis }}
+                {% if form.diagnosis.errors %}<p class="text-red-500 text-xs mt-1">{{ form.diagnosis.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium mb-1">Notes <span class="text-gray-400">(optional)</span></label>
+                {{ form.notes }}
+            </div>
+
+            <button type="submit"
+                    class="md:col-span-2 btn-shine w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary transition font-medium">
+                {{ title }}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

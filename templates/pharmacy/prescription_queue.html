@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Prescription Queue — SHMS{% endblock %}
+
+{% block content %}
+{% include "partials/page_header.html" with eyebrow="Pharmacy" title="Prescription Queue" subtitle="Pending prescriptions waiting to be dispensed against stock." back_url="/pharmacy/" back_label="Inventory" %}
+
+<div class="w-full max-w-7xl mx-auto">
+    {% if prescriptions %}
+    <section class="app-card app-card--flush">
+        <div class="app-table-wrap">
+            <table class="app-table min-w-[820px]">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Medicine</th>
+                        <th>Dosage</th>
+                        <th>Qty</th>
+                        <th>In stock</th>
+                        <th class="actions">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rx in prescriptions %}
+                    <tr>
+                        <td class="app-table__primary">{{ rx.medical_record.patient.user.get_full_name }}</td>
+                        <td class="app-table__meta">Dr. {{ rx.medical_record.doctor.user.get_full_name }}</td>
+                        <td>
+                            <span class="app-table__primary">{{ rx.medicine_name }}</span>
+                            {% if rx.medicine %}<span class="badge badge-teal ml-1">Stock item</span>{% endif %}
+                        </td>
+                        <td class="app-table__meta">{{ rx.dosage }} · {{ rx.duration }}</td>
+                        <td class="num">{{ rx.quantity }}</td>
+                        <td>
+                            {% if rx.medicine %}
+                                {% if rx.medicine.stock_quantity >= rx.quantity %}
+                                    <span class="badge badge-emerald">{{ rx.medicine.stock_quantity }}</span>
+                                {% else %}
+                                    <span class="badge badge-rose">{{ rx.medicine.stock_quantity }} (short)</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge badge-amber">Not linked</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <form method="post" action="{% url 'pharmacy:dispense_prescription' rx.id %}" onsubmit="return confirm('Dispense {{ rx.quantity }} x {{ rx.medicine_name }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary btn-sm">Dispense</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% else %}
+        {% include "partials/empty_state.html" with title="No pending prescriptions" text="New prescriptions from doctors will appear here for dispensing." icon="pill" %}
+    {% endif %}
+</div>
+{% endblock %}

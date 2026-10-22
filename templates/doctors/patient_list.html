@@ -48,6 +48,7 @@
                 </article>
             {% endfor %}
         </div>
+        {% include "partials/pagination.html" with page_obj=page_obj %}
     {% else %}
         <div class="bg-white shadow rounded-xl lg:rounded-2xl p-10 text-center">
             <div class="text-5xl mb-4">👥</div>
