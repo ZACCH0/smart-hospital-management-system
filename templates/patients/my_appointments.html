@@ -23,7 +23,7 @@
                     {% for appt in appointments %}
                     <tr>
                         <td>
-                            {% include "partials/avatar.html" with person=appt.doctor.user size="xs" meta=appt.doctor.get_specialization_display %}
+                            {% include "partials/avatar.html" with person=appt.doctor.user size="xs" meta=appt.doctor.specialization.name %}
                         </td>
                         <td class="whitespace-nowrap">
                             <span class="font-semibold text-slate-900">{{ appt.appointment_date|date:"D, j M Y" }}</span>

@@ -30,7 +30,7 @@
                 </a>
                 </div>
                 <div class="min-w-0 flex-1">
-                    <p class="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-white/70">Clinical workspace · {% if doctor_profile %}{{ doctor_profile.get_specialization_display }}{% else %}Doctor{% endif %}</p>
+                    <p class="text-[11px] lg:text-[12px] font-bold uppercase tracking-widest text-white/70">Clinical workspace · {% if doctor_profile %}{{ doctor_profile.specialization.name }}{% else %}Doctor{% endif %}</p>
                     <h1 class="text-[21px] sm:text-[26px] lg:text-[30px] font-extrabold tracking-tight truncate">Hello Dr. {{ user.first_name|default:user.get_full_name }}</h1>
                     <p class="mt-1 flex flex-wrap items-center gap-2">
                         {% if doctor_profile and doctor_profile.available %}
@@ -70,7 +70,7 @@
             <div class="app-card__body grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
                     <p class="text-[12px] font-semibold uppercase tracking-wide text-slate-400">Specialty</p>
-                    <p class="text-[14px] font-semibold text-slate-800 mt-0.5">{{ doctor_profile.get_specialization_display }}</p>
+                    <p class="text-[14px] font-semibold text-slate-800 mt-0.5">{{ doctor_profile.specialization.name }}</p>
                 </div>
                 <div>
                     <p class="text-[12px] font-semibold uppercase tracking-wide text-slate-400">Experience</p>

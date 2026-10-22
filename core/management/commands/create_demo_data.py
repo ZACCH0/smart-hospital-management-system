@@ -67,10 +67,13 @@ class Command(BaseCommand):
         )
 
         #  Create Doctor Profile 
-        from doctors.models import DoctorProfile
+        from doctors.models import DoctorProfile, Specialty
+        specialty, _ = Specialty.objects.get_or_create(
+            slug='general', defaults={'name': 'General Medicine'},
+        )
         doctor_profile = DoctorProfile.objects.create(
             user=doctor_user,
-            specialization='general',
+            specialization=specialty,
             qualification='MBBS, MD',
             experience_years=8,
             consultation_fee=5000.00,

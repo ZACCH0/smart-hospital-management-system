@@ -1,7 +1,20 @@
 from django.contrib import admin
 from django.contrib import messages
-from .models import DoctorProfile
+from .models import DoctorProfile, Specialty
 from accounts.models import CustomUser
+
+
+@admin.register(Specialty)
+class SpecialtyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'is_active', 'order', 'doctor_total')
+    list_editable = ('is_active', 'order')
+    list_filter = ('is_active',)
+    search_fields = ('name', 'slug', 'keywords')
+    prepopulated_fields = {'slug': ('name',)}
+
+    @admin.display(description='Doctors')
+    def doctor_total(self, obj):
+        return obj.doctors.count()
 
 
 class DoctorProfileInline(admin.StackedInline):

@@ -75,9 +75,10 @@ def health_assistant(request):
             messages.error(request, 'Please describe your symptoms first.')
         else:
             result = suggest_department(symptoms)
-            doctors = DoctorProfile.objects.filter(
-                available=True, specialization=result['department']
-            ).select_related('user')[:3]
+            if result and result['department']:
+                doctors = DoctorProfile.objects.filter(
+                    available=True, specialization__slug=result['department']
+                ).select_related('user')[:3]
             log_action(
                 request,
                 action='access',

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.utils import timezone
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Count, Q, F
 
 from core.decorators import (
     admin_required,
@@ -85,7 +85,7 @@ def admin_home(request):
         'occupied_beds': occupied_beds,
         'specialty_load': (
             DoctorProfile.objects
-            .values('specialization')
+            .values(department=F('specialization__name'))
             .annotate(total=Count('appointments'))
             .order_by('-total')[:6]
         ),

@@ -23,7 +23,7 @@ def home(request):
     doctors = cache.get('homepage_doctors')
     if doctors is None:
         doctors = list(
-            DoctorProfile.objects.select_related("user")
+            DoctorProfile.objects.select_related("user", "specialization")
             .order_by("-available", "user__first_name")[:8]
         )
         cache.set('homepage_doctors', doctors, 300)
@@ -33,12 +33,22 @@ def home(request):
         doctor_count = DoctorProfile.objects.count()
         cache.set('homepage_doctor_count', doctor_count, 300)
 
+    tabs = []
+    seen = set()
+    for doctor in doctors:
+        specialty = doctor.specialization
+        if specialty and specialty.slug not in seen:
+            seen.add(specialty.slug)
+            tabs.append((specialty.order, specialty.slug, specialty.name))
+    specialty_tabs = [(slug, name) for _, slug, name in sorted(tabs)]
+
     return render(
         request,
         "home.html",
         {
             "homepage_doctors": doctors,
             "homepage_doctor_count": doctor_count,
+            "specialty_tabs": specialty_tabs,
         },
     )
 
@@ -56,7 +66,7 @@ def demo_page(request):
             continue
         extra = ""
         if role == "doctor" and hasattr(user, "doctor_profile"):
-            extra = user.doctor_profile.get_specialization_display()
+            extra = user.doctor_profile.specialization.name
         personas[role] = {
             "name": user.get_full_name() or user.email,
             "extra": extra,

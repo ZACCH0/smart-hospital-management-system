@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from doctors.models import DoctorProfile
+from doctors.models import DoctorProfile, Specialty
 from patients.models import PatientProfile
 from medical_records.models import MedicalRecord
 from prescriptions.models import Prescription
@@ -18,19 +18,20 @@ def directory(request):
     doctors = cache.get('directory_doctors')
     if doctors is None:
         doctors = list(
-            DoctorProfile.objects.select_related("user").order_by(
-                "-available", "specialization", "user__first_name"
+            DoctorProfile.objects.select_related("user", "specialization").order_by(
+                "-available", "specialization__order", "user__first_name"
             )
         )
         cache.set('directory_doctors', doctors, 300)
 
     specialties = cache.get('directory_specialties')
     if specialties is None:
-        present = {doctor.specialization for doctor in doctors}
+        present_ids = {doctor.specialization_id for doctor in doctors}
         specialties = [
-            (value, label)
-            for value, label in DoctorProfile.SPECIALIZATION_CHOICES
-            if value in present
+            (specialty.slug, specialty.name)
+            for specialty in Specialty.objects.filter(
+                id__in=present_ids
+            ).order_by("order", "name")
         ]
         cache.set('directory_specialties', specialties, 300)
 

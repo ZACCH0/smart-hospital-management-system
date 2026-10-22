@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from core.ai import suggest_department
 from core.testing import make_doctor, make_patient
+from doctors.models import Specialty
 
 
 @override_settings(AI_API_KEY='')
@@ -34,6 +35,14 @@ class TriageRuleTests(TestCase):
     def test_blank_symptoms_return_nothing(self):
         self.assertIsNone(suggest_department('   '))
 
+    def test_admin_added_specialty_drives_routing(self):
+        Specialty.objects.create(
+            name='ENT', slug='ent', keywords='ear pain, sore throat, sinus', order=20,
+        )
+        result = suggest_department('sore throat with blocked sinus')
+        self.assertEqual(result['department'], 'ent')
+        self.assertEqual(result['department_label'], 'ENT')
+
     @override_settings(AI_API_KEY='test-key')
     def test_ai_failure_falls_back_to_rules(self):
         with mock.patch('core.ai.urlrequest.urlopen', side_effect=URLError('down')):
@@ -56,9 +65,7 @@ class HealthAssistantViewTests(TestCase):
         self.assertContains(response, 'Health Assistant')
 
     def test_post_symptoms_shows_department_and_matching_doctors(self):
-        cardiologist = make_doctor()
-        cardiologist.specialization = 'cardiology'
-        cardiologist.save(update_fields=['specialization'])
+        cardiologist = make_doctor(specialization='cardiology')
 
         self.client.force_login(self.patient.user)
         response = self.client.post(
@@ -74,6 +81,21 @@ class HealthAssistantViewTests(TestCase):
         response = self.client.post(reverse('patients:health_assistant'), {'symptoms': '  '})
         self.assertIsNone(response.context['result'])
         self.assertContains(response, 'Please describe your symptoms first.')
+
+    def test_doctor_of_admin_added_specialty_is_listed(self):
+        ent = Specialty.objects.create(
+            name='ENT', slug='ent', keywords='ear pain, sore throat, sinus', order=20,
+        )
+        doctor = make_doctor(specialization=ent)
+
+        self.client.force_login(self.patient.user)
+        response = self.client.post(
+            reverse('patients:health_assistant'),
+            {'symptoms': 'sore throat with blocked sinus'},
+        )
+
+        self.assertEqual(response.context['result']['department'], 'ent')
+        self.assertIn(doctor, response.context['doctors'])
 
     def test_doctor_cannot_use_patient_assistant(self):
         self.client.force_login(self.doctor_user.user)

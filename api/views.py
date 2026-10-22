@@ -11,12 +11,12 @@ from .serializers import AppointmentSerializer, DoctorSerializer, PatientSeriali
 class DoctorViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DoctorSerializer
     permission_classes = [permissions.IsAuthenticated]
-    search_fields = ['user__first_name', 'user__last_name', 'specialization', 'qualification']
+    search_fields = ['user__first_name', 'user__last_name', 'specialization__name', 'qualification']
     ordering_fields = ['consultation_fee', 'experience_years', 'user__last_name']
     ordering = ['user__last_name']
 
     def get_queryset(self):
-        return DoctorProfile.objects.select_related('user').all()
+        return DoctorProfile.objects.select_related('user', 'specialization').all()
 
 
 class PatientViewSet(viewsets.ReadOnlyModelViewSet):

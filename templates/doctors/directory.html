@@ -20,7 +20,7 @@
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="doctorGrid">
         {% for doctor in directory_doctors %}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition overflow-hidden flex flex-col doctor-card" data-specialization="{{ doctor.specialization }}">
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition overflow-hidden flex flex-col doctor-card" data-specialization="{{ doctor.specialization.slug }}">
             <div class="flex items-center justify-between gap-2 px-5 pt-4">
                 {% if doctor.available %}
                 <span class="flex-shrink-0 inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>Available</span>
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="p-5 flex-1 flex flex-col">
-                <p class="text-sm text-primary font-semibold text-center">{{ doctor.get_specialization_display }}</p>
+                <p class="text-sm text-primary font-semibold text-center">{{ doctor.specialization.name }}</p>
                 <p class="text-xs text-slate-500 text-center mt-0.5">{{ doctor.qualification }} · {{ doctor.experience_years }} yrs experience</p>
                 <div class="mt-auto pt-4 flex flex-wrap items-center gap-2">
                     {% if doctor.user.phone %}

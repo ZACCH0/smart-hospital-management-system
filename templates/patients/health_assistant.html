@@ -36,7 +36,7 @@
             <p class="text-[12.5px] font-semibold text-slate-700 mb-2">Available doctors in this department</p>
             <div class="flex flex-wrap gap-2">
                 {% for doctor in doctors %}
-                    {% include "partials/avatar.html" with person=doctor.user size="xs" meta=doctor.get_specialization_display %}
+                    {% include "partials/avatar.html" with person=doctor.user size="xs" meta=doctor.specialization.name %}
                 {% endfor %}
             </div>
         </div>

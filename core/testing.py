@@ -3,7 +3,7 @@ import itertools
 from datetime import date
 
 from accounts.models import CustomUser
-from doctors.models import DoctorProfile
+from doctors.models import DoctorProfile, Specialty
 from patients.models import PatientProfile
 
 _counter = itertools.count(1)
@@ -31,11 +31,18 @@ def make_patient(email=None, **extra):
     )
 
 
-def make_doctor(email=None, available=True, **extra):
+def make_doctor(email=None, available=True, specialization='general', **extra):
+    if not isinstance(specialization, Specialty):
+        specialty, _ = Specialty.objects.get_or_create(
+            slug=specialization,
+            defaults={'name': specialization.replace('-', ' ').title()},
+        )
+    else:
+        specialty = specialization
     user = make_user('doctor', email=email, **extra)
     return DoctorProfile.objects.create(
         user=user,
-        specialization='general',
+        specialization=specialty,
         qualification='MBBS',
         experience_years=5,
         consultation_fee=5000,

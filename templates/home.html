@@ -400,18 +400,13 @@
     {# Specialty filter tabs — JS-only, no backend change. Empty tabs auto-hide. #}
     <div class="flex flex-wrap justify-center gap-2 mb-10" role="tablist" aria-label="Filter doctors by specialty">
         <button type="button" data-spec-tab="all" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition" role="tab" aria-selected="true">All</button>
-        <button type="button" data-spec-tab="general" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">General Medicine</button>
-        <button type="button" data-spec-tab="cardiology" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">Cardiology</button>
-        <button type="button" data-spec-tab="dermatology" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">Dermatology</button>
-        <button type="button" data-spec-tab="pediatrics" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">Pediatrics</button>
-        <button type="button" data-spec-tab="orthopedics" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">Orthopedics</button>
-        <button type="button" data-spec-tab="gynecology" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">Gynecology</button>
-        <button type="button" data-spec-tab="neurology" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">Neurology</button>
-        <button type="button" data-spec-tab="psychiatry" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">Psychiatry</button>
+        {% for slug, name in specialty_tabs %}
+        <button type="button" data-spec-tab="{{ slug }}" class="spec-tab px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-600 border border-slate-200 hover:border-primary hover:text-primary transition" role="tab" aria-selected="false">{{ name }}</button>
+        {% endfor %}
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="doctorGrid">
         {% for doctor in homepage_doctors %}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition overflow-hidden flex flex-col doctor-card" data-specialization="{{ doctor.specialization }}">
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition overflow-hidden flex flex-col doctor-card" data-specialization="{{ doctor.specialization.slug }}">
             {# 06-style: name top-right + availability, photo, role, contact icons + Book. Real data only. #}
             <div class="flex items-center justify-between gap-2 px-5 pt-4">
                 {% if doctor.available %}
@@ -431,7 +426,7 @@
                 </div>
             </div>
             <div class="p-5 flex-1 flex flex-col">
-                <p class="text-sm text-primary font-semibold text-center">{{ doctor.get_specialization_display }}</p>
+                <p class="text-sm text-primary font-semibold text-center">{{ doctor.specialization.name }}</p>
                 <p class="text-xs text-slate-500 text-center mt-0.5">{{ doctor.qualification }} · {{ doctor.experience_years }} yrs experience</p>
                 <div class="mt-auto pt-4 flex flex-wrap items-center gap-2">
                     {% if doctor.user.phone %}

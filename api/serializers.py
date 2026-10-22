@@ -16,12 +16,14 @@ class UserSerializer(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     full_name = serializers.SerializerMethodField()
+    specialization = serializers.SlugRelatedField(slug_field='slug', read_only=True)
+    specialization_name = serializers.CharField(source='specialization.name', read_only=True)
 
     class Meta:
         model = DoctorProfile
         fields = [
-            'id', 'user', 'full_name', 'specialization', 'qualification',
-            'experience_years', 'consultation_fee', 'available',
+            'id', 'user', 'full_name', 'specialization', 'specialization_name',
+            'qualification', 'experience_years', 'consultation_fee', 'available',
         ]
 
     def get_full_name(self, obj):

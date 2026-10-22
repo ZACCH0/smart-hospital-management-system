@@ -279,7 +279,7 @@
                 <tbody>
                     {% for row in specialty_load %}
                     <tr>
-                        <td class="font-medium">{{ row.specialization|default:"General" }}</td>
+                        <td class="font-medium">{{ row.department|default:"General" }}</td>
                         <td class="text-right font-bold">{{ row.total }}</td>
                     </tr>
                     {% empty %}

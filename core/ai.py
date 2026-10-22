@@ -19,35 +19,6 @@ DISCLAIMER = (
     'local emergency number or go to the nearest emergency room.'
 )
 
-DEPARTMENT_KEYWORDS = (
-    ('cardiology', (
-        'chest pain', 'heart', 'palpitation', 'blood pressure', 'hypertension',
-        'cardiac', 'cholesterol',
-    )),
-    ('dermatology', (
-        'rash', 'skin', 'itch', 'acne', 'eczema', 'mole', 'hair loss', 'wound',
-    )),
-    ('pediatrics', (
-        'child', 'baby', 'infant', 'toddler', 'kid', 'newborn', 'vaccination',
-    )),
-    ('orthopedics', (
-        'bone', 'fracture', 'joint', 'knee', 'back pain', 'sprain', 'shoulder',
-        'neck pain', 'sports injury',
-    )),
-    ('gynecology', (
-        'pregnan', 'period', 'menstrual', 'vaginal', 'pelvic', 'prenatal',
-        'contraception',
-    )),
-    ('neurology', (
-        'headache', 'migraine', 'seizure', 'numbness', 'dizzy', 'fainting',
-        'tremor', 'memory',
-    )),
-    ('psychiatry', (
-        'anxiety', 'depress', 'panic', 'insomnia', 'mood', 'stress', 'suicidal',
-        'hearing voices',
-    )),
-)
-
 URGENT_KEYWORDS = (
     'chest pain', 'shortness of breath', 'difficulty breathing', 'severe bleeding',
     'unconscious', 'stroke', 'suicidal', 'seizure', 'severe abdominal',
@@ -55,9 +26,17 @@ URGENT_KEYWORDS = (
 )
 
 
-def _specialty_labels():
-    from doctors.models import DoctorProfile
-    return dict(DoctorProfile.SPECIALIZATION_CHOICES)
+def _active_specialties():
+    """Admin-managed specialties, ordered the way they should be offered."""
+    from doctors.models import Specialty
+    return list(Specialty.objects.filter(is_active=True).order_by('order', 'name'))
+
+
+def _default_specialty(specialties):
+    for specialty in specialties:
+        if specialty.slug == 'general':
+            return specialty
+    return specialties[0] if specialties else None
 
 
 def _advice_for(department, urgent):
@@ -76,16 +55,25 @@ def _rule_based(symptoms):
     text = (symptoms or '').lower()
     urgent = any(keyword in text for keyword in URGENT_KEYWORDS)
 
-    department = 'general'
-    for candidate, keywords in DEPARTMENT_KEYWORDS:
-        if any(keyword in text for keyword in keywords):
-            department = candidate
+    specialties = _active_specialties()
+    default = _default_specialty(specialties)
+
+    # The catch-all default is only used when nothing more specific matches,
+    # so "my baby has a fever" routes to Pediatrics, not General Medicine.
+    match = None
+    for specialty in specialties:
+        if specialty == default:
+            continue
+        if any(keyword in text for keyword in specialty.keyword_list()):
+            match = specialty
             break
 
-    labels = _specialty_labels()
+    chosen = match or default
+    department = chosen.slug if chosen else None
+    label = chosen.name if chosen else 'General Medicine'
     return {
         'department': department,
-        'department_label': labels.get(department, 'General Medicine'),
+        'department_label': label,
         'urgency': 'urgent' if urgent else 'routine',
         'advice': _advice_for(department, urgent),
         'source': 'rules',
@@ -99,6 +87,13 @@ def _ai_suggest(symptoms):
     if not api_key:
         return None
 
+    specialties = _active_specialties()
+    if not specialties:
+        return None
+
+    labels = {specialty.slug: specialty.name for specialty in specialties}
+    allowed = ', '.join(labels)
+
     base = settings.AI_BASE_URL.rstrip('/')
     payload = {
         'model': settings.AI_MODEL,
@@ -107,11 +102,10 @@ def _ai_suggest(symptoms):
             {
                 'role': 'system',
                 'content': (
-                    'You are a hospital triage assistant. Reply with strict JSON '
-                    'only: {"department": one of [general, cardiology, dermatology, '
-                    'pediatrics, orthopedics, gynecology, neurology, psychiatry], '
-                    '"urgency": "urgent" or "routine", "advice": "one or two '
-                    'sentences"}. Never give a diagnosis. Do not include any other keys.'
+                    f'You are a hospital triage assistant. Reply with strict JSON '
+                    f'only: {{"department": one of [{allowed}], '
+                    f'"urgency": "urgent" or "routine", "advice": "one or two '
+                    f'sentences"}}. Never give a diagnosis. Do not include any other keys.'
                 ),
             },
             {'role': 'user', 'content': symptoms[:1500]},
@@ -137,10 +131,9 @@ def _ai_suggest(symptoms):
         logger.warning('AI suggestion failed, falling back to rules: %s', exc)
         return None
 
-    labels = _specialty_labels()
     department = parsed.get('department')
     if department not in labels:
-        department = 'general'
+        department = _default_specialty(specialties).slug
     urgency = 'urgent' if parsed.get('urgency') == 'urgent' else 'routine'
     advice = str(parsed.get('advice') or '').strip() or _advice_for(department, urgency == 'urgent')
 

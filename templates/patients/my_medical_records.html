@@ -13,9 +13,9 @@
             <header class="app-card__head">
                 <div class="min-w-0">
                     <h2 class="truncate">Dr. {{ record.doctor.user.get_full_name }}</h2>
-                    <p>{{ record.created_at|date:"F j, Y" }} · {{ record.doctor.get_specialization_display }}</p>
+                    <p>{{ record.created_at|date:"F j, Y" }} · {{ record.doctor.specialization.name }}</p>
                 </div>
-                <span class="badge badge-sky flex-shrink-0">{{ record.doctor.get_specialization_display }}</span>
+                <span class="badge badge-sky flex-shrink-0">{{ record.doctor.specialization.name }}</span>
             </header>
             <div class="app-card__body grid gap-3">
                 {% if record.has_vitals %}
