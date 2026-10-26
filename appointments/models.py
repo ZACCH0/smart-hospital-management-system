@@ -117,13 +117,14 @@ class Appointment(models.Model):
                     f'Please choose a different time.'
                 )
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, validate_rules=True, **kwargs):
         if self.consultation_type == 'video':
             if not self.video_room:
                 self.video_room = secrets.token_hex(8)
         else:
             self.video_room = ''
-        self.full_clean()
+        if validate_rules:
+            self.full_clean()
         super().save(*args, **kwargs)
 
     @property

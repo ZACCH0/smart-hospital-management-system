@@ -60,6 +60,22 @@ class AppointmentRuleTests(TestCase):
                 appointment_date=self.future, appointment_time='12:00',
             )
 
+    def test_past_appointments_can_be_approved_without_crash(self):
+        appt = Appointment(
+            patient=self.patient, doctor=self.doctor,
+            appointment_date=timezone.now().date() - timedelta(days=2),
+            appointment_time='09:00',
+            status='pending',
+        )
+        appt.save(validate_rules=False)
+        self.client.force_login(self.receptionist)
+        response = self.client.get(
+            reverse('appointments:approve_appointment', args=[appt.id])
+        )
+        self.assertEqual(response.status_code, 302)
+        appt.refresh_from_db()
+        self.assertEqual(appt.status, 'approved')
+
     def test_doctor_only_sees_own_appointments_in_api(self):
         other_doctor = make_doctor()
         mine = Appointment.objects.create(

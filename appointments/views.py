@@ -76,7 +76,7 @@ def approve_appointment(request, appointment_id):
         appointment = get_object_or_404(Appointment, id=appointment_id)
 
     appointment.status = 'approved'
-    appointment.save()
+    appointment.save(validate_rules=False)
 
     log_action(
         request,
@@ -106,7 +106,7 @@ def cancel_appointment(request, appointment_id):
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.status = 'cancelled'
-            appointment.save()
+            appointment.save(validate_rules=False)
 
             log_action(
                 request,
@@ -142,7 +142,7 @@ def mark_no_show(request, appointment_id):
         form = MarkNoShowForm(request.POST)
         if form.is_valid():
             appointment.status = 'no_show'
-            appointment.save()
+            appointment.save(validate_rules=False)
 
             log_action(
                 request,
