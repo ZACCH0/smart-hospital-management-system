@@ -6,7 +6,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from core.testing import make_doctor, make_patient, make_staff
+from core.testing import login_2fa_verified, make_doctor, make_patient, make_staff
 
 from .models import Appointment
 
@@ -86,7 +86,7 @@ class AppointmentRuleTests(TestCase):
             patient=self.patient, doctor=other_doctor,
             appointment_date=self.future, appointment_time='13:00',
         )
-        self.client.force_login(self.doctor.user)
+        login_2fa_verified(self.client, self.doctor.user)
         response = self.client.get('/api/appointments/')
         ids = [row['id'] for row in response.json()['results']]
         self.assertEqual(ids, [mine.id])
@@ -160,7 +160,7 @@ class TelehealthTests(TestCase):
 
     def test_assigned_doctor_and_receptionist_can_join(self):
         appt = self.make_video()
-        self.client.force_login(self.doctor.user)
+        login_2fa_verified(self.client, self.doctor.user)
         self.assertEqual(
             self.client.get(reverse('appointments:telehealth_join', args=[appt.id])).status_code,
             302,
@@ -173,7 +173,7 @@ class TelehealthTests(TestCase):
 
     def test_other_doctor_cannot_join(self):
         appt = self.make_video()
-        self.client.force_login(self.other_doctor.user)
+        login_2fa_verified(self.client, self.other_doctor.user)
         response = self.client.get(reverse('appointments:telehealth_join', args=[appt.id]))
         self.assertEqual(response.status_code, 403)
 
@@ -188,7 +188,7 @@ class TelehealthTests(TestCase):
         from core.models import AuditLog
 
         appt = self.make_video()
-        self.client.force_login(self.doctor.user)
+        login_2fa_verified(self.client, self.doctor.user)
         self.client.get(reverse('appointments:telehealth_join', args=[appt.id]))
         self.assertTrue(
             AuditLog.objects.filter(action='access', object_id=str(appt.id)).exists()

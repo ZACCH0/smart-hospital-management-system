@@ -67,8 +67,7 @@ def role_redirect_view(request):
     is_admin = user.role == 'admin'
     is_receptionist = user.role == 'receptionist'
 
-    # Check if this user requires 2FA
-    if user_requires_2fa(user):
+    if user_requires_2fa(user) and not request.session.get('is_demo'):
         # If 2FA not set up yet — send to setup
         if not user_has_2fa_enabled(user):
             return redirect('accounts:setup_2fa')
@@ -381,10 +380,8 @@ def demo_login(request, role):
     request.session['is_demo'] = True
     request.session['demo_role'] = role
 
-    messages.info(
-        request,
-        f'You are now browsing as Demo {role.title()}. '
-        f'This is a demonstration with fake data only.'
-    )
+    # No toast here: the persistent amber "Demo mode" bar (base.html)
+    # already announces demo mode, and a toast would sit on top of the
+    # dashboard hero for ~6s and hide the header content on phones.
 
     return redirect('accounts:role_redirect')

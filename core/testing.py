@@ -52,3 +52,17 @@ def make_doctor(email=None, available=True, specialization='general', **extra):
 
 def make_staff(role='receptionist', email=None, **extra):
     return make_user(role, email=email, **extra)
+
+
+def login_2fa_verified(client, user):
+    """force_login + mark the session as 2FA-verified.
+
+    Admin/doctor accounts are gated by TwoFactorMiddleware on every
+    page; tests exercising app pages as those roles must bypass the
+    gate the same way a real verified session would.
+    """
+    client.force_login(user)
+    session = client.session
+    session['2fa_verified'] = True
+    session.save()
+    return client

@@ -4,7 +4,7 @@ from django.test import Client, TestCase
 from django.utils import timezone
 
 from appointments.models import Appointment
-from core.testing import make_doctor, make_patient, make_staff
+from core.testing import login_2fa_verified, make_doctor, make_patient, make_staff
 
 
 class AppointmentAPITests(TestCase):
@@ -113,7 +113,7 @@ class AppointmentAPITests(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_doctor_cannot_create_appointments(self):
-        self.client.force_login(self.doctor.user)
+        login_2fa_verified(self.client, self.doctor.user)
         response = self.client.post(
             '/api/appointments/', self._payload(), content_type='application/json',
         )
@@ -178,7 +178,7 @@ class AppointmentAPITests(TestCase):
             patient=self.patient, doctor=other_doctor,
             appointment_date=self.future, appointment_time='12:30',
         )
-        self.client.force_login(self.doctor.user)
+        login_2fa_verified(self.client, self.doctor.user)
 
         response = self.client.get('/api/appointments/')
 
@@ -205,6 +205,6 @@ class AppointmentAPITests(TestCase):
         self.assertEqual(self.client.delete(url).status_code, 403)
         self.assertTrue(Appointment.objects.filter(pk=appointment.pk).exists())
 
-        self.client.force_login(make_staff('admin'))
+        login_2fa_verified(self.client, make_staff('admin'))
         self.assertEqual(self.client.delete(url).status_code, 204)
         self.assertFalse(Appointment.objects.filter(pk=appointment.pk).exists())

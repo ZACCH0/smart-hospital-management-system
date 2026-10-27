@@ -4,6 +4,7 @@ from django.contrib.auth.models import AnonymousUser
 from accounts.models import CustomUser
 from core.audit import get_client_ip, log_action
 from core.models import AuditLog
+from core.testing import login_2fa_verified
 
 
 class AuditLogTests(TestCase):
@@ -61,14 +62,14 @@ class AuditLogViewTests(TestCase):
         )
 
     def test_admin_can_view_the_trail(self):
-        self.client.force_login(self.admin)
+        login_2fa_verified(self.client, self.admin)
         response = self.client.get('/audit-log/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Invoice #7')
         self.assertContains(response, 'Payment Recorded')
 
     def test_filter_by_action_and_search(self):
-        self.client.force_login(self.admin)
+        login_2fa_verified(self.client, self.admin)
         response = self.client.get('/audit-log/?action=payment')
         self.assertContains(response, 'Invoice #7')
         self.assertNotContains(response, 'Patient signed in')

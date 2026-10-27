@@ -1,10 +1,23 @@
 import re
 
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from .audit import get_client_ip, log_action
 from .throttle import check_rate_limit
+from accounts.two_factor import user_has_2fa_enabled, user_is_2fa_verified, user_requires_2fa
+
+# Paths reachable while an admin/doctor still owes 2FA (setup/verify/logout).
+EXEMPT_2FA = tuple(
+    re.compile(pattern)
+    for pattern in (
+        r'^/accounts/2fa/',
+        r'^/accounts/logout/$',
+        r'^/accounts/role-redirect/$',
+        r'^/static/',
+        r'^/media/',
+    )
+)
 
 # (scope, path regex, method or '*', limit, window in seconds)
 DEFAULT_RULES = (
@@ -76,3 +89,39 @@ class RateLimitMiddleware:
             return response
 
         return None
+
+
+class TwoFactorMiddleware:
+    """
+    Enforces the admin/doctor 2FA gate on every page, not just the
+    post-login redirect. Without this an admin/doctor could skip 2FA
+    by typing any URL directly (e.g. /dashboard/admin/).
+
+    Demo sessions (session['is_demo']) are exempt so showcase accounts
+    are never trapped in the 2FA flow.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        user = getattr(request, 'user', None)
+        if (
+            user is not None
+            and user.is_authenticated
+            and user_requires_2fa(user)
+            and not request.session.get('is_demo')
+            and not user_is_2fa_verified(request)
+            and not any(p.match(request.path_info) for p in EXEMPT_2FA)
+        ):
+            log_action(
+                request,
+                action='access',
+                model_name='TwoFactor',
+                object_repr=request.path_info,
+                details='Blocked page access before 2FA verification.',
+            )
+            if user_has_2fa_enabled(user):
+                return redirect('accounts:verify_2fa')
+            return redirect('accounts:setup_2fa')
+        return self.get_response(request)

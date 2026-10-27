@@ -6,7 +6,7 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from core.ai import suggest_department
-from core.testing import make_doctor, make_patient
+from core.testing import login_2fa_verified, make_doctor, make_patient
 from doctors.models import Specialty
 
 
@@ -99,7 +99,7 @@ class HealthAssistantViewTests(TestCase):
         self.assertIn(doctor, response.context['doctors'])
 
     def test_doctor_cannot_use_patient_assistant(self):
-        self.client.force_login(self.doctor_user.user)
+        login_2fa_verified(self.client, self.doctor_user.user)
         response = self.client.get(reverse('patients:health_assistant'))
         self.assertEqual(response.status_code, 403)
 

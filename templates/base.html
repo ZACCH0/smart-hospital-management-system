@@ -78,8 +78,12 @@
     {% if request.session.is_demo %}
     <div class="fixed top-0 inset-x-0 z-[70] h-9 bg-gradient-to-r from-amber-400 to-amber-300 text-amber-950 flex items-center justify-center gap-2 text-[12.5px] font-semibold px-3 text-center">
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-9 9 9 9M20 9l-9 9 9 9"/></svg>
-        <span class="truncate">Demo mode — sample data only, no real patient records.</span>
-        <a href="{% url 'accounts:logout' %}" class="underline underline-offset-2 hover:text-amber-700 whitespace-nowrap">Exit</a>
+        <span class="truncate hidden sm:inline">Demo mode — sample data only, no real patient records.</span>
+        <span class="truncate sm:hidden">Demo mode</span>
+        <form method="post" action="{% url 'accounts:logout' %}" class="flex items-center">
+            {% csrf_token %}
+            <button type="submit" class="underline underline-offset-2 hover:text-amber-700 whitespace-nowrap font-semibold">Exit</button>
+        </form>
     </div>
     {% endif %}
 

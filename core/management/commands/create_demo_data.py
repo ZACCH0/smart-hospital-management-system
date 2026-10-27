@@ -107,17 +107,31 @@ class Command(BaseCommand):
             (patient_user, 'profile_picture', 'patients/precious_okafor.jpg'),
             (patient_user, 'profile_banner', 'banners/clinic_hall.jpg'),
             (receptionist, 'profile_picture', 'staff/sarah_bello.jpg'),
+            (receptionist, 'profile_banner', 'banners/reception_desk.jpg'),
         ]
+        if admin:
+            photos += [
+                (admin, 'profile_picture', 'patients/admin_demo.jpg'),
+                (admin, 'profile_banner', 'banners/waiting_room.jpg'),
+            ]
         attached = [
             f'{user.email}:{field}' for user, field, filename in photos if attach_user_image(user, field, filename)
         ]
         # Existing seeded doctors/receptionist from data.json (no @shms-demo.com email)
         for email, field, filename in [
             ('zacch@gmail.com', 'profile_picture', 'doctors/zacch_smart.jpg'),
+            ('zacch@gmail.com', 'profile_banner', 'banners/doctor_office.jpg'),
             ('michealmorgan@gmail.com', 'profile_picture', 'doctors/micheal_morgan.jpg'),
             ('aladezaccheous74@gmail.com', 'profile_picture', 'doctors/hilda_titiloye.jpg'),
             ('lukegrace@gmail.com', 'profile_picture', 'doctors/grace_luke.jpg'),
             ('receptionist@gmail.com', 'profile_picture', 'staff/sarah_bello.jpg'),
+            ('david@gmail.com', 'profile_picture', 'patients/david.jpg'),
+            ('adeseun@gmail.com', 'profile_picture', 'patients/adeseun.jpg'),
+            ('crownpure6@gmail.com', 'profile_picture', 'patients/crownpure.jpg'),
+            ('jbchakbc@gmail.com', 'profile_picture', 'patients/joyce.jpg'),
+            ('njwbjkwfbfjkw@gmail.com', 'profile_picture', 'patients/ify.jpg'),
+            ('ruth.okoro@gmail.com', 'profile_picture', 'patients/ruth.jpg'),
+            ('zacchbook@gmail.com', 'profile_picture', 'patients/zacchbook.jpg'),
         ]:
             existing = User.objects.filter(email=email).first()
             if existing and attach_user_image(existing, field, filename):
@@ -159,9 +173,9 @@ class Command(BaseCommand):
              'Penicillin', 'Hypertension', '12 Awolowo Road, Ikoyi, Lagos', '08123400002',
              'patients/chidi_nwosu.jpg'),
             ('amara@shms-demo.com', 'Amara', 'Obi', date(2001, 11, 23), 'female', 'O+',
-             '', '', '5 Kudirat Abiola Way, Lagos', '08123400003', ''),
+             '', '', '5 Kudirat Abiola Way, Lagos', '08123400003', 'patients/amara_obi.jpg'),
             ('tunde@shms-demo.com', 'Tunde', 'Bakare', date(2016, 7, 9), 'male', 'B+',
-             '', 'Mild Asthma', '7 Adeola Odeku St, Victoria Island, Lagos', '08123400004', ''),
+             '', 'Mild Asthma', '7 Adeola Odeku St, Victoria Island, Lagos', '08123400004', 'patients/tunde_bakare.jpg'),
         ]
         extra_profiles = []
         for email, first, last, dob, gender, blood, allergies, conditions, address, phone, photo in extra_specs:
