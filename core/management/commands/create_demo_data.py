@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.base import File
+from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand
 from django.db import models
 from django.utils import timezone
@@ -15,9 +16,14 @@ CONSOLE_EMAIL = 'django.core.mail.backends.console.EmailBackend'
 
 
 def attach_user_image(user, field_name, filename):
-    """Attach a photo from the bundled seed_photos folder without overwriting."""
+    """Attach a photo from the bundled seed_photos folder.
+
+    Skips when a healthy photo is already attached; repairs references
+    whose file is missing (Render's ephemeral media dir wipes uploads on
+    every deploy, leaving broken FileField paths behind).
+    """
     field = getattr(user, field_name)
-    if field:
+    if field and default_storage.exists(field.name):
         return False
     source = Path(settings.BASE_DIR) / 'seed_photos' / filename
     if not source.exists():
@@ -99,6 +105,24 @@ class Command(BaseCommand):
             email_verified=True,
             is_active=True,
         )
+
+        # Clear photo references whose files are missing (Render's ephemeral
+        # media dir wipes uploads on every deploy, leaving FileField paths
+        # that 404). Empty fields let the UI fall back to the initials
+        # avatar instead of a broken image.
+        cleared = 0
+        for u in User.objects.all():
+            changed = False
+            if u.profile_picture and not default_storage.exists(u.profile_picture.name):
+                u.profile_picture = ''
+                changed = True
+            if u.profile_banner and not default_storage.exists(u.profile_banner.name):
+                u.profile_banner = ''
+                changed = True
+            if changed:
+                u.save(update_fields=['profile_picture', 'profile_banner'])
+                cleared += 1
+        self.stdout.write(f'  ✓ Cleared {cleared} broken photo reference(s)')
 
         #  Seed photos (bundled in seed_photos/, survive deploys) 
         photos = [
