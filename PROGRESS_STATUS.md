@@ -339,6 +339,7 @@ git log --oneline -10
 4. **WhatsApp Notifications** — implement a real provider (Twilio recommended) on a `feature/whatsapp` branch; awaiting prompt + credentials.
 5. **Open decision (old):** git history still contains old `media/` + pyc files — `filter-repo` cleanup vs leave-and-go-forward (needed only before a public history push).
 6. ~~Stage 8b approval~~ — **DONE (approved 2026-10-19).** ~~Stray `DoctorProfile id=4`~~ — **RESOLVED: KEEP.** ~~P24–26~~ — **DEFERRED (single-tenant).**
+7. **PERSISTENT MEDIA — Cloudinary/S3 (user: "we go do it later" 2026-10-28 — SCHEDULED NEXT):** currently every deploy wipes Render's ephemeral media folder → real users' uploaded profile photos/lab reports vanish (file gone, DB ref cleared by seed, initials fallback) on EVERY deploy; all typed data is safe (Neon DB untouched by deploys). Fix: wire `django-cloudinary-storage` (or S3) for media storage — accounts' photos, banners, lab reports persist through deploys + load via CDN. Needs user to create a free Cloudinary account and provide `CLOUDINARY_URL` (Render env var). Small change: settings + requirements + a storage toggle. DO THIS BEFORE inviting real users / before the showcase is filmed as a "real hospital" (registered-user flow must survive deploys).
 
 ---
 
