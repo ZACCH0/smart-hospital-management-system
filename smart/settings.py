@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'smart.wsgi.application'
 # Database
 DATABASE_URL = config('DATABASE_URL', default=f'sqlite:///{BASE_DIR}/db.sqlite3')
 DATABASES = {
-    'default': dj_database_url.parse(DATABASE_URL)
+    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=60)
 }
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
