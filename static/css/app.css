@@ -1221,3 +1221,35 @@ body.has-demo-banner .app-toasts { top: calc(var(--topbar-h) + 36px + 14px); }
   .app-card { box-shadow: none; border-color: #d1d5db; break-inside: avoid; }
   a[href]::after { content: ""; }
 }
+
+/* --------------------------------------------------------------------------
+   8. GLOBAL CARD MOTION (hover-only, GPU-cheap: transform/box-shadow/border
+   - no layout properties, no JS, no downloads; auto-killed by the
+   prefers-reduced-motion guard above)
+   -------------------------------------------------------------------------- */
+.app-card {
+  transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+}
+.app-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sh-md);
+  border-color: var(--brand-200);
+}
+
+/* Icon tiles pop + fill teal when their card is hovered (admin KPI keeps its
+   stronger scoped override; this covers every other dashboard/list page) */
+.app-icontile {
+  transition: transform var(--t), background-color var(--t),
+              border-color var(--t), color var(--t);
+}
+.app-card:hover .app-icontile,
+.app-stat:hover .app-icontile {
+  transform: scale(1.07) rotate(-3deg);
+}
+
+/* Ease the existing row tint instead of snapping */
+.app-table tbody tr { transition: background-color var(--t-fast); }
+
+/* Stat numbers get a subtle brand tint on hover for non-admin dashboards
+   (admin keeps its stronger scoped treatment) */
+.app-stat { transition: transform var(--t), box-shadow var(--t), border-color var(--t); }
