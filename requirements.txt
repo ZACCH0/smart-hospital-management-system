@@ -14,3 +14,5 @@ sqlparse==0.5.5
 tzdata==2026.2
 whitenoise==6.12.0
 colorama==0.4.6
+cloudinary==1.46.3
+django-cloudinary-storage==0.3.0

@@ -8,7 +8,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -24,7 +23,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # Local apps
-    'core',  
+    'core',
     'accounts',
     'smart',
     'doctors',
@@ -40,6 +39,17 @@ INSTALLED_APPS = [
     'api',
     'dashboard',
 ]
+
+# Persistent media — Cloudinary when CLOUDINARY_URL is configured (Render);
+# local filesystem otherwise (dev). Tests stay offline and local.
+CLOUDINARY_URL = config('CLOUDINARY_URL', default='')
+USE_CLOUDINARY = bool(CLOUDINARY_URL) and 'test' not in sys.argv
+
+if USE_CLOUDINARY:
+    # python-decouple does not inject into the environment, but the
+    # cloudinary client reads CLOUDINARY_URL from os.environ at import.
+    os.environ.setdefault('CLOUDINARY_URL', CLOUDINARY_URL)
+    INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -102,11 +112,25 @@ RATE_LIMIT_ENABLED = config('RATE_LIMIT_ENABLED', default=True, cast=bool)
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Storage backends — static via WhiteNoise; media on Cloudinary only when
+# configured (uploaded photos/reports survive redeploys), local disk otherwise.
+STORAGES = {
+    'default': {
+        'BACKEND': (
+            'cloudinary_storage.storage.MediaCloudinaryStorage'
+            if USE_CLOUDINARY
+            else 'django.core.files.storage.FileSystemStorage'
+        ),
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 # Upload limits enforced by core.validators
 MAX_IMAGE_UPLOAD_MB = config('MAX_IMAGE_UPLOAD_MB', default=5, cast=int)
@@ -150,10 +174,12 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='SHMS <noreply@shms.com>')
 
-# Automated tests never touch a real inbox and may use a fast hasher.
+# Automated tests never touch a real inbox and may use a fast hasher;
+# they also skip collectstatic, so static URLs stay unhashed there.
 if 'test' in sys.argv:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
     PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
+    STORAGES['staticfiles']['BACKEND'] = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Notification channels (swap for a real provider class when available)
 SMS_BACKEND = config('SMS_BACKEND', default='notifications.channels.ConsoleSMSBackend')
