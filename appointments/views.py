@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+import traceback
 from .models import Appointment
 from .forms import AppointmentForm, CancelAppointmentForm, MarkNoShowForm
 from core.decorators import receptionist_required, staff_required
@@ -67,27 +68,42 @@ def appointment_list(request):
 @login_required
 @staff_required
 def approve_appointment(request, appointment_id):
-    user = request.user
-    if hasattr(user, 'doctor_profile'):
-        appointment = get_object_or_404(
-            Appointment, id=appointment_id, doctor=user.doctor_profile
+    # TEMP-DEBUG (2026-11-03): live 500 on approve — capture the traceback
+    # into the audit log; remove once the real fix is in.
+    try:
+        user = request.user
+        if hasattr(user, 'doctor_profile'):
+            appointment = get_object_or_404(
+                Appointment, id=appointment_id, doctor=user.doctor_profile
+            )
+        else:
+            appointment = get_object_or_404(Appointment, id=appointment_id)
+
+        appointment.status = 'approved'
+        appointment.save(validate_rules=False)
+
+        log_action(
+            request,
+            action='approve',
+            model_name='Appointment',
+            object_id=appointment.id,
+            object_repr=str(appointment),
+            details=f'Approved by {request.user.get_full_name()}'
         )
-    else:
-        appointment = get_object_or_404(Appointment, id=appointment_id)
-
-    appointment.status = 'approved'
-    appointment.save(validate_rules=False)
-
-    log_action(
-        request,
-        action='approve',
-        model_name='Appointment',
-        object_id=appointment.id,
-        object_repr=str(appointment),
-        details=f'Approved by {request.user.get_full_name()}'
-    )
-    messages.success(request, 'Appointment approved.')
-    return redirect('appointments:appointment_list')
+        messages.success(request, 'Appointment approved.')
+        return redirect('appointments:appointment_list')
+    except Exception:
+        from core.models import AuditLog
+        log_action(
+            request,
+            action='access',
+            model_name='TEMP-DEBUG',
+            object_id=appointment_id,
+            object_repr='approve_appointment failed on live',
+            details='TEMP-DEBUG-TRACEBACK\n' + traceback.format_exc(),
+        )
+        messages.error(request, 'Approve hit a server error; details logged for diagnosis.')
+        return redirect('appointments:appointment_list')
 
 
 @login_required
