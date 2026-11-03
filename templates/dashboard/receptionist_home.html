@@ -163,11 +163,14 @@
                             <td class="whitespace-nowrap">Dr. {{ appt.doctor.user.get_full_name }}<span class="block text-[12px] text-slate-500 font-normal">{{ appt.doctor.specialization.name }}</span></td>
                             <td class="whitespace-nowrap text-[13px]">{{ appt.appointment_date|date:"j M" }} · {{ appt.appointment_time|time:"H:i" }}</td>
                             <td class="text-right whitespace-nowrap">
-                                <a href="{% url 'appointments:approve_appointment' appt.id %}"
-                                   data-confirm="Approve this appointment for {{ appt.patient.user.get_full_name }} with Dr. {{ appt.doctor.user.get_full_name }}?"
-                                   data-confirm-title="Approve appointment"
-                                   data-confirm-label="Approve"
-                                   class="btn btn-primary btn-sm">Approve</a>
+                                <form method="post" action="{% url 'appointments:approve_appointment' appt.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                       data-confirm="Approve this appointment for {{ appt.patient.user.get_full_name }} with Dr. {{ appt.doctor.user.get_full_name }}?"
+                                       data-confirm-title="Approve appointment"
+                                       data-confirm-label="Approve"
+                                       class="btn btn-primary btn-sm">Approve</button>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}

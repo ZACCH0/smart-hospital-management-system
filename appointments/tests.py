@@ -69,12 +69,46 @@ class AppointmentRuleTests(TestCase):
         )
         appt.save(validate_rules=False)
         self.client.force_login(self.receptionist)
-        response = self.client.get(
+        response = self.client.post(
             reverse('appointments:approve_appointment', args=[appt.id])
         )
         self.assertEqual(response.status_code, 302)
         appt.refresh_from_db()
         self.assertEqual(appt.status, 'approved')
+
+    def test_approve_is_post_only(self):
+        appt = Appointment(
+            patient=self.patient, doctor=self.doctor,
+            appointment_date=self.future,
+            appointment_time='10:30',
+            status='pending',
+        )
+        appt.save(validate_rules=False)
+        self.client.force_login(self.receptionist)
+        response = self.client.get(
+            reverse('appointments:approve_appointment', args=[appt.id])
+        )
+        self.assertEqual(response.status_code, 405)
+        appt.refresh_from_db()
+        self.assertEqual(appt.status, 'pending')
+
+    def test_list_and_board_use_post_forms_for_approve(self):
+        appt = Appointment.objects.create(
+            patient=self.patient, doctor=self.doctor,
+            appointment_date=self.future, appointment_time='14:00',
+        )
+        approve_link = '<a href="/appointments/{id}/approve/"'.format(id=appt.id)
+        approve_action = 'action="/appointments/{id}/approve/"'.format(id=appt.id)
+
+        self.client.force_login(self.receptionist)
+        list_html = self.client.get(reverse('appointments:appointment_list')).content.decode()
+        self.assertNotIn(approve_link, list_html)
+        self.assertIn(approve_action, list_html)
+        self.assertIn('form method="post"', list_html)
+
+        board_html = self.client.get(reverse('dashboard:receptionist_home')).content.decode()
+        self.assertNotIn(approve_link, board_html)
+        self.assertIn(approve_action, board_html)
 
     def test_doctor_only_sees_own_appointments_in_api(self):
         other_doctor = make_doctor()
